@@ -4,12 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "run-s generate migrate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --cache --ext \".js,.ts,.tsx\" --report-unused-disable-directives --report-unused-disable-directives src",
-    "lint-fix": "pnpm lint --fix",
-    "postinstall": "pnpm generate"
+    "lint-fix": "pnpm lint --fix"
   },
   "prettier": {
     "printWidth": 80,
