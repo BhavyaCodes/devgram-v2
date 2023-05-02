@@ -1,0 +1,55 @@
+{
+  "name": "@examples/trpc-next-prisma-starter",
+  "version": "10.23.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "run-s generate migrate",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint --cache --ext \".js,.ts,.tsx\" --report-unused-disable-directives --report-unused-disable-directives src",
+    "lint-fix": "pnpm lint --fix",
+    "postinstall": "pnpm generate"
+  },
+  "prettier": {
+    "printWidth": 80,
+    "trailingComma": "all",
+    "singleQuote": true
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^4.18.0",
+    "@trpc/client": "^10.23.0",
+    "@trpc/next": "^10.23.0",
+    "@trpc/react-query": "^10.23.0",
+    "@trpc/server": "^10.23.0",
+    "clsx": "^1.1.1",
+    "next": "^13.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "superjson": "^1.7.4",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.20",
+    "@types/react": "^18.0.9",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.30.0",
+    "eslint-config-next": "^13.2.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.8.7",
+    "prisma": "^4.12.0",
+    "start-server-and-test": "^1.12.0",
+    "tsx": "^3.12.3",
+    "typescript": "^4.8.3",
+    "vite": "^4.1.2",
+    "vitest": "^0.28.5"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
