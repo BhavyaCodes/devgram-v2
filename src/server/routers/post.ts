@@ -2,11 +2,11 @@
  *
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
-import Post from '../models/Post.model';
+import Post from '../models/Post';
 import { router, publicProcedure } from '../trpc';
 // import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-
+import { ObjectId } from 'mongodb';
 /**
  * Default selector for Post.
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -29,6 +29,23 @@ export const postRouter = router({
     const result = (await post.save()).toJSON();
     return result;
   }),
+  getAll: publicProcedure
+    // .output(
+    //   z.array(
+    //     z.object({
+    //       content: z.string(),
+    //       _id: z.instanceof(ObjectId),
+    //       createdAt: z.date(),
+    //       updatedAt: z.date(),
+    //     }),
+    //   ),
+    // )
+    .query(async () => {
+      const posts = await Post.find({}).lean();
+      console.log(posts);
+      // console.log('---------------', typeof posts[0]?.createdAt);
+      return posts;
+    }),
   // list: publicProcedure
   //   .input(
   //     z.object({

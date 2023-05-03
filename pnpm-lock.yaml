@@ -19,6 +19,9 @@ dependencies:
   clsx:
     specifier: ^1.1.1
     version: 1.2.1
+  mongodb:
+    specifier: ^5.3.0
+    version: 5.3.0
   mongoose:
     specifier: ^7.1.0
     version: 7.1.0

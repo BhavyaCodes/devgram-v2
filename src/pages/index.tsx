@@ -4,6 +4,7 @@ import { inferProcedureInput } from '@trpc/server';
 import Link from 'next/link';
 import { Fragment, useEffect } from 'react';
 import NewPost from '~/components/NewPost';
+import PostsList from '~/components/PostsList';
 import type { AppRouter } from '~/server/routers/_app';
 
 const IndexPage: NextPageWithLayout = () => {
@@ -53,6 +54,7 @@ const IndexPage: NextPageWithLayout = () => {
       <h2>
         Latest Posts
         {/* {postsQuery.status === 'loading' && '(loading)'} */}
+        <PostsList />
       </h2>
 
       <NewPost />

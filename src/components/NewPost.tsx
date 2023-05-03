@@ -2,7 +2,13 @@ import React, { FC, useRef } from 'react';
 import { trpc } from '~/utils/trpc';
 
 const NewPost: FC = () => {
-  const createPost = trpc.post.create.useMutation({});
+  const utils = trpc.useContext();
+
+  const createPost = trpc.post.create.useMutation({
+    onSuccess() {
+      utils.post.getAll.invalidate();
+    },
+  });
   const inputRef = useRef<null | HTMLInputElement>(null);
   const handleClick = () => {
     if (!inputRef.current) {

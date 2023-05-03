@@ -1,7 +1,9 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 
 interface IPost {
   content: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const postSchema = new Schema<IPost>(
@@ -12,5 +14,5 @@ const postSchema = new Schema<IPost>(
 );
 
 const Post = model<IPost>('Post', postSchema);
-
 export default Post;
+// export default mongoose.models?.Post || model<IPost>('Post', postSchema);
