@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import { env } from './env';
 
 const dbConnect = async () => {
   mongoose
-    .connect('mongodb://127.0.0.1:27017/test')
+    .connect(env.DATABASE_URL)
     .then(() => console.log('Connected to database'));
 };
 
