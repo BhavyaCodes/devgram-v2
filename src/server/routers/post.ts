@@ -2,6 +2,7 @@
  *
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
+import Post from '../models/Post.model';
 import { router, publicProcedure } from '../trpc';
 // import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -22,6 +23,11 @@ import { z } from 'zod';
 export const postRouter = router({
   sayHi: publicProcedure.input(z.string()).query(({ input }) => {
     return input;
+  }),
+  create: publicProcedure.input(z.string()).mutation(async ({ input }) => {
+    const post = new Post({ content: input });
+    const result = (await post.save()).toJSON();
+    return result;
   }),
   // list: publicProcedure
   //   .input(

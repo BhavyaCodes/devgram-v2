@@ -2,14 +2,15 @@ import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 import { inferProcedureInput } from '@trpc/server';
 import Link from 'next/link';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
+import NewPost from '~/components/NewPost';
 import type { AppRouter } from '~/server/routers/_app';
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
 
-  const myString = trpc.post.sayHi.useQuery('dfgrtrhrth');
-  console.log(myString.data);
+  // const myString = trpc.post.sayHi.useQuery('dfgrtrhrth');
+  // console.log(myString.data);
   // const postsQuery = trpc.post.list.useInfiniteQuery(
   //   {
   //     limit: 5,
@@ -54,9 +55,9 @@ const IndexPage: NextPageWithLayout = () => {
         {/* {postsQuery.status === 'loading' && '(loading)'} */}
       </h2>
 
-      <hr />
+      <NewPost />
 
-      <h3>Add a Post</h3>
+      <hr />
     </>
   );
 };
