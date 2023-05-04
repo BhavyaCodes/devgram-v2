@@ -80,7 +80,7 @@ export const trpc = createTRPCNext<AppRouter, SSRContext>({
 
             const {
               // If you're using Node 18 before 18.15.0, omit the "connection" header
-              connection: _connection,
+              // connection: _connection,
               ...headers
             } = ctx.req.headers;
             return headers;
