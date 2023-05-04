@@ -58,7 +58,7 @@ export default async function handler(
       await session.save();
       res.setHeader(
         'Set-Cookie',
-        `token=${token}; HttpOnly; Path=/${
+        `token=${token}; HttpOnly; Path=/;${
           env.NODE_ENV === 'development' ? '' : ' Secure'
         }`,
       );
@@ -75,7 +75,7 @@ export default async function handler(
     await session.save();
     res.setHeader(
       'Set-Cookie',
-      `token=${token}; HttpOnly; Path=/${
+      `token=${token}; HttpOnly; Path=/;${
         env.NODE_ENV === 'development' ? '' : ' Secure'
       }`,
     );
