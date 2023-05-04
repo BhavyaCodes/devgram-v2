@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { env } from '~/server/env';
 import jwt from 'jsonwebtoken';
 import User from '~/server/models/User';
+import mongoose from 'mongoose';
 
 interface GoogleTokensResult {
   access_token: string;
@@ -17,11 +18,14 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   {
+    const dbUri = env.DATABASE_URL;
+
     const code = req.query.code as string;
     if (!code) {
       res.status(500).redirect('/');
     }
-    // Handle any other HTTP method
+    await mongoose.connect(dbUri);
+
     const obj = await getGoogleOAuthTokens({ code });
 
     const userData = jwt.decode(obj.id_token) as {
