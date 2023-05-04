@@ -60,7 +60,7 @@ export default async function handler(
         'Set-Cookie',
         `token=${token}; HttpOnly; Path=/;${
           env.NODE_ENV === 'development' ? '' : ' Secure'
-        }`,
+        }; Max-Age=31560000`,
       );
       console.log(res.getHeaders());
 
@@ -77,7 +77,7 @@ export default async function handler(
       'Set-Cookie',
       `token=${token}; HttpOnly; Path=/;${
         env.NODE_ENV === 'development' ? '' : ' Secure'
-      }`,
+      }; Max-Age=31560000`,
     );
     console.log(res.getHeaders());
     return res.redirect('/');
