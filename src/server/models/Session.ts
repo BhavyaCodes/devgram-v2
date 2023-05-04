@@ -1,9 +1,13 @@
 import mongoose, { Schema, model } from 'mongoose';
 import { ObjectId } from 'mongodb';
+import { IUser } from './User';
 
-interface ISession {
-  userId: ObjectId;
+export interface ISession {
+  _id: ObjectId;
+  userId: ObjectId | IUser;
   token: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const sessionSchema = new Schema<ISession>(

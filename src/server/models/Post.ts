@@ -1,9 +1,11 @@
+import { ObjectId } from 'mongodb';
 import mongoose, { Schema, model } from 'mongoose';
 
-interface IPost {
+export interface IPost {
+  _id: ObjectId;
   content: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const postSchema = new Schema<IPost>(

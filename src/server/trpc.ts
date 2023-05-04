@@ -11,6 +11,12 @@
 import { initTRPC } from '@trpc/server';
 import { transformer } from '~/utils/transformer';
 import { Context } from './context';
+import Session from './models/Session';
+import User from './models/User';
+import { IUser } from './models/User';
+
+//TODO: REmove this below
+console.log(User);
 
 const t = initTRPC.context<Context>().create({
   /**
@@ -46,3 +52,23 @@ export const middleware = t.middleware;
  * @see https://trpc.io/docs/v10/merging-routers
  */
 export const mergeRouters = t.mergeRouters;
+
+// middlewares
+
+const currentUserMiddleware = middleware(async ({ ctx, next }) => {
+  const token = ctx.req.cookies?.token;
+
+  if (!token) {
+    return next();
+  }
+
+  const doc = await Session.findOne({ token }).populate('userId');
+  if (!doc?.userId) {
+    return next();
+  }
+  const user = doc.userId as IUser;
+  console.log('hiiiii');
+  return next({ ctx: { user } });
+});
+
+export const currentUserProcedure = publicProcedure.use(currentUserMiddleware);

@@ -2,9 +2,11 @@
 import * as trpc from '@trpc/server';
 import * as trpcNext from '@trpc/server/adapters/next';
 import dbConnect from './db';
+import { IUser } from './models/User';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface CreateContextOptions {
+interface CreateContextOptions extends trpcNext.CreateNextContextOptions {
   // session: Session | null
+  user?: IUser;
 }
 
 /**
@@ -13,7 +15,7 @@ interface CreateContextOptions {
  */
 export async function createContextInner(_opts: CreateContextOptions) {
   await dbConnect();
-  return {};
+  return _opts;
 }
 
 export type Context = trpc.inferAsyncReturnType<typeof createContextInner>;
@@ -27,5 +29,5 @@ export async function createContext(
 ): Promise<Context> {
   // for API-response caching see https://trpc.io/docs/caching
 
-  return await createContextInner({});
+  return await createContextInner(opts);
 }

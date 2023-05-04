@@ -6,7 +6,6 @@ import Post from '../models/Post';
 import { router, publicProcedure } from '../trpc';
 // import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { ObjectId } from 'mongodb';
 /**
  * Default selector for Post.
  * It's important to always explicitly say which fields you want to return in order to not leak extra information

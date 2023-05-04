@@ -1,10 +1,12 @@
+import { ObjectId } from 'mongodb';
 import mongoose, { Schema, model } from 'mongoose';
 
-interface IUser {
+export interface IUser {
+  _id: ObjectId;
   email: string;
   image?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   name: string;
 }
 

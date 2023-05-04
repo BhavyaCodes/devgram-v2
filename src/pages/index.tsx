@@ -1,15 +1,18 @@
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
-import { inferProcedureInput } from '@trpc/server';
-import Link from 'next/link';
-import { Fragment, useEffect } from 'react';
+
 import NewPost from '~/components/NewPost';
 import PostsList from '~/components/PostsList';
-import type { AppRouter } from '~/server/routers/_app';
 import getGoogleOAuthURL from '~/utils/getGoogleUrl';
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
+
+  const userData = trpc.user.getUser.useQuery(undefined, {
+    retry: false,
+  });
+
+  // console.log(userData.data);
 
   // const myString = trpc.post.sayHi.useQuery('dfgrtrhrth');
   // console.log(myString.data);
@@ -41,6 +44,7 @@ const IndexPage: NextPageWithLayout = () => {
 
   return (
     <>
+      {userData.data ? <h3>Welcome {userData.data.name}</h3> : null}
       <a href={getGoogleOAuthURL()}>Login With Google</a>
       <h2>Latest Posts</h2>
       {/* {postsQuery.status === 'loading' && '(loading)'} */}
