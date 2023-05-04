@@ -4,6 +4,7 @@ import { env } from '~/server/env';
 import jwt from 'jsonwebtoken';
 import User from '~/server/models/User';
 import mongoose from 'mongoose';
+import Session from '~/server/models/Session';
 
 interface GoogleTokensResult {
   access_token: string;
@@ -45,9 +46,21 @@ export default async function handler(
       });
 
       await newUser.save();
+
+      const session = new Session({
+        userId: newUser._id,
+        token: jwt.sign({ userId: newUser._id.toString() }, env.JWT_SECRET),
+      });
+      session.save();
+      return res.redirect('/');
     }
 
-    res.redirect('/');
+    const session = new Session({
+      userId: user._id,
+      token: jwt.sign({ userId: user._id.toString() }, env.JWT_SECRET),
+    });
+    session.save();
+    return res.redirect('/');
   }
 }
 

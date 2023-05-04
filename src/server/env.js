@@ -10,6 +10,7 @@ const { z } = require('zod');
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   GOOGLE_OAUTH_CLIENT_SECRET: z.string(),
+  JWT_SECRET: z.string(),
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
   NEXT_PUBLIC_GOOGLE_OAUTH_REDIRECT_URL: z.string(),
   NODE_ENV: z.enum(['development', 'test', 'production']),
