@@ -13,7 +13,7 @@ const postSchema = new Schema<IPost>(
   { timestamps: true },
 );
 
-// const Post = model<IPost>('Post', postSchema);
-// export default Post;
-export default (mongoose.models?.Post as any) ||
-  model<IPost>('Post', postSchema);
+const Post = model<IPost>('Post', postSchema);
+export default Post;
+// export default (mongoose.models?.Post as any) ||
+//   model<IPost>('Post', postSchema);
