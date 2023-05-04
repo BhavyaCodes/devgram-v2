@@ -42,7 +42,7 @@ export const postRouter = router({
     // )
     .query(async () => {
       const posts = await Post.find({}).lean();
-      console.log(posts);
+      // console.log(posts);
       // console.log('---------------', typeof posts[0]?.createdAt);
       return posts;
     }),

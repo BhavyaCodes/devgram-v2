@@ -6,6 +6,7 @@ import { Fragment, useEffect } from 'react';
 import NewPost from '~/components/NewPost';
 import PostsList from '~/components/PostsList';
 import type { AppRouter } from '~/server/routers/_app';
+import getGoogleOAuthURL from '~/utils/getGoogleUrl';
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
@@ -40,26 +41,11 @@ const IndexPage: NextPageWithLayout = () => {
 
   return (
     <>
-      <h1>Welcome to your tRPC starter!</h1>
-      <p>
-        If you get stuck, check <a href="https://trpc.io">the docs</a>, write a
-        message in our <a href="https://trpc.io/discord">Discord-channel</a>, or
-        write a message in{' '}
-        <a href="https://github.com/trpc/trpc/discussions">
-          GitHub Discussions
-        </a>
-        .
-      </p>
-
-      <h2>
-        Latest Posts
-        {/* {postsQuery.status === 'loading' && '(loading)'} */}
-        <PostsList />
-      </h2>
-
+      <a href={getGoogleOAuthURL()}>Login With Google</a>
+      <h2>Latest Posts</h2>
+      {/* {postsQuery.status === 'loading' && '(loading)'} */}
+      <PostsList />
       <NewPost />
-
-      <hr />
     </>
   );
 };
