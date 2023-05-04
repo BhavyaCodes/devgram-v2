@@ -44,8 +44,11 @@ const IndexPage: NextPageWithLayout = () => {
 
   return (
     <>
-      {userData.data ? <h3>Welcome {userData.data.name}</h3> : null}
-      <a href={getGoogleOAuthURL()}>Login With Google</a>
+      {userData.data ? (
+        <h3>Welcome {userData.data.name}</h3>
+      ) : (
+        <a href={getGoogleOAuthURL()}>Login With Google</a>
+      )}
       <h2>Latest Posts</h2>
       {/* {postsQuery.status === 'loading' && '(loading)'} */}
       <PostsList />
