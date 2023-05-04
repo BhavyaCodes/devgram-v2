@@ -47,19 +47,39 @@ export default async function handler(
 
       await newUser.save();
 
+      const token = jwt.sign(
+        { userId: newUser._id.toString() },
+        env.JWT_SECRET,
+      );
       const session = new Session({
         userId: newUser._id,
-        token: jwt.sign({ userId: newUser._id.toString() }, env.JWT_SECRET),
+        token,
       });
-      session.save();
+      await session.save();
+      res.setHeader(
+        'Set-Cookie',
+        `token=${token}; HttpOnly; Path=/${
+          env.NODE_ENV === 'development' ? '' : ' Secure'
+        }`,
+      );
+      console.log(res.getHeaders());
+
       return res.redirect('/');
     }
+    const token = jwt.sign({ userId: user._id.toString() }, env.JWT_SECRET);
 
     const session = new Session({
       userId: user._id,
-      token: jwt.sign({ userId: user._id.toString() }, env.JWT_SECRET),
+      token,
     });
-    session.save();
+    await session.save();
+    res.setHeader(
+      'Set-Cookie',
+      `token=${token}; HttpOnly; Path=/${
+        env.NODE_ENV === 'development' ? '' : ' Secure'
+      }`,
+    );
+    console.log(res.getHeaders());
     return res.redirect('/');
   }
 }
