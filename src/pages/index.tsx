@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import NewPost from '~/components/NewPost';
 import PostsList from '~/components/PostsList';
 import getGoogleOAuthURL from '~/utils/getGoogleUrl';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
@@ -59,6 +59,9 @@ const IndexPage: NextPageWithLayout = () => {
 
   return (
     <>
+      <Typography variant="h1" component="h1">
+        Devgram
+      </Typography>
       {getUser.data ? (
         <h3>Welcome {getUser.data.name}</h3>
       ) : (

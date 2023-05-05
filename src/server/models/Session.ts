@@ -19,7 +19,7 @@ const sessionSchema = new Schema<ISession>(
   { timestamps: true },
 );
 
-const Session = model<ISession>('Session', sessionSchema);
-export default Session;
-// export default (mongoose.models?.Session as any) ||
-//   model<ISession>('Session', sessionSchema);
+// const Session = model<ISession>('Session', sessionSchema);
+// export default Session;
+export default (mongoose.models?.Session as any) ||
+  model<ISession>('Session', sessionSchema);
