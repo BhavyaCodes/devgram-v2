@@ -4,6 +4,7 @@ import { router } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { authOnlyProcedure, currentSessionProcedure } from '../middleware';
+import Session from '../models/Session';
 export const userRouter = router({
   getUser: authOnlyProcedure
     .output(
@@ -25,7 +26,8 @@ export const userRouter = router({
       return session.userId;
     }),
 
-  logout: currentSessionProcedure.mutation(({ ctx }) => {
+  logout: currentSessionProcedure.mutation(async ({ ctx }) => {
+    await Session.deleteOne({ _id: ctx?.session?._id });
     ctx.res.setHeader('Set-Cookie', `token=; HttpOnly; Path=/; Max-Age=0`);
   }),
 });

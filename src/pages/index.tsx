@@ -1,18 +1,32 @@
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
-
+import { useQueryClient } from '@tanstack/react-query';
 import NewPost from '~/components/NewPost';
 import PostsList from '~/components/PostsList';
 import getGoogleOAuthURL from '~/utils/getGoogleUrl';
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
+  const queryClient = useQueryClient();
 
-  const userData = trpc.user.getUser.useQuery(undefined, {
+  const getUser = trpc.user.getUser.useQuery(undefined, {
     retry: false,
+    initialData: null,
+    onError: ({ data }) => {
+      // console.log('@@@@@@@@@@@@@@@@@@@@@@\n', data);
+      if (data?.code === 'UNAUTHORIZED') {
+        console.log('not logged in');
+      }
+    },
   });
 
-  // console.log(userData.data);
+  const logoutMutation = trpc.user.logout.useMutation({
+    onSuccess: () => {
+      queryClient.setQueryData([['user', 'getUser'], { type: 'query' }], null);
+    },
+  });
+
+  // console.log(getUser.data);
 
   // const myString = trpc.post.sayHi.useQuery('dfgrtrhrth');
   // console.log(myString.data);
@@ -44,8 +58,8 @@ const IndexPage: NextPageWithLayout = () => {
 
   return (
     <>
-      {userData.data ? (
-        <h3>Welcome {userData.data.name}</h3>
+      {getUser.data ? (
+        <h3>Welcome {getUser.data.name}</h3>
       ) : (
         <a href={getGoogleOAuthURL()}>Login With Google</a>
       )}
@@ -53,6 +67,12 @@ const IndexPage: NextPageWithLayout = () => {
       {/* {postsQuery.status === 'loading' && '(loading)'} */}
       <PostsList />
       <NewPost />
+      {getUser.data ? (
+        <button type="button" onClick={() => logoutMutation.mutate()}>
+          Logout
+        </button>
+      ) : null}
+      <button onClick={() => utils.user.getUser.refetch()}>refetch user</button>
     </>
   );
 };
