@@ -110,13 +110,13 @@ export const trpc = createTRPCNext<AppRouter, SSRContext>({
       };
     }
 
-    const error = opts.clientErrors[0];
-    if (error) {
-      // Propagate http first error from API calls
-      return {
-        status: error.data?.httpStatus ?? 500,
-      };
-    }
+    // const error = opts.clientErrors[0];
+    // if (error) {
+    //   // Propagate http first error from API calls
+    //   return {
+    //     status: error.data?.httpStatus ?? 500,
+    //   };
+    // }
 
     // for app caching with SSR see https://trpc.io/docs/caching
 
