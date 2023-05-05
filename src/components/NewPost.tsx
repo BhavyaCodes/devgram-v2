@@ -1,3 +1,4 @@
+import { Button, TextField } from '@mui/material';
 import React, { FC, useRef } from 'react';
 import { trpc } from '~/utils/trpc';
 
@@ -22,8 +23,10 @@ const NewPost: FC = () => {
   return (
     <div>
       <h3>NewPost Component</h3>
-      <input ref={inputRef} type="text" required />
-      <button onClick={handleClick}>Submit</button>
+      <TextField ref={inputRef} type="text" required />
+      <Button variant="contained" onClick={handleClick}>
+        Submit
+      </Button>
     </div>
   );
 };

@@ -5,6 +5,12 @@ import type { ReactElement, ReactNode } from 'react';
 import { DefaultLayout } from '~/components/DefaultLayout';
 import { trpc } from '~/utils/trpc';
 
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import theme from '../utils/theme';
+import createEmotionCache from '../utils/createEmotionCache';
+
 export type NextPageWithLayout<
   TProps = Record<string, unknown>,
   TInitialProps = TProps,
@@ -12,19 +18,31 @@ export type NextPageWithLayout<
   getLayout?: (page: ReactElement) => ReactNode;
 };
 
-type AppPropsWithLayout = AppProps & {
+export type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
+  emotionCache?: EmotionCache;
 };
 
-const MyApp = (({ Component, pageProps }: AppPropsWithLayout) => {
+const clientSideEmotionCache = createEmotionCache();
+
+const MyApp = (({
+  Component,
+  pageProps,
+  emotionCache = clientSideEmotionCache,
+}: AppPropsWithLayout) => {
   const getLayout =
     Component.getLayout ??
     ((page) => (
-      <DefaultLayout>
-        <ReactQueryDevtools initialIsOpen={true} />
-        {page}
-        <ReactQueryDevtools />
-      </DefaultLayout>
+      <CacheProvider value={emotionCache}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <DefaultLayout>
+            <ReactQueryDevtools initialIsOpen={false} />
+            {page}
+            <ReactQueryDevtools />
+          </DefaultLayout>
+        </ThemeProvider>
+      </CacheProvider>
     ));
 
   return getLayout(<Component {...pageProps} />);

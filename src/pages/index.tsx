@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import NewPost from '~/components/NewPost';
 import PostsList from '~/components/PostsList';
 import getGoogleOAuthURL from '~/utils/getGoogleUrl';
+import { Button } from '@mui/material';
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
@@ -68,11 +69,16 @@ const IndexPage: NextPageWithLayout = () => {
       <PostsList />
       {getUser.data ? <NewPost /> : <p>Login to post</p>}
       {getUser.data ? (
-        <button type="button" onClick={() => logoutMutation.mutate()}>
+        <Button
+          type="button"
+          variant="contained"
+          color="error"
+          onClick={() => logoutMutation.mutate()}
+        >
           Logout
-        </button>
+        </Button>
       ) : null}
-      <button onClick={() => utils.user.getUser.refetch()}>refetch user</button>
+      <Button onClick={() => utils.user.getUser.refetch()}>refetch user</Button>
     </>
   );
 };
