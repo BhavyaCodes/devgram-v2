@@ -1,11 +1,11 @@
 import { ObjectId } from 'mongodb';
-import { router, currentUserProcedure, publicProcedure } from '../trpc';
+import { router } from '../trpc';
 
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-
+import { authOnlyProcedure, currentSessionProcedure } from '../middleware';
 export const userRouter = router({
-  getUser: currentUserProcedure
+  getUser: authOnlyProcedure
     .output(
       z
         .object({
@@ -22,9 +22,10 @@ export const userRouter = router({
       if (!session) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@\n', session.userId);
       return session.userId;
     }),
 
-  // logout: currentUserProcedure.mutation(({ctx}) => {}),
+  logout: currentSessionProcedure.mutation(({ ctx }) => {
+    ctx.res.setHeader('Set-Cookie', `token=; HttpOnly; Path=/; Max-Age=0`);
+  }),
 });

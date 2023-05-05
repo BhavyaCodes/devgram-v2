@@ -52,22 +52,3 @@ export const middleware = t.middleware;
  * @see https://trpc.io/docs/v10/merging-routers
  */
 export const mergeRouters = t.mergeRouters;
-
-// middlewares
-
-const currentUserMiddleware = middleware(async ({ ctx, next }) => {
-  const token = ctx.req.cookies?.token;
-
-  if (!token) {
-    return next();
-  }
-
-  const session = await Session.findOne({ token }).populate('userId').lean();
-  if (!session?.userId) {
-    return next();
-  }
-
-  return next({ ctx: { session } });
-});
-
-export const currentUserProcedure = publicProcedure.use(currentUserMiddleware);
