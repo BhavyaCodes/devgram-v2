@@ -5,3 +5,5 @@ describe('Visit website', () => {
     cy.get('h1').should('have.text', 'Devgram');
   });
 });
+
+export {};
