@@ -13,11 +13,16 @@ const PostsList = () => {
   }
   return (
     <div>
-      <ul>
-        {posts.data.map((post) => (
-          <li key={post._id.toString()}>{post.content}</li>
-        ))}
-      </ul>
+      {posts.data.map((post) => (
+        <div key={post._id.toString()} style={{ border: '1px solid #222222' }}>
+          <p>{post.userId.name}</p>
+          <img
+            src={post.userId.image?.split('=')[0]}
+            style={{ maxHeight: 100 }}
+          />
+          <p>{post.content}</p>
+        </div>
+      ))}
     </div>
   );
 };
