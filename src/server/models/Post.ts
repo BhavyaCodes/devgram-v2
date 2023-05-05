@@ -1,8 +1,10 @@
 import { ObjectId } from 'mongodb';
 import mongoose, { Schema, model } from 'mongoose';
+import { IUser } from './User';
 
 export interface IPost {
   _id: ObjectId;
+  userId: IUser;
   content: string;
   createdAt: Date;
   updatedAt: Date;
@@ -10,6 +12,7 @@ export interface IPost {
 
 const postSchema = new Schema<IPost>(
   {
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     content: { type: String, required: true },
   },
   { timestamps: true },

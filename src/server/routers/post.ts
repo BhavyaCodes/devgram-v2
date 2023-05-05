@@ -2,6 +2,8 @@
  *
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
+import { ObjectId } from 'mongodb';
+import { authOnlyProcedure } from '../middleware';
 import Post from '../models/Post';
 import { router, publicProcedure } from '../trpc';
 // import { TRPCError } from '@trpc/server';
@@ -23,26 +25,36 @@ export const postRouter = router({
   sayHi: publicProcedure.input(z.string()).query(({ input }) => {
     return input;
   }),
-  create: publicProcedure.input(z.string()).mutation(async ({ input }) => {
-    const post = new Post({ content: input });
-    const result = (await post.save()).toJSON();
-    return result;
-  }),
+  create: authOnlyProcedure
+    .input(z.string())
+    .mutation(async ({ input, ctx }) => {
+      const post = new Post({
+        content: input,
+        userId: ctx.session?.userId._id,
+      });
+      const result = (await post.save()).toJSON();
+      return result;
+    }),
   getAll: publicProcedure
-    // .output(
-    //   z.array(
-    //     z.object({
-    //       content: z.string(),
-    //       _id: z.instanceof(ObjectId),
-    //       createdAt: z.date(),
-    //       updatedAt: z.date(),
-    //     }),
-    //   ),
-    // )
+    .output(
+      z.array(
+        z.object({
+          content: z.string(),
+          _id: z.instanceof(ObjectId),
+          createdAt: z.date(),
+          updatedAt: z.date(),
+          userId: z.object({
+            _id: z.instanceof(ObjectId),
+            image: z.string().optional(),
+            name: z.string(),
+          }),
+        }),
+      ),
+    )
     .query(async () => {
-      const posts = await Post.find({}).lean();
-      // console.log(posts);
-      // console.log('---------------', typeof posts[0]?.createdAt);
+      const posts = await Post.find({})
+        .populate('userId', { _id: 1, image: 1, name: 1 })
+        .lean();
       return posts;
     }),
   // list: publicProcedure

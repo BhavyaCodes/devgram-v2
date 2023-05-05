@@ -66,7 +66,7 @@ const IndexPage: NextPageWithLayout = () => {
       <h2>Latest Posts</h2>
       {/* {postsQuery.status === 'loading' && '(loading)'} */}
       <PostsList />
-      <NewPost />
+      {getUser.data ? <NewPost /> : <p>Login to post</p>}
       {getUser.data ? (
         <button type="button" onClick={() => logoutMutation.mutate()}>
           Logout
