@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { router, currentUserProcedure } from '../trpc';
+import { router, currentUserProcedure, publicProcedure } from '../trpc';
 
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
@@ -18,11 +18,13 @@ export const userRouter = router({
         .or(z.undefined()),
     )
     .query(({ ctx }) => {
-      const user = ctx.user;
-      if (!user) {
+      const session = ctx.session;
+      if (!session) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-      return user;
+      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@\n', session.userId);
+      return session.userId;
     }),
+
+  // logout: currentUserProcedure.mutation(({ctx}) => {}),
 });

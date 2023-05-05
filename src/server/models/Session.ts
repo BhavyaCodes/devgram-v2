@@ -4,7 +4,7 @@ import { IUser } from './User';
 
 export interface ISession {
   _id: ObjectId;
-  userId: ObjectId | IUser;
+  userId: IUser;
   token: string;
   createdAt: Date;
   updatedAt: Date;

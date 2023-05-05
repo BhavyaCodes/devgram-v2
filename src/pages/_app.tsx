@@ -1,3 +1,4 @@
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { NextPage } from 'next';
 import type { AppType, AppProps } from 'next/app';
 import type { ReactElement, ReactNode } from 'react';
@@ -17,7 +18,14 @@ type AppPropsWithLayout = AppProps & {
 
 const MyApp = (({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout =
-    Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
+    Component.getLayout ??
+    ((page) => (
+      <DefaultLayout>
+        <ReactQueryDevtools initialIsOpen={true} />
+        {page}
+        <ReactQueryDevtools />
+      </DefaultLayout>
+    ));
 
   return getLayout(<Component {...pageProps} />);
 }) as AppType;

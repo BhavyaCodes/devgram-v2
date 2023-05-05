@@ -2,11 +2,10 @@
 import * as trpc from '@trpc/server';
 import * as trpcNext from '@trpc/server/adapters/next';
 import dbConnect from './db';
-import { IUser } from './models/User';
+import { ISession } from './models/Session';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface CreateContextOptions extends trpcNext.CreateNextContextOptions {
-  // session: Session | null
-  user?: IUser;
+  session?: ISession;
 }
 
 /**

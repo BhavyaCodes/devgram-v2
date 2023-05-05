@@ -62,13 +62,12 @@ const currentUserMiddleware = middleware(async ({ ctx, next }) => {
     return next();
   }
 
-  const doc = await Session.findOne({ token }).populate('userId');
-  if (!doc?.userId) {
+  const session = await Session.findOne({ token }).populate('userId').lean();
+  if (!session?.userId) {
     return next();
   }
-  const user = doc.userId as IUser;
-  console.log('hiiiii');
-  return next({ ctx: { user } });
+
+  return next({ ctx: { session } });
 });
 
 export const currentUserProcedure = publicProcedure.use(currentUserMiddleware);
