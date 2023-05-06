@@ -20,7 +20,7 @@ const PostsList = () => {
             src={post.userId.image?.split('=')[0]}
             style={{ maxHeight: 100 }}
           />
-          <p>{post.content}</p>
+          <p data-cy="post-content">{post.content}</p>
         </div>
       ))}
     </div>

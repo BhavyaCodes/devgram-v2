@@ -73,6 +73,7 @@ const IndexPage: NextPageWithLayout = () => {
       {getUser.data ? <NewPost /> : <p>Login to post</p>}
       {getUser.data ? (
         <Button
+          data-cy="logout-button"
           type="button"
           variant="contained"
           color="error"

@@ -23,8 +23,19 @@ const NewPost: FC = () => {
   return (
     <div>
       <h3>NewPost Component</h3>
-      <TextField inputRef={inputRef} type="text" required />
-      <Button variant="contained" onClick={handleClick}>
+      <TextField
+        inputRef={inputRef}
+        type="text"
+        required
+        inputProps={{
+          'data-cy': 'post-input',
+        }}
+      />
+      <Button
+        variant="contained"
+        onClick={handleClick}
+        data-cy="submit-post-button"
+      >
         Submit
       </Button>
     </div>
