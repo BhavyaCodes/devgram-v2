@@ -8,10 +8,13 @@ const NewPost: FC = () => {
   const createPost = trpc.post.create.useMutation({
     onSuccess() {
       utils.post.getAll.invalidate();
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
     },
   });
   const inputRef = useRef<null | HTMLInputElement>(null);
-  const handleClick = () => {
+  const handleSubmit = () => {
     if (!inputRef.current) {
       console.log('there');
       return;
@@ -21,7 +24,7 @@ const NewPost: FC = () => {
     createPost.mutate(text);
   };
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <h3>NewPost Component</h3>
       <TextField
         inputRef={inputRef}
@@ -31,14 +34,10 @@ const NewPost: FC = () => {
           'data-cy': 'post-input',
         }}
       />
-      <Button
-        variant="contained"
-        onClick={handleClick}
-        data-cy="submit-post-button"
-      >
+      <Button variant="contained" data-cy="submit-post-button" type="submit">
         Submit
       </Button>
-    </div>
+    </form>
   );
 };
 
