@@ -23,7 +23,7 @@ const NewPost: FC = () => {
   return (
     <div>
       <h3>NewPost Component</h3>
-      <TextField ref={inputRef} type="text" required />
+      <TextField inputRef={inputRef} type="text" required />
       <Button variant="contained" onClick={handleClick}>
         Submit
       </Button>

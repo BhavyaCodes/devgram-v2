@@ -38,7 +38,6 @@ export default async function handler(
 
     const user = await User.findOne({ email: userData.email });
     if (!user) {
-      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
       const newUser = new User({
         email: userData.email,
         name: userData.name,
@@ -62,7 +61,6 @@ export default async function handler(
           env.NODE_ENV === 'development' ? '' : ' Secure'
         }; Max-Age=31560000`,
       );
-      console.log(res.getHeaders());
 
       return res.redirect('/');
     }
@@ -79,12 +77,11 @@ export default async function handler(
         env.NODE_ENV === 'development' ? '' : ' Secure'
       }; Max-Age=31560000`,
     );
-    console.log(res.getHeaders());
     return res.redirect('/');
   }
 }
 
-export async function getGoogleOAuthTokens({
+async function getGoogleOAuthTokens({
   code,
 }: {
   code: string;

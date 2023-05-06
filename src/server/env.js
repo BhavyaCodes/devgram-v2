@@ -14,6 +14,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
   NEXT_PUBLIC_GOOGLE_OAUTH_REDIRECT_URL: z.string(),
   NODE_ENV: z.enum(['development', 'test', 'production']),
+  REFRESH_TOKEN: z.string(),
 });
 
 const env = envSchema.safeParse(process.env);
