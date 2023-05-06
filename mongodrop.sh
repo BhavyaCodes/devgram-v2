@@ -1,0 +1,1 @@
+mongosh devgram-v3 --eval "db.dropDatabase()"
