@@ -13,6 +13,9 @@
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })
 //
+Cypress.Commands.add('login', () => {
+  cy.visit('/api/google-oauth-cypress');
+});
 //
 // -- This is a child command --
 // Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })

@@ -63,7 +63,7 @@ const IndexPage: NextPageWithLayout = () => {
         Devgram
       </Typography>
       {getUser.data ? (
-        <h3>Welcome {getUser.data.name}</h3>
+        <h3 data-test="welcome-text">Welcome {getUser.data.name}</h3>
       ) : (
         <a href={getGoogleOAuthURL()}>Login With Google</a>
       )}

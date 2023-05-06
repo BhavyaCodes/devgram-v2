@@ -6,5 +6,6 @@ export default defineConfig({
       // implement node event listeners here
     },
     baseUrl: 'http://127.0.0.1:3000',
+    // testIsolation: false,
   },
 });
