@@ -3,6 +3,9 @@
 namespace Cypress {
   interface Chainable {
     login(): Chainable<void>;
+    mongoRestore(): void;
+    mongoDump(): void;
+    dropDB(): void;
     // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>;
     // dismiss(
     //   subject: string,
