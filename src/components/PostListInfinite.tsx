@@ -48,6 +48,9 @@ const PostsList = () => {
             />
             <p data-cy="post-content">{post.content}</p>
             <Typography>Like Count: {post.likeCount}</Typography>
+            {post.hasLiked && (
+              <Typography variant="subtitle1">You liked this</Typography>
+            )}
             <Button
               type="button"
               onClick={() => likeMutation.mutate(post._id.toString())}

@@ -3,12 +3,12 @@
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
 import { ObjectId } from 'mongodb';
-import { authOnlyProcedure } from '../middleware';
+import { authOnlyProcedure, currentSessionProcedure } from '../middleware';
 import Post, { IPost } from '../models/Post';
 import { router, publicProcedure } from '../trpc';
 // import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { FilterQuery, Types } from 'mongoose';
+import { FilterQuery, PipelineStage, Types } from 'mongoose';
 import Like from '../models/Like';
 import { TRPCError } from '@trpc/server';
 /**
@@ -38,7 +38,7 @@ export const postRouter = router({
       const result = (await post.save()).toJSON();
       return result;
     }),
-  getAll: publicProcedure
+  getAll: currentSessionProcedure
     .input(
       z.object({
         cursor: z
@@ -63,6 +63,7 @@ export const postRouter = router({
               name: z.string(),
             }),
             likeCount: z.number(),
+            hasLiked: z.boolean().nullish(),
           }),
         ),
         nextCursor: z
@@ -73,7 +74,8 @@ export const postRouter = router({
           .nullish(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      const userId = ctx.session?.userId;
       const limit = 5;
       const cursor = input.cursor;
       const createdAt = input.cursor?.createdAt;
@@ -102,9 +104,10 @@ export const postRouter = router({
         updatedAt: Date;
         __v: number;
         likeCount: number;
+        hasLiked?: boolean | null;
       }
 
-      const posts: PostsAggregationResult[] = await Post.aggregate([
+      const pipeLine: PipelineStage[] = [
         {
           $match: query,
         },
@@ -172,7 +175,42 @@ export const postRouter = router({
             preserveNullAndEmptyArrays: false,
           },
         },
-      ]);
+      ];
+
+      if (userId) {
+        pipeLine.push(
+          {
+            $lookup: {
+              from: 'likes',
+              pipeline: [
+                {
+                  $match: {
+                    userId: userId._id,
+                  },
+                },
+              ],
+              localField: '_id',
+              foreignField: 'postId',
+              as: 'hasLiked',
+            },
+          },
+          {
+            $addFields: {
+              hasLiked: {
+                $cond: {
+                  if: {
+                    $anyElementTrue: ['$hasLiked'],
+                  },
+                  then: true,
+                  else: undefined,
+                },
+              },
+            },
+          },
+        );
+      }
+
+      const posts: PostsAggregationResult[] = await Post.aggregate(pipeLine);
 
       // console.log(query2);
 
