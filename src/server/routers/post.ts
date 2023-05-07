@@ -127,6 +127,21 @@ export const postRouter = router({
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     }),
+  unlikePost: authOnlyProcedure
+    .input(z.string())
+    .output(z.boolean())
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session.userId;
+      const postId = input;
+
+      try {
+        await Like.deleteOne({ postId, userId }, { userId, postId });
+        return true;
+      } catch (error) {
+        console.log(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    }),
   // list: publicProcedure
   //   .input(
   //     z.object({

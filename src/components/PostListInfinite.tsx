@@ -21,6 +21,7 @@ const PostsList = () => {
   );
 
   const likeMutation = trpc.post.likePost.useMutation();
+  const unlikeMutation = trpc.post.unlikePost.useMutation();
 
   if (isLoading) {
     return <div>Loading....</div>;
@@ -52,6 +53,13 @@ const PostsList = () => {
               onClick={() => likeMutation.mutate(post._id.toString())}
             >
               Like This Post
+            </Button>
+            <Button
+              type="button"
+              color="error"
+              onClick={() => unlikeMutation.mutate(post._id.toString())}
+            >
+              Unlike This Post
             </Button>
           </div>
         ))}
