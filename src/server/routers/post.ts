@@ -37,38 +37,70 @@ export const postRouter = router({
       return result;
     }),
   getAll: publicProcedure
-    .input(z.object({ createdAt: z.date(), _id: z.string() }).optional())
+    .input(
+      z.object({
+        cursor: z
+          .object({ createdAt: z.date().nullish(), _id: z.string().nullish() })
+          .optional(),
+      }),
+    )
     .output(
-      z.array(
-        z.object({
-          content: z.string(),
-          _id: z.instanceof(ObjectId),
-          createdAt: z.date(),
-          updatedAt: z.date(),
-          userId: z.object({
+      z.object({
+        posts: z.array(
+          z.object({
+            content: z.string(),
             _id: z.instanceof(ObjectId),
-            image: z.string().optional(),
-            name: z.string(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+            userId: z.object({
+              _id: z.instanceof(ObjectId),
+              image: z.string().optional(),
+              name: z.string(),
+            }),
           }),
-        }),
-      ),
+        ),
+        nextCursor: z
+          .object({
+            createdAt: z.date().nullish(),
+            _id: z.string().nullish(),
+          })
+          .optional(),
+      }),
     )
     .query(async ({ input }) => {
-      const query: FilterQuery<IPost> = input
-        ? {
-            $or: [
-              {
-                createdAt: { $lt: input.createdAt },
-              },
-              { createdAt: input.createdAt, _id: { $lt: input._id } },
-            ],
-          }
-        : {};
+      const limit = 5;
+      const cursor = input.cursor;
+      const createdAt = input?.cursor?.createdAt;
+      const _id = input?.cursor?._id;
+      const query: FilterQuery<IPost> =
+        createdAt && _id
+          ? {
+              $or: [
+                {
+                  createdAt: { $lt: createdAt },
+                },
+                { createdAt, _id: { $lt: _id } },
+              ],
+            }
+          : {};
       const posts = await Post.find(query)
         .sort({ createdAt: -1, _id: -1 })
+        .limit(limit + 1)
         .populate('userId', { _id: 1, image: 1, name: 1 })
         .lean();
-      return posts;
+
+      console.log(posts);
+      let nextCursor: typeof cursor;
+      if (posts.length > limit) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const nextItem = posts.pop()!;
+        nextCursor = {
+          _id: nextItem?._id.toString(),
+          createdAt: nextItem.createdAt,
+        };
+      }
+
+      return { posts, nextCursor };
     }),
   // list: publicProcedure
   //   .input(

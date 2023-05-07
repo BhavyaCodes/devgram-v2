@@ -2,20 +2,18 @@ import React from 'react';
 import { trpc } from '~/utils/trpc';
 
 const PostsList = () => {
-  const postsQuery = trpc.post.getAll.useQuery({
-    cursor: {},
-  });
+  // const posts = trpc.post.getAll.useQuery({});
+  // const posts = trpc.post.getAll.useInfiniteQuery(1, {});
+  // if (posts.isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (postsQuery.isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (postsQuery.error) {
-    return <div>error</div>;
-  }
+  // if (posts.error) {
+  //   return <div>error</div>;
+  // }
   return (
     <div>
-      {postsQuery.data.posts.map((post) => (
+      {/* {posts.data.map((post) => (
         <div key={post._id.toString()} style={{ border: '1px solid #222222' }}>
           <p>{post.userId.name}</p>
           <img
@@ -24,7 +22,7 @@ const PostsList = () => {
           />
           <p data-cy="post-content">{post.content}</p>
         </div>
-      ))}
+      ))} */}
     </div>
   );
 };
