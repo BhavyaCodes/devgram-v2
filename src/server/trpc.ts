@@ -11,9 +11,7 @@
 import { initTRPC } from '@trpc/server';
 import { transformer } from '~/utils/transformer';
 import { Context } from './context';
-import Session from './models/Session';
 import User from './models/User';
-import { IUser } from './models/User';
 
 //TODO: REmove this below
 console.log(User);

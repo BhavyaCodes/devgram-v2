@@ -1,9 +1,10 @@
+import { Button } from '@mui/material';
 import React from 'react';
 import { trpc } from '~/utils/trpc';
 
 const PostsList = () => {
   const {
-    status,
+    // status,
     error,
     data,
     isLoading,
@@ -14,16 +15,12 @@ const PostsList = () => {
     {},
     {
       getNextPageParam: (lastPage) => {
-        console.log('hiiiiiiiiii');
-        console.log(lastPage);
         return lastPage.nextCursor;
       },
     },
   );
-  // const posts = trpc.post.getAll.useInfiniteQuery(1, {});
-  // if (posts.isLoading) {
-  //   return <div>Loading...</div>;
-  // }
+
+  const likeMutation = trpc.post.likePost.useMutation();
 
   if (isLoading) {
     return <div>Loading....</div>;
@@ -33,13 +30,8 @@ const PostsList = () => {
     return <div>error</div>;
   }
 
-  console.log('------------ PageParams ------------');
-  console.log(data.pageParams);
-  console.log('------------ Pages ------------');
-
-  console.log(data.pages);
   const posts = data.pages.flatMap((obj) => obj.posts);
-  console.log(posts);
+
   return (
     <>
       <h1>k</h1>
@@ -55,13 +47,20 @@ const PostsList = () => {
               style={{ maxHeight: 100 }}
             />
             <p data-cy="post-content">{post.content}</p>
+            <Button
+              type="button"
+              onClick={() => likeMutation.mutate(post._id.toString())}
+            >
+              Like This Post
+            </Button>
           </div>
         ))}
       </div>
 
-      {hasNextPage && (
+      {hasNextPage && !isFetchingNextPage && (
         <button onClick={() => fetchNextPage()}>Fetch More</button>
       )}
+      {isFetchingNextPage && <p>Loading more posts......</p>}
     </>
   );
 };

@@ -2,7 +2,7 @@ import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 import { useQueryClient } from '@tanstack/react-query';
 import NewPost from '~/components/NewPost';
-import PostsList from '~/components/PostsList';
+// import PostsList from '~/components/PostsList';
 import getGoogleOAuthURL from '~/utils/getGoogleUrl';
 import { Button, Typography } from '@mui/material';
 import PostListInfinite from '~/components/PostListInfinite';

@@ -9,6 +9,8 @@ import { router, publicProcedure } from '../trpc';
 // import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { FilterQuery } from 'mongoose';
+import Like from '../models/Like';
+import { TRPCError } from '@trpc/server';
 /**
  * Default selector for Post.
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -105,6 +107,25 @@ export const postRouter = router({
       }
 
       return { posts, nextCursor };
+    }),
+  likePost: authOnlyProcedure
+    .input(z.string())
+    .output(z.boolean())
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session.userId;
+      const postId = input;
+
+      try {
+        await Like.updateOne(
+          { postId, userId },
+          { userId, postId },
+          { upsert: true, new: true },
+        ).lean();
+        return true;
+      } catch (error) {
+        console.log(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
     }),
   // list: publicProcedure
   //   .input(
