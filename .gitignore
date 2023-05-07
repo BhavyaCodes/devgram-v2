@@ -41,4 +41,7 @@ yarn-error.log*
 # testing
 playwright/test-results
 
+/cypress/videos
+/cypress/screenshots
+
 /dump

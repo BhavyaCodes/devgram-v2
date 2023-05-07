@@ -4,10 +4,11 @@
  */
 import { ObjectId } from 'mongodb';
 import { authOnlyProcedure } from '../middleware';
-import Post from '../models/Post';
+import Post, { IPost } from '../models/Post';
 import { router, publicProcedure } from '../trpc';
 // import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
+import { FilterQuery } from 'mongoose';
 /**
  * Default selector for Post.
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -36,6 +37,7 @@ export const postRouter = router({
       return result;
     }),
   getAll: publicProcedure
+    .input(z.object({ createdAt: z.date(), _id: z.string() }).optional())
     .output(
       z.array(
         z.object({
@@ -51,8 +53,19 @@ export const postRouter = router({
         }),
       ),
     )
-    .query(async () => {
-      const posts = await Post.find({})
+    .query(async ({ input }) => {
+      const query: FilterQuery<IPost> = input
+        ? {
+            $or: [
+              {
+                createdAt: { $lt: input.createdAt },
+              },
+              { createdAt: input.createdAt, _id: { $lt: input._id } },
+            ],
+          }
+        : {};
+      const posts = await Post.find(query)
+        .sort({ createdAt: -1, _id: -1 })
         .populate('userId', { _id: 1, image: 1, name: 1 })
         .lean();
       return posts;

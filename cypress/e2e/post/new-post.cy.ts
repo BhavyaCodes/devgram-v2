@@ -17,7 +17,7 @@ describe('Logged in user should be able to submit new post', () => {
     cy.get('[data-cy="post-content"]').contains(text).should('not.exist');
     cy.get('[data-cy="post-input"]').type(text);
     cy.get('[data-cy="submit-post-button"]').click();
-    cy.get('[data-cy="post-content"]').contains(text).should('have.length', 1);
+    cy.get('[data-cy="post-content"]').contains(text).should('exist');
 
     //make sure input is empty after submitting
     cy.get('[data-cy="post-input"]').should('have.text', '');

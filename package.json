@@ -10,7 +10,8 @@
     "lint-fix": "pnpm lint --fix",
     "prepare": "husky install",
     "format": "prettier --write",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "test": "./node_modules/cypress/bin/cypress run"
   },
   "prettier": {
     "printWidth": 80,
