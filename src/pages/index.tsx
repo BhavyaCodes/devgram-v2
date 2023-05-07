@@ -5,6 +5,7 @@ import NewPost from '~/components/NewPost';
 import PostsList from '~/components/PostsList';
 import getGoogleOAuthURL from '~/utils/getGoogleUrl';
 import { Button, Typography } from '@mui/material';
+import PostListInfinite from '~/components/PostListInfinite';
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
@@ -69,7 +70,8 @@ const IndexPage: NextPageWithLayout = () => {
       )}
       <h2>Latest Posts</h2>
       {/* {postsQuery.status === 'loading' && '(loading)'} */}
-      <PostsList />
+      {/* <PostsList /> */}
+      <PostListInfinite />
       {getUser.data ? <NewPost /> : <p>Login to post</p>}
       {getUser.data ? (
         <Button

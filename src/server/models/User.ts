@@ -20,7 +20,7 @@ const userSchema = new Schema<IUser>(
   { timestamps: true },
 );
 
-// const User = model<IUser>('User', userSchema);
-// export default User;
-export default (mongoose.models?.User as any) ||
-  model<IUser>('User', userSchema);
+const User = model<IUser>('User', userSchema);
+export default User;
+// export default (mongoose.models?.User as any) ||
+//   model<IUser>('User', userSchema);

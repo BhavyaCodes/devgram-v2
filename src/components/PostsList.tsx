@@ -2,9 +2,7 @@ import React from 'react';
 import { trpc } from '~/utils/trpc';
 
 const PostsList = () => {
-  const postsQuery = trpc.post.getAll.useQuery({
-    cursor: {},
-  });
+  const postsQuery = trpc.post.getAll.useQuery({});
 
   if (postsQuery.isLoading) {
     return <div>Loading...</div>;

@@ -40,8 +40,11 @@ export const postRouter = router({
     .input(
       z.object({
         cursor: z
-          .object({ createdAt: z.date().nullish(), _id: z.string().nullish() })
-          .optional(),
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+          })
+          .nullish(),
       }),
     )
     .output(
@@ -61,16 +64,16 @@ export const postRouter = router({
         ),
         nextCursor: z
           .object({
-            createdAt: z.date().nullish(),
-            _id: z.string().nullish(),
+            createdAt: z.date(),
+            _id: z.string(),
           })
-          .optional(),
+          .nullish(),
       }),
     )
     .query(async ({ input }) => {
       const limit = 5;
       const cursor = input.cursor;
-      const createdAt = input?.cursor?.createdAt;
+      const createdAt = input.cursor?.createdAt;
       const _id = input?.cursor?._id;
       const query: FilterQuery<IPost> =
         createdAt && _id
@@ -90,14 +93,16 @@ export const postRouter = router({
         .lean();
 
       console.log(posts);
-      let nextCursor: typeof cursor;
+      let nextCursor: typeof cursor = undefined;
       if (posts.length > limit) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const nextItem = posts.pop()!;
-        nextCursor = {
-          _id: nextItem?._id.toString(),
-          createdAt: nextItem.createdAt,
-        };
+        if (nextItem) {
+          nextCursor = {
+            _id: nextItem._id.toString(),
+            createdAt: nextItem.createdAt,
+          };
+        }
       }
 
       return { posts, nextCursor };
