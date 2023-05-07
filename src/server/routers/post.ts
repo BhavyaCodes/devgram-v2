@@ -80,9 +80,9 @@ export const postRouter = router({
           ? {
               $or: [
                 {
-                  createdAt: { $lt: createdAt },
+                  createdAt: { $lte: createdAt },
                 },
-                { createdAt, _id: { $lt: _id } },
+                { createdAt, _id: { $lte: _id } },
               ],
             }
           : {};
@@ -92,7 +92,6 @@ export const postRouter = router({
         .populate('userId', { _id: 1, image: 1, name: 1 })
         .lean();
 
-      console.log(posts);
       let nextCursor: typeof cursor = undefined;
       if (posts.length > limit) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
