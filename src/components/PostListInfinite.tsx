@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import React from 'react';
 import { trpc } from '~/utils/trpc';
 
@@ -35,7 +35,6 @@ const PostsList = () => {
 
   return (
     <>
-      <h1>k</h1>
       <div>
         {posts.map((post) => (
           <div
@@ -48,6 +47,7 @@ const PostsList = () => {
               style={{ maxHeight: 100 }}
             />
             <p data-cy="post-content">{post.content}</p>
+            <Typography>Like Count: {post.likeCount}</Typography>
             <Button
               type="button"
               onClick={() => likeMutation.mutate(post._id.toString())}

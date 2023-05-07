@@ -8,7 +8,7 @@ import Post, { IPost } from '../models/Post';
 import { router, publicProcedure } from '../trpc';
 // import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 import Like from '../models/Like';
 import { TRPCError } from '@trpc/server';
 /**
@@ -62,6 +62,7 @@ export const postRouter = router({
               image: z.string().optional(),
               name: z.string(),
             }),
+            likeCount: z.number(),
           }),
         ),
         nextCursor: z
@@ -84,15 +85,102 @@ export const postRouter = router({
                 {
                   createdAt: { $lte: createdAt },
                 },
-                { createdAt, _id: { $lte: _id } },
+                { createdAt, _id: { $lte: new Types.ObjectId(_id) } },
               ],
             }
           : {};
-      const posts = await Post.find(query)
-        .sort({ createdAt: -1, _id: -1 })
-        .limit(limit + 1)
-        .populate('userId', { _id: 1, image: 1, name: 1 })
-        .lean();
+
+      interface PostsAggregationResult {
+        _id: ObjectId;
+        userId: {
+          _id: ObjectId;
+          image: string;
+          name: string;
+        };
+        content: string;
+        createdAt: Date;
+        updatedAt: Date;
+        __v: number;
+        likeCount: number;
+      }
+
+      const posts: PostsAggregationResult[] = await Post.aggregate([
+        {
+          $match: query,
+        },
+        {
+          $sort: { createdAt: -1, _id: -1 },
+        },
+
+        {
+          $limit: limit + 1,
+        },
+        {
+          $lookup: {
+            from: 'likes',
+            pipeline: [
+              {
+                $group: {
+                  _id: '$postId',
+                  likes: {
+                    $sum: 1,
+                  },
+                },
+              },
+            ],
+            localField: '_id',
+            foreignField: 'postId',
+            as: 'likeData',
+          },
+        },
+        {
+          $unwind: {
+            path: '$likeData',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            likeCount: {
+              $ifNull: ['$likeData.likes', 0],
+            },
+          },
+        },
+        {
+          $unset: 'likeData',
+        },
+        {
+          $lookup: {
+            from: 'users',
+            pipeline: [
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  image: 1,
+                },
+              },
+            ],
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userId',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userId',
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+      ]);
+
+      // console.log(query2);
+
+      // const posts = await Post.find(query)
+      //   .sort({ createdAt: -1, _id: -1 })
+      //   .limit(limit + 1)
+      //   .populate('userId', { _id: 1, image: 1, name: 1 })
+      //   .lean();
 
       let nextCursor: typeof cursor = undefined;
       if (posts.length > limit) {
