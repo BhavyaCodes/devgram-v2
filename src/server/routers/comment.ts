@@ -3,13 +3,10 @@
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
 import { ObjectId } from 'mongodb';
-import { authOnlyProcedure, currentSessionProcedure } from '../middleware';
-import Post, { IPost } from '../models/Post';
+import { authOnlyProcedure } from '../middleware';
+import Post from '../models/Post';
 import { router, publicProcedure } from '../trpc';
-// import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { FilterQuery, PipelineStage, Types } from 'mongoose';
-import Like from '../models/Like';
 import { TRPCError } from '@trpc/server';
 import Comment from '../models/Comment';
 /**
@@ -106,7 +103,6 @@ export const commentRouter = router({
         _id: input.postId,
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       if (comment?.postId.toString() === post?._id.toString()) {
         // Comment is make to logged in user's Post
         await Comment.deleteOne({ _id: input.commentId });

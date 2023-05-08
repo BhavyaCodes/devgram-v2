@@ -7,9 +7,39 @@ interface CommentListProps {
 }
 
 export const CommentList = ({ postId }: CommentListProps) => {
+  const utils = trpc.useContext();
+
   const getCommentsQuery =
     trpc.post.comment.getCommentsByPostId.useQuery(postId);
-  const deleteCommentMutation = trpc.post.comment.deleteComment.useMutation();
+  const deleteCommentMutation = trpc.post.comment.deleteComment.useMutation({
+    onSuccess(data, variables, context) {
+      utils.post.getAll.setInfiniteData({}, (oldData) => {
+        if (!oldData) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        const newPages = oldData.pages.map((page) => {
+          const newPosts = page.posts.map((post) => {
+            if (post._id.toString() === variables.postId) {
+              return {
+                ...post,
+                commentCount: post.commentCount - 1,
+              };
+            }
+            return post;
+          });
+          return { posts: newPosts, nextCursor: page.nextCursor };
+        });
+        return {
+          pageParams: oldData.pageParams,
+          pages: newPages,
+        };
+      });
+    },
+  });
 
   if (getCommentsQuery.data) {
     return (

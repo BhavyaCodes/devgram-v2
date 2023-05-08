@@ -39,6 +39,7 @@ const PostsList = () => {
             _id={post._id.toString()}
             content={post.content}
             likeCount={post.likeCount}
+            commentCount={post.commentCount}
             hasLiked={post.hasLiked}
             name={post.userId.name}
             image={post.userId.image}

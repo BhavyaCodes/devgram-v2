@@ -22,6 +22,7 @@ interface PostBoxProps {
   userId: string;
   content: string;
   likeCount: number;
+  commentCount: number;
   /**
    * Logged in user has liked the post
    */
@@ -35,6 +36,7 @@ export const PostBox = ({
   image,
   content,
   likeCount,
+  commentCount,
   hasLiked,
 }: PostBoxProps) => {
   const utils = trpc.useContext();
@@ -178,6 +180,7 @@ export const PostBox = ({
         </Button>
       )}
       <AddComment postId={_id} />
+      <Typography>Comment count: {commentCount}</Typography>
       <CommentList postId={_id} />
     </div>
   );

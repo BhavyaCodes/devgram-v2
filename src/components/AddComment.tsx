@@ -9,7 +9,35 @@ interface AddCommentProps {
 export const AddComment = ({ postId }: AddCommentProps) => {
   const utils = trpc.useContext();
   const addCommentMutation = trpc.post.comment.addComment.useMutation({
-    onSuccess: () => utils.post.comment.getCommentsByPostId.invalidate(postId),
+    // onSuccess: () => utils.post.comment.getCommentsByPostId.invalidate(postId),
+    onSuccess(data, variables, context) {
+      // utils.post.comment.getCommentsByPostId.invalidate(postId);
+      utils.post.getAll.setInfiniteData({}, (oldData) => {
+        if (!oldData) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        const newPages = oldData.pages.map((page) => {
+          const newPosts = page.posts.map((post) => {
+            if (post._id.toString() === variables.postId) {
+              return {
+                ...post,
+                commentCount: post.commentCount + 1,
+              };
+            }
+            return post;
+          });
+          return { posts: newPosts, nextCursor: page.nextCursor };
+        });
+        return {
+          pageParams: oldData.pageParams,
+          pages: newPages,
+        };
+      });
+    },
   });
 
   const commentInputRef = useRef<HTMLInputElement | null>(null);

@@ -64,6 +64,7 @@ export const postRouter = router({
               name: z.string(),
             }),
             likeCount: z.number(),
+            commentCount: z.number(),
             hasLiked: z.boolean().nullish(),
           }),
         ),
@@ -105,6 +106,7 @@ export const postRouter = router({
         updatedAt: Date;
         __v: number;
         likeCount: number;
+        commentCount: number;
         hasLiked?: boolean | null;
       }
 
@@ -138,8 +140,32 @@ export const postRouter = router({
           },
         },
         {
+          $lookup: {
+            from: 'comments',
+            pipeline: [
+              {
+                $group: {
+                  _id: '$postId',
+                  comments: {
+                    $sum: 1,
+                  },
+                },
+              },
+            ],
+            localField: '_id',
+            foreignField: 'postId',
+            as: 'commentData',
+          },
+        },
+        {
           $unwind: {
             path: '$likeData',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $unwind: {
+            path: '$commentData',
             preserveNullAndEmptyArrays: true,
           },
         },
@@ -148,10 +174,13 @@ export const postRouter = router({
             likeCount: {
               $ifNull: ['$likeData.likes', 0],
             },
+            commentCount: {
+              $ifNull: ['$commentData.comments', 0],
+            },
           },
         },
         {
-          $unset: 'likeData',
+          $unset: ['likeData', 'commentData'],
         },
         {
           $lookup: {
