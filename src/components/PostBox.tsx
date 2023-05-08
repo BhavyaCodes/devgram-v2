@@ -63,7 +63,37 @@ export const PostBox = ({
       });
     },
   });
-  const unlikeMutation = trpc.post.unlikePost.useMutation();
+  const unlikeMutation = trpc.post.unlikePost.useMutation({
+    onSuccess(data, variables, context) {
+      //variable -> postId
+      utils.post.getAll.setInfiniteData({}, (oldData) => {
+        if (!oldData) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        const newPages = oldData.pages.map((page) => {
+          const newPosts = page.posts.map((post) => {
+            if (post._id.toString() === variables) {
+              return {
+                ...post,
+                hasLiked: undefined,
+                likeCount: post.likeCount - 1,
+              };
+            }
+            return post;
+          });
+          return { posts: newPosts, nextCursor: page.nextCursor };
+        });
+        return {
+          pageParams: oldData.pageParams,
+          pages: newPages,
+        };
+      });
+    },
+  });
 
   return (
     <div style={{ border: '1px solid #222222' }}>
