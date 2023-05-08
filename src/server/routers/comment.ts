@@ -8,7 +8,8 @@ import Post from '../models/Post';
 import { router, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import Comment from '../models/Comment';
+import Comment, { IComment } from '../models/Comment';
+import { FilterQuery, Types } from 'mongoose';
 /**
  *
  * Default selector for Post.
@@ -78,6 +79,80 @@ export const commentRouter = router({
         .lean();
 
       return comments;
+    }),
+  getCommentsByPostIdPaginated: publicProcedure
+    .input(
+      z.object({
+        cursor: z
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+          })
+          .nullish(),
+        postId: z.string(),
+      }),
+    )
+    .output(
+      z.object({
+        comments: z.array(
+          z.object({
+            _id: z.instanceof(ObjectId),
+            postId: z.instanceof(ObjectId),
+            content: z.string(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+            userId: z.object({
+              _id: z.instanceof(ObjectId),
+              image: z.string().optional(),
+              name: z.string(),
+            }),
+          }),
+        ),
+        nextCursor: z
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+          })
+          .nullish(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const limit = 5;
+      const cursor = input.cursor;
+      const createdAt = input.cursor?.createdAt;
+      const _id = input?.cursor?._id;
+
+      const query: FilterQuery<IComment> =
+        createdAt && _id
+          ? {
+              $or: [
+                {
+                  createdAt: { $lte: createdAt },
+                },
+                { createdAt, _id: { $lte: new Types.ObjectId(_id) } },
+              ],
+            }
+          : { postId: input };
+
+      const comments = await Comment.find(query)
+        .populate('userId', { _id: 1, image: 1, name: 1 })
+        .sort({ createdAt: -1 })
+        .limit(limit + 1)
+        .lean();
+
+      let nextCursor: typeof cursor = undefined;
+      if (comments.length > limit) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const nextItem = comments.pop()!;
+        if (nextItem) {
+          nextCursor = {
+            _id: nextItem._id.toString(),
+            createdAt: nextItem.createdAt,
+          };
+        }
+      }
+
+      return { comments, nextCursor };
     }),
   deleteComment: authOnlyProcedure
     .input(z.object({ commentId: z.string(), postId: z.string() }))
