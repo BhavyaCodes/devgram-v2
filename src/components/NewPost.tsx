@@ -1,5 +1,5 @@
 import { Button, TextField } from '@mui/material';
-import React, { FC, useRef } from 'react';
+import React, { FC, FormEventHandler, useRef } from 'react';
 import { trpc } from '~/utils/trpc';
 
 const NewPost: FC = () => {
@@ -14,7 +14,11 @@ const NewPost: FC = () => {
     },
   });
   const inputRef = useRef<null | HTMLInputElement>(null);
-  const handleSubmit = () => {
+  const handleSubmit: FormEventHandler = (e) => {
+    e.preventDefault();
+    if (createPost.isLoading) {
+      return;
+    }
     if (!inputRef.current) {
       console.log('there');
       return;
@@ -30,11 +34,17 @@ const NewPost: FC = () => {
         inputRef={inputRef}
         type="text"
         required
+        disabled={createPost.isLoading}
         inputProps={{
           'data-cy': 'post-input',
         }}
       />
-      <Button variant="contained" data-cy="submit-post-button" type="submit">
+      <Button
+        variant="contained"
+        data-cy="submit-post-button"
+        type="submit"
+        disabled={createPost.isLoading}
+      >
         Submit
       </Button>
     </form>
