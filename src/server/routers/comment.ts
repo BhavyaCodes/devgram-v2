@@ -83,4 +83,38 @@ export const commentRouter = router({
       console.log(comments);
       return comments;
     }),
+  deleteComment: authOnlyProcedure
+    .input(z.object({ commentId: z.string(), postId: z.string() }))
+    .output(z.boolean())
+    .mutation(async ({ ctx, input }) => {
+      // If current user is author or Comment
+
+      const deletedByCommentor = await Comment.findOneAndDelete({
+        userId: ctx.session.userId._id,
+        _id: input.commentId,
+        postId: input.postId,
+      });
+
+      if (deletedByCommentor) {
+        return true;
+      }
+
+      // If current user is author or Post
+
+      const comment = await Comment.findOne({ _id: input.postId });
+
+      const post = await Post.findOne({
+        userId: ctx.session.userId._id,
+        postId: input.postId,
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      if (comment!.userId.toString() === post!.userId.toString()) {
+        // Comment is make to logged in user's Post
+        Comment.deleteOne({ _id: input.commentId });
+        return true;
+      }
+
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }),
 });
