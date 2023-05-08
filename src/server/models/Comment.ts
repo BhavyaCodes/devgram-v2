@@ -1,9 +1,10 @@
 import { ObjectId } from 'mongodb';
 import mongoose, { Model, Schema, model } from 'mongoose';
+import { IUser } from './User';
 
 export interface IComment {
   _id: ObjectId;
-  userId: ObjectId;
+  userId: IUser;
   postId: ObjectId;
   content: string;
   createdAt: Date;
