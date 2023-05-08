@@ -1,6 +1,7 @@
 import { Button, Typography } from '@mui/material';
-import React from 'react';
 import { trpc } from '~/utils/trpc';
+import { AddComment } from './AddComment';
+import { CommentList } from './CommentList';
 
 interface PostBoxProps {
   /**
@@ -32,6 +33,7 @@ export const PostBox = ({
   hasLiked,
 }: PostBoxProps) => {
   const utils = trpc.useContext();
+
   const likeMutation = trpc.post.likePost.useMutation({
     onSuccess(data, variables, context) {
       //variable -> postId
@@ -122,6 +124,8 @@ export const PostBox = ({
           Like This Post
         </Button>
       )}
+      <AddComment postId={_id} />
+      <CommentList postId={_id} />
     </div>
   );
 };

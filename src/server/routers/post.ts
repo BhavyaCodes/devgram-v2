@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { FilterQuery, PipelineStage, Types } from 'mongoose';
 import Like from '../models/Like';
 import { TRPCError } from '@trpc/server';
+import { commentRouter } from './comment';
 /**
  * Default selector for Post.
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -268,6 +269,7 @@ export const postRouter = router({
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     }),
+  comment: commentRouter,
   // list: publicProcedure
   //   .input(
   //     z.object({

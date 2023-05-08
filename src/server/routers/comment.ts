@@ -68,7 +68,6 @@ export const commentRouter = router({
           updatedAt: z.date(),
           userId: z.object({
             _id: z.instanceof(ObjectId),
-            createdAt: z.date(),
             image: z.string().optional(),
             name: z.string(),
           }),
@@ -78,7 +77,10 @@ export const commentRouter = router({
     .query(async ({ input }) => {
       const comments = await Comment.find({ postId: input })
         .populate('userId', { _id: 1, image: 1, name: 1 })
+        .sort({ createdAt: -1 })
         .lean();
+
+      console.log(comments);
       return comments;
     }),
 });
