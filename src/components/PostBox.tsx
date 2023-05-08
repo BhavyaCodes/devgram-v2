@@ -108,12 +108,17 @@ export const PostBox = ({
             type="button"
             color="error"
             onClick={() => unlikeMutation.mutate(_id)}
+            disabled={unlikeMutation.isLoading}
           >
             Unlike This Post
           </Button>
         </>
       ) : (
-        <Button type="button" onClick={() => likeMutation.mutate(_id)}>
+        <Button
+          type="button"
+          onClick={() => likeMutation.mutate(_id)}
+          disabled={likeMutation.isLoading}
+        >
           Like This Post
         </Button>
       )}

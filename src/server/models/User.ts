@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Model, Schema, model } from 'mongoose';
 
 export interface IUser {
   _id: ObjectId;
@@ -22,5 +22,5 @@ const userSchema = new Schema<IUser>(
 
 const User = model<IUser>('User', userSchema);
 export default User;
-// export default (mongoose.models?.User as any) ||
+// export default (mongoose.models?.User as Model<IUser>) ||
 //   model<IUser>('User', userSchema);

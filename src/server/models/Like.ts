@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Model, Schema, model } from 'mongoose';
 
 export interface ILike {
   _id: ObjectId;
@@ -21,5 +21,5 @@ likeSchema.index({ userId: 1, postId: 1 }, { unique: true });
 
 const Like = model<ILike>('Like', likeSchema);
 export default Like;
-// export default (mongoose.models?.Like as any) ||
+// export default (mongoose.models?.Like as Model<ILike>) ||
 //   model<ILike>('Like', likeSchema);

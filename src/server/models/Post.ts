@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Model, Schema, model } from 'mongoose';
 import { IUser } from './User';
 
 export interface IPost {
@@ -20,5 +20,5 @@ const postSchema = new Schema<IPost>(
 
 const Post = model<IPost>('Post', postSchema);
 export default Post;
-// export default (mongoose.models?.Post as any) ||
+// export default (mongoose.models?.Post as Model<IPost>) ||
 //   model<IPost>('Post', postSchema);
