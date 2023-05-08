@@ -1,6 +1,6 @@
-import { Button, Typography } from '@mui/material';
 import React from 'react';
 import { trpc } from '~/utils/trpc';
+import { PostBox } from './PostBox';
 
 const PostsList = () => {
   const {
@@ -20,9 +20,6 @@ const PostsList = () => {
     },
   );
 
-  const likeMutation = trpc.post.likePost.useMutation();
-  const unlikeMutation = trpc.post.unlikePost.useMutation();
-
   if (isLoading) {
     return <div>Loading....</div>;
   }
@@ -37,34 +34,15 @@ const PostsList = () => {
     <>
       <div>
         {posts.map((post) => (
-          <div
+          <PostBox
             key={post._id.toString()}
-            style={{ border: '1px solid #222222' }}
-          >
-            <p>{post.userId.name}</p>
-            <img
-              src={post.userId.image?.split('=')[0]}
-              style={{ maxHeight: 100 }}
-            />
-            <p data-cy="post-content">{post.content}</p>
-            <Typography>Like Count: {post.likeCount}</Typography>
-            {post.hasLiked && (
-              <Typography variant="subtitle1">You liked this</Typography>
-            )}
-            <Button
-              type="button"
-              onClick={() => likeMutation.mutate(post._id.toString())}
-            >
-              Like This Post
-            </Button>
-            <Button
-              type="button"
-              color="error"
-              onClick={() => unlikeMutation.mutate(post._id.toString())}
-            >
-              Unlike This Post
-            </Button>
-          </div>
+            _id={post._id.toString()}
+            content={post.content}
+            likeCount={post.likeCount}
+            hasLiked={post.hasLiked}
+            name={post.userId.name}
+            image={post.userId.image}
+          />
         ))}
       </div>
 
