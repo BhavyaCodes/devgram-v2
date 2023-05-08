@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import React from 'react';
 import { trpc } from '~/utils/trpc';
 
@@ -9,6 +9,7 @@ interface CommentListProps {
 export const CommentList = ({ postId }: CommentListProps) => {
   const getCommentsQuery =
     trpc.post.comment.getCommentsByPostId.useQuery(postId);
+  const deleteCommentMutation = trpc.post.comment.deleteComment.useMutation();
 
   if (getCommentsQuery.data) {
     return (
@@ -21,6 +22,17 @@ export const CommentList = ({ postId }: CommentListProps) => {
             <Typography component="span" variant="body1">
               {comment.content}
             </Typography>
+            <Button
+              type="button"
+              onClick={() => {
+                deleteCommentMutation.mutate({
+                  postId,
+                  commentId: comment._id.toString(),
+                });
+              }}
+            >
+              Delete Comment
+            </Button>
           </Box>
         ))}
       </div>

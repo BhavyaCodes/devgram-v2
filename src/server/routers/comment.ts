@@ -80,7 +80,6 @@ export const commentRouter = router({
         .sort({ createdAt: -1 })
         .lean();
 
-      console.log(comments);
       return comments;
     }),
   deleteComment: authOnlyProcedure
@@ -88,7 +87,6 @@ export const commentRouter = router({
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
       // If current user is author or Comment
-
       const deletedByCommentor = await Comment.findOneAndDelete({
         userId: ctx.session.userId._id,
         _id: input.commentId,
@@ -101,17 +99,17 @@ export const commentRouter = router({
 
       // If current user is author or Post
 
-      const comment = await Comment.findOne({ _id: input.postId });
+      const comment = await Comment.findOne({ _id: input.commentId });
 
       const post = await Post.findOne({
         userId: ctx.session.userId._id,
-        postId: input.postId,
+        _id: input.postId,
       });
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      if (comment!.userId.toString() === post!.userId.toString()) {
+      if (comment?.postId.toString() === post?._id.toString()) {
         // Comment is make to logged in user's Post
-        Comment.deleteOne({ _id: input.commentId });
+        await Comment.deleteOne({ _id: input.commentId });
         return true;
       }
 
