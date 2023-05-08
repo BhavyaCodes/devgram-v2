@@ -68,11 +68,12 @@ const IndexPage: NextPageWithLayout = () => {
       ) : (
         <a href={getGoogleOAuthURL()}>Login With Google</a>
       )}
+      {getUser.data ? <NewPost /> : <p>Login to post</p>}
       <h2>Latest Posts</h2>
       {/* {postsQuery.status === 'loading' && '(loading)'} */}
       {/* <PostsList /> */}
       <PostListInfinite />
-      {getUser.data ? <NewPost /> : <p>Login to post</p>}
+
       {getUser.data ? (
         <Button
           data-cy="logout-button"
@@ -84,7 +85,7 @@ const IndexPage: NextPageWithLayout = () => {
           Logout
         </Button>
       ) : null}
-      <Button onClick={() => utils.user.getUser.refetch()}>refetch user</Button>
+      {/* <Button onClick={() => utils.user.getUser.refetch()}>refetch user</Button> */}
     </>
   );
 };

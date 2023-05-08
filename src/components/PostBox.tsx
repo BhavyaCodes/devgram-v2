@@ -2,7 +2,7 @@ import { Button, Typography } from '@mui/material';
 import { trpc } from '~/utils/trpc';
 import { AddComment } from './AddComment';
 import { CommentList } from './CommentList';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 interface PostBoxProps {
   /**
    * postId
@@ -16,6 +16,10 @@ interface PostBoxProps {
    * image of post author
    */
   image?: string;
+  /**
+   * _id of author
+   */
+  userId: string;
   content: string;
   likeCount: number;
   /**
@@ -26,6 +30,7 @@ interface PostBoxProps {
 
 export const PostBox = ({
   _id,
+  userId,
   name,
   image,
   content,
@@ -97,11 +102,59 @@ export const PostBox = ({
     },
   });
 
+  const deletePostMutation = trpc.post.deletePost.useMutation({
+    onSuccess(data, variables, context) {
+      //variable -> postId
+      utils.post.getAll.setInfiniteData({}, (oldData) => {
+        if (!oldData) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        const newPages = oldData.pages.map((page) => {
+          const newPosts = page.posts.filter(
+            (post) => post._id.toString() !== variables,
+          );
+          return { posts: newPosts, nextCursor: page.nextCursor };
+        });
+        return {
+          pageParams: oldData.pageParams,
+          pages: newPages,
+        };
+      });
+    },
+  });
+
+  const getUser = trpc.user.getUser.useQuery(undefined, {
+    retry: false,
+    initialData: null,
+    onError: ({ data }) => {
+      if (data?.code === 'UNAUTHORIZED') {
+        console.log('not logged in');
+      }
+    },
+  });
+
   return (
     <div style={{ border: '1px solid #222222' }}>
       <p>{name}</p>
       <img src={image?.split('=')[0]} style={{ maxHeight: 100 }} />
       <p data-cy="post-content">{content}</p>
+      {getUser.data?._id?.toString() === userId ? (
+        <Button
+          variant="contained"
+          color="error"
+          startIcon={<DeleteIcon />}
+          type="button"
+          onClick={() => {
+            deletePostMutation.mutate(_id);
+          }}
+        >
+          Delete Post
+        </Button>
+      ) : null}
       <Typography>Like Count: {likeCount}</Typography>
       {hasLiked ? (
         <>

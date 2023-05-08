@@ -29,7 +29,6 @@ const NewPost: FC = () => {
   };
   return (
     <form onSubmit={handleSubmit}>
-      <h3>NewPost Component</h3>
       <TextField
         inputRef={inputRef}
         type="text"

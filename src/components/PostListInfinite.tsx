@@ -42,6 +42,7 @@ const PostsList = () => {
             hasLiked={post.hasLiked}
             name={post.userId.name}
             image={post.userId.image}
+            userId={post.userId._id.toString()}
           />
         ))}
       </div>

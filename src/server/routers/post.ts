@@ -269,6 +269,22 @@ export const postRouter = router({
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     }),
+  deletePost: authOnlyProcedure
+    .input(z.string())
+    .output(z.boolean())
+    .mutation(async ({ input, ctx }) => {
+      const currentUser = ctx.session.userId;
+      const deletedPost = await Post.findOneAndDelete({
+        _id: input,
+        userId: currentUser._id,
+      });
+
+      if (!deletedPost) {
+        throw new TRPCError({ code: 'BAD_REQUEST' });
+      }
+
+      return true;
+    }),
   comment: commentRouter,
   // list: publicProcedure
   //   .input(
