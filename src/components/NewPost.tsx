@@ -17,10 +17,6 @@ const NewPost: FC = () => {
 
         const newPage = {
           posts: [data.post],
-          nextCursor: {
-            createdAt: data.post.createdAt,
-            _id: data.post._id.toString(),
-          },
         };
 
         const newPages = [newPage, ...oldData.pages];
