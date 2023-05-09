@@ -28,7 +28,7 @@ const PostsList = () => {
     return <div>error</div>;
   }
 
-  const posts = data.pages.flatMap((obj) => obj.posts);
+  const posts = data.pages.flatMap((page) => page.posts);
 
   return (
     <>

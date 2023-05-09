@@ -132,7 +132,7 @@ export const commentRouter = router({
                 { createdAt, _id: { $lte: new Types.ObjectId(_id) } },
               ],
             }
-          : { postId: input };
+          : { postId: input.postId };
 
       const comments = await Comment.find(query)
         .populate('userId', { _id: 1, image: 1, name: 1 })

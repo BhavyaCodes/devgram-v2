@@ -1,8 +1,8 @@
 import { Button, Typography } from '@mui/material';
 import { trpc } from '~/utils/trpc';
 import { AddComment } from './AddComment';
-import { CommentList } from './CommentList';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { CommentListInfinite } from './CommentListInfinite';
 interface PostBoxProps {
   /**
    * postId
@@ -181,7 +181,8 @@ export const PostBox = ({
       )}
       <AddComment postId={_id} />
       <Typography>Comment count: {commentCount}</Typography>
-      <CommentList postId={_id} />
+      {/* <CommentList postId={_id} /> */}
+      <CommentListInfinite postId={_id} />
     </div>
   );
 };
