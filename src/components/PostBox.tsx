@@ -130,6 +130,7 @@ export const PostBox = ({
   });
 
   const getUser = trpc.user.getUser.useQuery(undefined, {
+    staleTime: 60000,
     retry: false,
     onError: ({ data }) => {
       if (data?.code === 'UNAUTHORIZED') {

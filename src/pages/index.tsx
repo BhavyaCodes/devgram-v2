@@ -8,12 +8,11 @@ import { Button, Typography } from '@mui/material';
 import PostListInfinite from '~/components/PostListInfinite';
 
 const IndexPage: NextPageWithLayout = () => {
-  const utils = trpc.useContext();
   const queryClient = useQueryClient();
 
   const getUser = trpc.user.getUser.useQuery(undefined, {
+    staleTime: 60000,
     retry: false,
-    initialData: null,
     onError: ({ data }) => {
       // console.log('@@@@@@@@@@@@@@@@@@@@@@\n', data);
       if (data?.code === 'UNAUTHORIZED') {
