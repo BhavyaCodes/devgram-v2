@@ -32,6 +32,22 @@ export const commentRouter = router({
         content: z.string(),
       }),
     )
+    .output(
+      z.object({
+        comment: z.object({
+          content: z.string(),
+          _id: z.instanceof(ObjectId),
+          postId: z.instanceof(ObjectId),
+          createdAt: z.date(),
+          updatedAt: z.date(),
+          userId: z.object({
+            _id: z.instanceof(ObjectId),
+            image: z.string().optional(),
+            name: z.string(),
+          }),
+        }),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const { content, postId } = input;
       const user = ctx.session.userId;
@@ -51,8 +67,24 @@ export const commentRouter = router({
         userId: user._id,
       });
 
-      await newComment.save();
-      return newComment;
+      const savedComment = await newComment.save();
+
+      const result = {
+        comment: {
+          content: savedComment.content,
+          _id: savedComment._id,
+          createdAt: savedComment.createdAt,
+          updatedAt: savedComment.updatedAt,
+          postId: new Types.ObjectId(postId),
+          userId: {
+            _id: user._id,
+            image: user.image,
+            name: user.name,
+          },
+        },
+      };
+
+      return result;
     }),
   getCommentsByPostId: publicProcedure
     .input(z.string())
