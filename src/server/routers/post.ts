@@ -25,19 +25,70 @@ import { commentRouter } from './comment';
 //   updatedAt: true,
 // });
 
+interface PostsAggregationResult {
+  _id: ObjectId;
+  userId: {
+    _id: ObjectId;
+    image: string;
+    name: string;
+  };
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+  likeCount: number;
+  commentCount: number;
+  hasLiked?: boolean | null;
+}
+
 export const postRouter = router({
   sayHi: publicProcedure.input(z.string()).query(({ input }) => {
     return input;
   }),
   create: authOnlyProcedure
     .input(z.string())
+    .output(
+      z.object({
+        post: z.object({
+          content: z.string(),
+          _id: z.instanceof(ObjectId),
+          createdAt: z.date(),
+          updatedAt: z.date(),
+          userId: z.object({
+            _id: z.instanceof(ObjectId),
+            image: z.string().optional(),
+            name: z.string(),
+          }),
+          likeCount: z.number(),
+          commentCount: z.number(),
+          hasLiked: z.null(),
+        }),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const post = new Post({
         content: input,
-        userId: ctx.session?.userId._id,
+        userId: ctx.session.userId._id,
       });
-      const result = (await post.save()).toJSON();
-      return result;
+
+      const savedPost = await post.save();
+
+      const result = {
+        content: savedPost.content,
+        _id: savedPost._id,
+        createdAt: savedPost.createdAt,
+        updatedAt: savedPost.updatedAt,
+        userId: {
+          _id: ctx.session.userId._id,
+          image: ctx.session.userId.image,
+          name: ctx.session.userId.name,
+        },
+        likeCount: 0,
+        commentCount: 0,
+        hasLiked: null,
+      };
+
+      return { post: result };
     }),
   getAll: currentSessionProcedure
     .input(
@@ -93,22 +144,6 @@ export const postRouter = router({
               ],
             }
           : {};
-
-      interface PostsAggregationResult {
-        _id: ObjectId;
-        userId: {
-          _id: ObjectId;
-          image: string;
-          name: string;
-        };
-        content: string;
-        createdAt: Date;
-        updatedAt: Date;
-        __v: number;
-        likeCount: number;
-        commentCount: number;
-        hasLiked?: boolean | null;
-      }
 
       const pipeLine: PipelineStage[] = [
         {

@@ -131,7 +131,6 @@ export const PostBox = ({
 
   const getUser = trpc.user.getUser.useQuery(undefined, {
     retry: false,
-    initialData: null,
     onError: ({ data }) => {
       if (data?.code === 'UNAUTHORIZED') {
         console.log('not logged in');

@@ -6,8 +6,28 @@ const NewPost: FC = () => {
   const utils = trpc.useContext();
 
   const createPost = trpc.post.create.useMutation({
-    onSuccess() {
-      utils.post.getAll.invalidate();
+    onSuccess(data) {
+      utils.post.getAll.setInfiniteData({}, (oldData) => {
+        if (!oldData) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        const newPage = {
+          posts: [data.post],
+          nextCursor: {
+            createdAt: data.post.createdAt,
+            _id: data.post._id.toString(),
+          },
+        };
+
+        const newPages = [newPage, ...oldData.pages];
+
+        return { pages: newPages, pageParams: oldData.pageParams };
+      });
+
       if (inputRef.current) {
         inputRef.current.value = '';
       }
