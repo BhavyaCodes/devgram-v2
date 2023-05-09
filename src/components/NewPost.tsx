@@ -4,6 +4,7 @@ import { trpc } from '~/utils/trpc';
 
 const NewPost: FC = () => {
   const utils = trpc.useContext();
+  const inputRef = useRef<null | HTMLInputElement>(null);
 
   const createPost = trpc.post.create.useMutation({
     onSuccess(data) {
@@ -29,7 +30,6 @@ const NewPost: FC = () => {
       }
     },
   });
-  const inputRef = useRef<null | HTMLInputElement>(null);
   const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
     if (createPost.isLoading) {

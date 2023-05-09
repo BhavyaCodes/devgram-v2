@@ -7,11 +7,10 @@ interface AddCommentProps {
 }
 
 export const AddComment = ({ postId }: AddCommentProps) => {
+  const commentInputRef = useRef<HTMLInputElement | null>(null);
   const utils = trpc.useContext();
   const addCommentMutation = trpc.post.comment.addComment.useMutation({
-    // onSuccess: () => utils.post.comment.getCommentsByPostId.invalidate(postId),
-    onSuccess(data, variables, context) {
-      // utils.post.comment.getCommentsByPostId.invalidate(postId);
+    onSuccess(data, variables) {
       utils.post.getAll.setInfiniteData({}, (oldData) => {
         if (!oldData) {
           return {
@@ -19,7 +18,6 @@ export const AddComment = ({ postId }: AddCommentProps) => {
             pageParams: [],
           };
         }
-
         const newPages = oldData.pages.map((page) => {
           const newPosts = page.posts.map((post) => {
             if (post._id.toString() === variables.postId) {
@@ -37,10 +35,34 @@ export const AddComment = ({ postId }: AddCommentProps) => {
           pages: newPages,
         };
       });
+
+      utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
+        {
+          postId: variables.postId,
+        },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+
+          const newPage = {
+            comments: [data.comment],
+          };
+
+          const newPages = [newPage, ...oldData.pages];
+
+          return { pages: newPages, pageParams: oldData.pageParams };
+        },
+      );
+
+      if (commentInputRef.current) {
+        commentInputRef.current.value = '';
+      }
     },
   });
-
-  const commentInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleAddComment: FormEventHandler = (e) => {
     e.preventDefault();
