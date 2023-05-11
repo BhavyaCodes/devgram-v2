@@ -49,6 +49,29 @@ export const CommentListInfinite = ({ postId }: CommentListInfiniteProps) => {
           pages: newPages,
         };
       });
+
+      utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
+        { postId: variables.postId },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+
+          const newPages = oldData.pages.map((page) => {
+            const newComments = page.comments.filter(
+              (comment) => comment._id.toString() !== variables.commentId,
+            );
+            return { comments: newComments, nextCursor: page.nextCursor };
+          });
+          return {
+            pageParams: oldData.pageParams,
+            pages: newPages,
+          };
+        },
+      );
     },
   });
 
