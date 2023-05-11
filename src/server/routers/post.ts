@@ -12,6 +12,7 @@ import { FilterQuery, PipelineStage, Types } from 'mongoose';
 import Like from '../models/Like';
 import { TRPCError } from '@trpc/server';
 import { commentRouter } from './comment';
+import Comment from '../models/Comment';
 /**
  * Default selector for Post.
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -338,6 +339,12 @@ export const postRouter = router({
     .output(z.boolean())
     .mutation(async ({ input, ctx }) => {
       const currentUser = ctx.session.userId;
+
+      await Promise.all([
+        Comment.deleteMany({ postId: input }),
+        Like.deleteMany({ postId: input }),
+      ]);
+
       const deletedPost = await Post.findOneAndDelete({
         _id: input,
         userId: currentUser._id,
