@@ -47,7 +47,7 @@ export const postRouter = router({
     return input;
   }),
   create: authOnlyProcedure
-    .input(z.string())
+    .input(z.object({ content: z.string(), imageId: z.string().optional() }))
     .output(
       z.object({
         post: z.object({
@@ -55,6 +55,7 @@ export const postRouter = router({
           _id: z.instanceof(ObjectId),
           createdAt: z.date(),
           updatedAt: z.date(),
+          imageId: z.string().nullish(),
           userId: z.object({
             _id: z.instanceof(ObjectId),
             image: z.string().optional(),
@@ -68,8 +69,9 @@ export const postRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       const post = new Post({
-        content: input,
+        content: input.content,
         userId: ctx.session.userId._id,
+        imageId: input.imageId,
       });
 
       const savedPost = await post.save();
@@ -79,6 +81,7 @@ export const postRouter = router({
         _id: savedPost._id,
         createdAt: savedPost.createdAt,
         updatedAt: savedPost.updatedAt,
+        imageId: savedPost.imageId,
         userId: {
           _id: ctx.session.userId._id,
           image: ctx.session.userId.image,
