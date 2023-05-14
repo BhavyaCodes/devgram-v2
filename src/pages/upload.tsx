@@ -13,7 +13,8 @@ const Page: NextPage = () => {
       return;
     }
 
-    const { signature, timestamp } = (await axios.get('/api/test-image')).data;
+    const { signature, timestamp } = (await axios.get('/api/upload-image'))
+      .data;
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
 
