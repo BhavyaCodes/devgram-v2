@@ -88,7 +88,7 @@ const NewPost: FC = () => {
       await axios
         .post(uploadEndpoint, formData)
         .then((res) => {
-          imageId = res.data.public_id;
+          imageId = res.data.public_id as string;
         })
         .catch((err) => {
           setImageUploadError('Error uploading image, please try again');
