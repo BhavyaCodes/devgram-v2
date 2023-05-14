@@ -306,6 +306,34 @@ export const postRouter = router({
 
       return { posts, nextCursor };
     }),
+  viewLikes: publicProcedure
+    .input(z.string())
+    .output(
+      z.array(
+        z.object({
+          _id: z.instanceof(ObjectId),
+          postId: z.instanceof(ObjectId),
+          createdAt: z.date(),
+          updatedAt: z.date(),
+          userId: z.object({
+            _id: z.instanceof(ObjectId),
+            image: z.string().optional(),
+            name: z.string(),
+          }),
+        }),
+      ),
+    )
+    .query(async ({ input }) => {
+      const likeDocs = await Like.find({ postId: input })
+        .populate('userId', {
+          _id: 1,
+          image: 1,
+          name: 1,
+        })
+        .lean();
+
+      return likeDocs;
+    }),
   likePost: authOnlyProcedure
     .input(z.string())
     .output(z.boolean())
