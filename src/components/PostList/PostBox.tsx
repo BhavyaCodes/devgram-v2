@@ -2,7 +2,7 @@ import { Button, Typography } from '@mui/material';
 import { trpc } from '~/utils/trpc';
 import { AddComment } from './AddComment';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { CommentListInfinite } from './CommentListInfinite';
+import { CommentList } from './CommentList';
 interface PostBoxProps {
   /**
    * postId
@@ -41,6 +41,8 @@ export const PostBox = ({
   hasLiked,
   imageId,
 }: PostBoxProps) => {
+  console.log(imageId);
+
   const utils = trpc.useContext();
 
   const likeMutation = trpc.post.likePost.useMutation({
@@ -189,7 +191,7 @@ export const PostBox = ({
       <AddComment postId={_id} />
       <Typography>Comment count: {commentCount}</Typography>
       {/* <CommentList postId={_id} /> */}
-      <CommentListInfinite postId={_id} />
+      <CommentList postId={_id} />
     </div>
   );
 };

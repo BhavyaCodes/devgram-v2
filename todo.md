@@ -6,3 +6,4 @@
 - [ ] create profile page
 - [ ] Error Handling
 - [x] add image upload
+- [ ] Conditional cloudinary import

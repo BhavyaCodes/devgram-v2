@@ -6,7 +6,7 @@ interface CommentListInfiniteProps {
   postId: string;
 }
 
-export const CommentListInfinite = ({ postId }: CommentListInfiniteProps) => {
+export const CommentList = ({ postId }: CommentListInfiniteProps) => {
   const utils = trpc.useContext();
 
   const {
