@@ -8,9 +8,13 @@ const { z } = require('zod');
 
 /*eslint sort-keys: "error"*/
 const envSchema = z.object({
+  CLOUDINARY_API_SECRET: z.string(),
   DATABASE_URL: z.string().url(),
   GOOGLE_OAUTH_CLIENT_SECRET: z.string(),
   JWT_SECRET: z.string(),
+  NEXT_PUBLIC_CLOUDINARY_API_KEY: z.string(),
+  NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string(),
+  NEXT_PUBLIC_CLOUDINARY_FOLDER: z.string(),
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
   NEXT_PUBLIC_GOOGLE_OAUTH_REDIRECT_URL: z.string(),
   NODE_ENV: z.enum(['development', 'test', 'production']),

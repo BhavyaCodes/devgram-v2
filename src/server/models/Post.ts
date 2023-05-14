@@ -8,12 +8,14 @@ export interface IPost {
   content: string;
   createdAt: Date;
   updatedAt: Date;
+  imageId?: string;
 }
 
 const postSchema = new Schema<IPost>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     content: { type: String, required: true },
+    imageId: { type: String },
   },
   { timestamps: true },
 );

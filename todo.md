@@ -5,3 +5,4 @@
 - [ ] show who liked the post
 - [ ] create profile page
 - [ ] Error Handling
+- [x] add image upload
