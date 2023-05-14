@@ -27,6 +27,7 @@ interface PostBoxProps {
    * Logged in user has liked the post
    */
   hasLiked?: boolean | null;
+  imageId?: string;
 }
 
 export const PostBox = ({
@@ -38,6 +39,7 @@ export const PostBox = ({
   likeCount,
   commentCount,
   hasLiked,
+  imageId,
 }: PostBoxProps) => {
   const utils = trpc.useContext();
 
@@ -144,6 +146,11 @@ export const PostBox = ({
       <p>{name}</p>
       <img src={image?.split('=')[0]} style={{ maxHeight: 100 }} />
       <p data-cy="post-content">{content}</p>
+      {!!imageId && (
+        <img
+          src={`${process.env.NEXT_PUBLIC_CLOUDINARY_DELIVERY_URL}/${imageId}`}
+        />
+      )}
       {getUser.data?._id?.toString() === userId ? (
         <Button
           variant="contained"

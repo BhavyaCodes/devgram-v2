@@ -44,6 +44,7 @@ const PostsList = () => {
             name={post.userId.name}
             image={post.userId.image}
             userId={post.userId._id.toString()}
+            imageId={post.imageId}
           />
         ))}
       </div>

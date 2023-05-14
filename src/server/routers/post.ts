@@ -113,6 +113,7 @@ export const postRouter = router({
             _id: z.instanceof(ObjectId),
             createdAt: z.date(),
             updatedAt: z.date(),
+            imageId: z.string().optional(),
             userId: z.object({
               _id: z.instanceof(ObjectId),
               image: z.string().optional(),
