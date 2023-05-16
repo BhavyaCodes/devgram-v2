@@ -41,8 +41,6 @@ export const PostBox = ({
   hasLiked,
   imageId,
 }: PostBoxProps) => {
-  console.log(imageId);
-
   const utils = trpc.useContext();
 
   const likeMutation = trpc.post.likePost.useMutation({

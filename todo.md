@@ -6,4 +6,6 @@
 - [ ] create profile page
 - [ ] Error Handling
 - [x] add image upload
+- [x] Delete image when deleting post
 - [ ] Conditional cloudinary import
+- [x] Add Dark mode

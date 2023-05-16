@@ -55,7 +55,6 @@ const NewPost: FC = () => {
       return;
     }
     if (!inputRef.current) {
-      console.log('there');
       return;
     }
 
@@ -96,7 +95,6 @@ const NewPost: FC = () => {
         });
     }
     const text = inputRef.current.value;
-    console.log(text);
     createPost.mutate({ content: text, imageId });
   };
   return (
