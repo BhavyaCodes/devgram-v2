@@ -71,7 +71,7 @@ const MyApp = (({
         </button>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <DefaultLayout>
+          <DefaultLayout toggleTheme={handleToggleTheme}>
             <ReactQueryDevtools initialIsOpen={false} />
             {page}
             <ReactQueryDevtools />

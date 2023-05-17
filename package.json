@@ -41,6 +41,7 @@
     "next": "^13.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-toggle-dark-mode": "^1.1.1",
     "superjson": "^1.7.4",
     "zod": "^3.0.0"
   },

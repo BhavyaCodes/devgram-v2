@@ -1,17 +1,26 @@
-import { AppBar, Toolbar } from '@mui/material';
+import { AppBar, Box, Container, Toolbar, useTheme } from '@mui/material';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import logoBlack from '~/assets/logo-black.svg';
 import logoTextBlack from '~/assets/logo-text-dark.svg';
+import { DarkModeSwitch } from 'react-toggle-dark-mode';
 
 const DynamicScrollToTop = dynamic(() => import('./ScrollToTop'), {
   ssr: false,
 });
 
-type DefaultLayoutProps = { children: ReactNode };
+type DefaultLayoutProps = { children: ReactNode; toggleTheme: () => void };
 
-export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
+export const DefaultLayout = ({
+  children,
+  toggleTheme,
+}: DefaultLayoutProps) => {
+  const theme = useTheme();
+
+  useEffect(() => {
+    console.log(theme.palette.mode);
+  });
   return (
     <>
       <Head>
@@ -24,14 +33,29 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
             p: 2,
             '& #nav-logo': { width: 30 },
             '& #nav-logo-text': { width: 100, ml: 1 },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
-          <img src={logoBlack.src} alt="devGram logo" id="nav-logo" />
-          <img src={logoTextBlack.src} alt="devGram" id="nav-logo-text" />
+          <Box display="flex" alignItems="center">
+            <img src={logoBlack.src} alt="devGram logo" id="nav-logo" />
+            <img src={logoTextBlack.src} alt="devGram" id="nav-logo-text" />
+          </Box>
+          <Box display="flex" alignItems="center">
+            <DarkModeSwitch
+              // style={{ marginBottom: '2rem' }}
+              checked={theme.palette.mode === 'dark'}
+              onChange={toggleTheme}
+              size={30}
+            />
+          </Box>
         </Toolbar>
       </AppBar>
       <Toolbar id="back-to-top-anchor" />
-      <main>{children}</main>
+
+      <Container component="main">{children}</Container>
+
       <DynamicScrollToTop />
     </>
   );
