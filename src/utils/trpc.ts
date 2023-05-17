@@ -17,9 +17,9 @@ function getBaseUrl() {
   }
 
   // // reference for render.com
-  if (process.env.RENDER_INTERNAL_HOSTNAME) {
-    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
-  }
+  // if (process.env.RENDER_INTERNAL_HOSTNAME) {
+  //   return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
+  // }
 
   // assume localhost
   return `http://127.0.0.1:${process.env.PORT ?? 3000}`;

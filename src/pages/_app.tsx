@@ -48,6 +48,11 @@ const MyApp = (({
       createTheme({
         palette: {
           mode,
+          primary: {
+            main: '#1FDF64',
+            dark: '#1DB954',
+            // light
+          },
         },
       }),
     [mode],
