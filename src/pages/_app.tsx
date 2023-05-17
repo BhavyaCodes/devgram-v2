@@ -9,6 +9,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import createEmotionCache from '../utils/createEmotionCache';
 import { parse, serialize } from 'cookie';
+import { roboto } from '~/utils/theme';
 
 export type NextPageWithLayout<
   TProps = Record<string, unknown>,
@@ -54,6 +55,9 @@ const MyApp = (({
             // light
           },
         },
+        typography: {
+          fontFamily: roboto.style.fontFamily,
+        },
       }),
     [mode],
   );
@@ -67,11 +71,11 @@ const MyApp = (({
         </button>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {/* <DefaultLayout> */}
-          <ReactQueryDevtools initialIsOpen={false} />
-          {page}
-          <ReactQueryDevtools />
-          {/* </DefaultLayout> */}
+          <DefaultLayout>
+            <ReactQueryDevtools initialIsOpen={false} />
+            {page}
+            <ReactQueryDevtools />
+          </DefaultLayout>
         </ThemeProvider>
       </CacheProvider>
     ));
