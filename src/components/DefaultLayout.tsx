@@ -29,15 +29,16 @@ function ScrollTop({ children }: { children: ReactNode }) {
   });
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    const anchor = (
-      (event.target as HTMLDivElement).ownerDocument || document
-    ).querySelector('#back-to-top-anchor');
+    console.log('click');
+    // const anchor = (
+    //   (event.target as HTMLDivElement).ownerDocument || document
+    // ).querySelector('#back-to-top-anchor');
 
-    if (anchor) {
-      anchor.scrollIntoView({
-        block: 'center',
-      });
-    }
+    // if (anchor) {
+    //   anchor.scrollIntoView({
+    //     block: 'center',
+    //   });
+    // }
   };
 
   return (
