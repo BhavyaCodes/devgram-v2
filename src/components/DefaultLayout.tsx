@@ -22,7 +22,7 @@ function ScrollTop({ children }: { children: ReactNode }) {
   // will default to window.
   // This is only being set here because the demo is in an iframe.
   const trigger = useScrollTrigger({
-    target: window ? window : undefined,
+    // target: window ? window : undefined,
     // target:
     disableHysteresis: true,
     threshold: 100,
