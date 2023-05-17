@@ -48,6 +48,7 @@ export const DefaultLayout = ({
               checked={theme.palette.mode === 'dark'}
               onChange={toggleTheme}
               size={30}
+              moonColor="#000"
             />
           </Box>
         </Toolbar>
