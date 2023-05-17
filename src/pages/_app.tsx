@@ -67,11 +67,11 @@ const MyApp = (({
         </button>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <DefaultLayout>
-            <ReactQueryDevtools initialIsOpen={false} />
-            {page}
-            <ReactQueryDevtools />
-          </DefaultLayout>
+          {/* <DefaultLayout> */}
+          <ReactQueryDevtools initialIsOpen={false} />
+          {page}
+          <ReactQueryDevtools />
+          {/* </DefaultLayout> */}
         </ThemeProvider>
       </CacheProvider>
     ));
