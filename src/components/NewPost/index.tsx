@@ -22,7 +22,7 @@ const NewPost: FC = () => {
   const [imageUploadProgress, setImageUploadProgress] = useState<
     number | undefined
   >();
-
+  const [posting, setPosting] = useState(false);
   const [imageUploadError, setImageUploadError] = useState<
     string | undefined
   >();
@@ -61,6 +61,11 @@ const NewPost: FC = () => {
     }
   };
   const handleSubmit: FormEventHandler = async (e) => {
+    if (posting) {
+      return;
+    }
+    setPosting(true);
+
     e.preventDefault();
     if (createPost.isLoading) {
       return;
@@ -117,10 +122,12 @@ const NewPost: FC = () => {
         setInput('');
         setFileInput(undefined);
         setImageUploadProgress(undefined);
+        setPosting(false);
       })
       .catch((err) => {
         console.log(err);
         setImageUploadProgress(undefined);
+        setPosting(false);
       });
   };
   return (
@@ -144,6 +151,7 @@ const NewPost: FC = () => {
               '& img': {
                 width: '100%',
                 borderRadius: 200,
+                opacity: posting ? 0.5 : 1,
               },
               pr: 2,
             }}
@@ -152,89 +160,99 @@ const NewPost: FC = () => {
           </Box>
         )}
         <Box flexGrow={1}>
-          <TextInput input={input} setInput={setInput} />
-          {!!fileInput && (
-            <Box
-              sx={{
-                '& img': {
-                  width: '100%',
-                  display: 'block',
-                },
-                overflow: 'hidden',
-                borderRadius: 5,
-                mt: 2,
-                position: 'relative',
-              }}
-            >
+          <Box
+            sx={{
+              opacity: posting ? 0.5 : 1,
+            }}
+          >
+            <TextInput input={input} setInput={setInput} />
+            {!!fileInput && (
               <Box
                 sx={{
-                  cursor: 'pointer',
-                  '&:hover': {
-                    bgcolor: 'rgba(15,20,25,0.9)',
+                  '& img': {
+                    width: '100%',
+                    display: 'block',
+                    marginBottom: posting ? 2 : 0,
+                    borderRadius: 5,
                   },
+                  overflow: 'hidden',
+                  mt: 2,
+                  position: 'relative',
                 }}
-                position="absolute"
-                height={36}
-                width={36}
-                bgcolor="rgba(15,20,25,0.75)"
-                left={4}
-                top={4}
-                borderRadius={200}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                onClick={() => setFileInput(undefined)}
               >
-                <CloseRoundedIcon />
+                <Box
+                  sx={{
+                    cursor: 'pointer',
+                    display: posting ? 'none' : 'flex',
+
+                    '&:hover': {
+                      bgcolor: 'rgba(15,20,25,0.9)',
+                    },
+                  }}
+                  position="absolute"
+                  height={36}
+                  width={36}
+                  bgcolor="rgba(15,20,25,0.75)"
+                  left={6}
+                  top={6}
+                  borderRadius={200}
+                  alignItems="center"
+                  justifyContent="center"
+                  onClick={() => setFileInput(undefined)}
+                >
+                  <CloseRoundedIcon />
+                </Box>
+                <img src={URL.createObjectURL(fileInput)} />
               </Box>
-              <img src={URL.createObjectURL(fileInput)} />
+            )}
+          </Box>
+          {!posting && (
+            <Box
+              borderTop="1px solid rgb(56, 68, 77)"
+              mt={3}
+              pt={1}
+              display="flex"
+              justifyContent={'space-between'}
+            >
+              <label htmlFor="file-input-button">
+                <IconButton
+                  size="small"
+                  type="button"
+                  onClick={(e) => {
+                    document.getElementById('file-input-button')?.click();
+                    e.preventDefault();
+                    // console.log(e);
+                    // e.persist();
+                  }}
+                >
+                  <ImageOutlinedIcon
+                    sx={{
+                      width: '90%',
+                      fill: (theme) => theme.palette.primary.dark,
+                    }}
+                  />
+                </IconButton>
+                <input
+                  type="file"
+                  style={{ display: 'none' }}
+                  id="file-input-button"
+                  placeholder="asdfasdf"
+                  onChange={handleFileChange}
+                />
+              </label>
+              <Box>
+                <Button
+                  size="small"
+                  variant="contained"
+                  data-cy="submit-post-button"
+                  type="submit"
+                  disabled={createPost.isLoading}
+                >
+                  Post
+                </Button>
+              </Box>
             </Box>
           )}
-          <Box
-            borderTop="1px solid rgb(56, 68, 77)"
-            mt={3}
-            pt={1}
-            display="flex"
-            justifyContent={'space-between'}
-          >
-            <label htmlFor="file-input-button">
-              <IconButton
-                size="small"
-                type="button"
-                onClick={(e) => {
-                  document.getElementById('file-input-button')?.click();
-                  e.preventDefault();
-                  // console.log(e);
-                  // e.persist();
-                }}
-              >
-                <ImageOutlinedIcon
-                  sx={{
-                    width: '90%',
-                    fill: (theme) => theme.palette.primary.dark,
-                  }}
-                />
-              </IconButton>
-              <input
-                type="file"
-                style={{ display: 'none' }}
-                id="file-input-button"
-                placeholder="asdfasdf"
-                onChange={handleFileChange}
-              />
-            </label>
-            <Box>
-              <Button
-                size="small"
-                variant="contained"
-                data-cy="submit-post-button"
-                type="submit"
-                disabled={createPost.isLoading}
-              >
-                Post
-              </Button>
-            </Box>
-          </Box>
         </Box>
         <>
           {/* <TextField
