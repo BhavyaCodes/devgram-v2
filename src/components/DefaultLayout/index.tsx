@@ -55,7 +55,9 @@ export const DefaultLayout = ({
       </AppBar>
       <Toolbar id="back-to-top-anchor" />
 
-      <Container component="main">{children}</Container>
+      <Container maxWidth="md" component="main">
+        {children}
+      </Container>
 
       <DynamicScrollToTop />
     </>

@@ -1,5 +1,5 @@
-import { KeyboardArrowUp } from '@mui/icons-material';
 import { Box, Fab, Fade, useScrollTrigger } from '@mui/material';
+import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
 
 function ScrollToTop() {
   // const { children, window } = props;
@@ -31,7 +31,7 @@ function ScrollToTop() {
         sx={{ position: 'fixed', bottom: 16, right: 16 }}
       >
         <Fab size="small" aria-label="scroll back to top">
-          <KeyboardArrowUp />
+          <KeyboardArrowUpOutlinedIcon />
         </Fab>
       </Box>
     </Fade>
