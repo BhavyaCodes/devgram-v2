@@ -129,9 +129,9 @@ const NewPost: FC = () => {
             <img src={user.data.image} alt={`${user.data.name} avatar`} />
           </Box>
         )}
-        {/* <Box flexGrow={1}>
-          <TextInput input={input} setInput={setInput} />
-          {!!fileInput && (
+        <Box flexGrow={1}>
+          {/* <TextInput input={input} setInput={setInput} /> */}
+          {/* {!!fileInput && (
             <Box
               sx={{
                 '& img': {
@@ -145,7 +145,7 @@ const NewPost: FC = () => {
             >
               <img src={URL.createObjectURL(fileInput)} />
             </Box>
-          )}
+          )} */}
           <Box borderTop="1px solid rgb(56, 68, 77)" mt={3} display="flex">
             <label htmlFor="file-input-button">
               <IconButton
@@ -169,7 +169,7 @@ const NewPost: FC = () => {
               />
             </label>
           </Box>
-        </Box> */}
+        </Box>
         <>
           <TextField
             inputRef={inputRef}
