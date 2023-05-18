@@ -115,7 +115,7 @@ const NewPost: FC = () => {
         onSubmit={handleSubmit}
         display="flex"
       >
-        {!!user.data?.image && (
+        {/* {!!user.data?.image && (
           <Box
             flexBasis="8%"
             sx={{
@@ -128,10 +128,10 @@ const NewPost: FC = () => {
           >
             <img src={user.data.image} alt={`${user.data.name} avatar`} />
           </Box>
-        )}
-        <Box flexGrow={1}>
+        )} */}
+        {/* <Box flexGrow={1}>
           <TextInput input={input} setInput={setInput} />
-          {/* {!!fileInput && (
+          {!!fileInput && (
             <Box
               sx={{
                 '& img': {
@@ -145,7 +145,7 @@ const NewPost: FC = () => {
             >
               <img src={URL.createObjectURL(fileInput)} />
             </Box>
-          )} */}
+          )}
           <Box borderTop="1px solid rgb(56, 68, 77)" mt={3} display="flex">
             <label htmlFor="file-input-button">
               <IconButton
@@ -169,30 +169,29 @@ const NewPost: FC = () => {
               />
             </label>
           </Box>
-        </Box>
+        </Box> */}
+        <>
+          <TextField
+            inputRef={inputRef}
+            type="text"
+            required
+            disabled={createPost.isLoading}
+            inputProps={{
+              'data-cy': 'post-input',
+            }}
+          />
+          <input type="file" onChange={handleFileChange} />
+          <Typography color="red">{imageUploadError}</Typography>
+          <Button
+            variant="contained"
+            data-cy="submit-post-button"
+            type="submit"
+            disabled={createPost.isLoading}
+          >
+            Submit
+          </Button>
+        </>
       </Box>
-
-      <>
-        <TextField
-          inputRef={inputRef}
-          type="text"
-          required
-          disabled={createPost.isLoading}
-          inputProps={{
-            'data-cy': 'post-input',
-          }}
-        />
-        <input type="file" onChange={handleFileChange} />
-        <Typography color="red">{imageUploadError}</Typography>
-        <Button
-          variant="contained"
-          data-cy="submit-post-button"
-          type="submit"
-          disabled={createPost.isLoading}
-        >
-          Submit
-        </Button>
-      </>
     </>
   );
 };
