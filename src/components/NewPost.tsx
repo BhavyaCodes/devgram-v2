@@ -9,7 +9,8 @@ import React, {
 } from 'react';
 import { trpc } from '~/utils/trpc';
 import { TextInput } from './PostList/TextInput';
-import { ImageOutlined } from '@mui/icons-material';
+// import { ImageOutlined } from '@mui/icons-material';
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
 const NewPost: FC = () => {
   const utils = trpc.useContext();
@@ -158,7 +159,7 @@ const NewPost: FC = () => {
                 //   // e.persist();
                 // }}
               >
-                {/* <ImageOutlined color="primary" sx={{ width: '90%' }} /> */}
+                <ImageOutlinedIcon color="primary" sx={{ width: '90%' }} />
               </IconButton>
               <input
                 type="file"
