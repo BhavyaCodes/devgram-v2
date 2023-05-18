@@ -15,6 +15,7 @@ export const TextInput = ({ input, setInput }: TextInputProps) => {
     <InputBase
       fullWidth
       type="text"
+      required
       autoComplete="off"
       sx={{
         // border: '1px solid red',

@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, TextField, Typography } from '@mui/material';
+import { Box, Button, IconButton } from '@mui/material';
 import axios from 'axios';
 import React, {
   ChangeEventHandler,
@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { trpc } from '~/utils/trpc';
-import { TextInput } from './PostList/TextInput';
+import { TextInput } from './TextInput';
 // import { ImageOutlined } from '@mui/icons-material';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
@@ -61,7 +61,7 @@ const NewPost: FC = () => {
     if (createPost.isLoading) {
       return;
     }
-    if (!inputRef.current) {
+    if (!input) {
       return;
     }
 
@@ -101,8 +101,14 @@ const NewPost: FC = () => {
           console.log(err);
         });
     }
-    const text = inputRef.current.value;
-    createPost.mutate({ content: text, imageId });
+    const text = input;
+    createPost
+      .mutateAsync({ content: text, imageId })
+      .then(() => {
+        setInput('');
+        setFileInput(undefined);
+      })
+      .catch((err) => console.log(err));
   };
   return (
     <>
@@ -131,8 +137,8 @@ const NewPost: FC = () => {
           </Box>
         )}
         <Box flexGrow={1}>
-          {/* <TextInput input={input} setInput={setInput} /> */}
-          {/* {!!fileInput && (
+          <TextInput input={input} setInput={setInput} />
+          {!!fileInput && (
             <Box
               sx={{
                 '& img': {
@@ -146,18 +152,18 @@ const NewPost: FC = () => {
             >
               <img src={URL.createObjectURL(fileInput)} />
             </Box>
-          )} */}
+          )}
           <Box borderTop="1px solid rgb(56, 68, 77)" mt={3} display="flex">
             <label htmlFor="file-input-button">
               <IconButton
                 size="small"
                 type="button"
-                // onClick={(e) => {
-                //   document.getElementById('file-input-button')?.click();
-                //   e.preventDefault();
-                //   // console.log(e);
-                //   // e.persist();
-                // }}
+                onClick={(e) => {
+                  document.getElementById('file-input-button')?.click();
+                  e.preventDefault();
+                  // console.log(e);
+                  // e.persist();
+                }}
               >
                 <ImageOutlinedIcon color="primary" sx={{ width: '90%' }} />
               </IconButton>
@@ -170,19 +176,6 @@ const NewPost: FC = () => {
               />
             </label>
           </Box>
-        </Box>
-        <>
-          <TextField
-            inputRef={inputRef}
-            type="text"
-            required
-            disabled={createPost.isLoading}
-            inputProps={{
-              'data-cy': 'post-input',
-            }}
-          />
-          <input type="file" onChange={handleFileChange} />
-          <Typography color="red">{imageUploadError}</Typography>
           <Button
             variant="contained"
             data-cy="submit-post-button"
@@ -191,6 +184,19 @@ const NewPost: FC = () => {
           >
             Submit
           </Button>
+        </Box>
+        <>
+          {/* <TextField
+            inputRef={inputRef}
+            type="text"
+            required
+            disabled={createPost.isLoading}
+            inputProps={{
+              'data-cy': 'post-input',
+            }}
+          /> */}
+          {/* <input type="file" onChange={handleFileChange} /> */}
+          {/* <Typography color="red">{imageUploadError}</Typography> */}
         </>
       </Box>
     </>
