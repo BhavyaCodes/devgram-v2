@@ -115,7 +115,7 @@ const NewPost: FC = () => {
         onSubmit={handleSubmit}
         display="flex"
       >
-        {/* {!!user.data?.image && (
+        {!!user.data?.image && (
           <Box
             flexBasis="8%"
             sx={{
@@ -128,7 +128,7 @@ const NewPost: FC = () => {
           >
             <img src={user.data.image} alt={`${user.data.name} avatar`} />
           </Box>
-        )} */}
+        )}
         {/* <Box flexGrow={1}>
           <TextInput input={input} setInput={setInput} />
           {!!fileInput && (
