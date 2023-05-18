@@ -158,7 +158,7 @@ const NewPost: FC = () => {
                 //   // e.persist();
                 // }}
               >
-                <ImageOutlined color="primary" sx={{ width: '90%' }} />
+                {/* <ImageOutlined color="primary" sx={{ width: '90%' }} /> */}
               </IconButton>
               <input
                 type="file"
