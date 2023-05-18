@@ -52,11 +52,29 @@ const MyApp = (({
           primary: {
             main: '#1FDF64',
             dark: '#1DB954',
-            // light
+            light: 'rgb(0, 186, 124)',
           },
+          ...(mode === 'dark'
+            ? {
+                text: {
+                  primary: 'rgb(231, 233, 234)',
+                },
+              }
+            : {}),
         },
         typography: {
           fontFamily: roboto.style.fontFamily,
+        },
+        components: {
+          MuiIconButton: {
+            styleOverrides: {
+              root: {
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 186,124,0.1)',
+                },
+              },
+            },
+          },
         },
       }),
     [mode],

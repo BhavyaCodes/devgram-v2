@@ -1,4 +1,4 @@
-import { Button, TextField, Typography } from '@mui/material';
+import { Box, Button, IconButton, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React, {
   ChangeEventHandler,
@@ -8,15 +8,21 @@ import React, {
   useState,
 } from 'react';
 import { trpc } from '~/utils/trpc';
+import { TextInput } from './PostList/TextInput';
+import { ImageOutlined } from '@mui/icons-material';
 
 const NewPost: FC = () => {
   const utils = trpc.useContext();
   const inputRef = useRef<null | HTMLInputElement>(null);
+  const [input, setInput] = useState('');
+
+  const user = trpc.user.getUser.useQuery();
 
   const [imageUploadError, setImageUploadError] = useState<
     string | undefined
   >();
   const [fileInput, setFileInput] = useState<File | undefined>();
+
   const createPost = trpc.post.create.useMutation({
     onSuccess(data) {
       utils.post.getAll.setInfiniteData({}, (oldData) => {
@@ -98,27 +104,96 @@ const NewPost: FC = () => {
     createPost.mutate({ content: text, imageId });
   };
   return (
-    <form onSubmit={handleSubmit}>
-      <TextField
-        inputRef={inputRef}
-        type="text"
-        required
-        disabled={createPost.isLoading}
-        inputProps={{
-          'data-cy': 'post-input',
+    <>
+      <Box
+        sx={{
+          border: '1px solid rgb(56, 68, 77)',
+          p: 2,
+          pb: 0.5,
         }}
-      />
-      <input type="file" onChange={handleFileChange} />
-      <Typography color="red">{imageUploadError}</Typography>
-      <Button
-        variant="contained"
-        data-cy="submit-post-button"
-        type="submit"
-        disabled={createPost.isLoading}
+        component="form"
+        onSubmit={handleSubmit}
+        display="flex"
       >
-        Submit
-      </Button>
-    </form>
+        {!!user.data?.image && (
+          <Box
+            flexBasis="8%"
+            sx={{
+              '& img': {
+                width: '100%',
+                borderRadius: 200,
+              },
+              pr: 2,
+            }}
+          >
+            <img src={user.data.image} alt={`${user.data.name} avatar`} />
+          </Box>
+        )}
+        <Box flexGrow={1}>
+          <TextInput input={input} setInput={setInput} />
+          {/* {!!fileInput && (
+            <Box
+              sx={{
+                '& img': {
+                  width: '100%',
+                  display: 'block',
+                },
+                overflow: 'hidden',
+                borderRadius: 5,
+                mt: 2,
+              }}
+            >
+              <img src={URL.createObjectURL(fileInput)} />
+            </Box>
+          )} */}
+          <Box borderTop="1px solid rgb(56, 68, 77)" mt={3} display="flex">
+            <label htmlFor="file-input-button">
+              <IconButton
+                size="small"
+                type="button"
+                // onClick={(e) => {
+                //   document.getElementById('file-input-button')?.click();
+                //   e.preventDefault();
+                //   // console.log(e);
+                //   // e.persist();
+                // }}
+              >
+                <ImageOutlined color="primary" sx={{ width: '90%' }} />
+              </IconButton>
+              <input
+                type="file"
+                style={{ display: 'none' }}
+                id="file-input-button"
+                placeholder="asdfasdf"
+                onChange={handleFileChange}
+              />
+            </label>
+          </Box>
+        </Box>
+      </Box>
+
+      <>
+        <TextField
+          inputRef={inputRef}
+          type="text"
+          required
+          disabled={createPost.isLoading}
+          inputProps={{
+            'data-cy': 'post-input',
+          }}
+        />
+        <input type="file" onChange={handleFileChange} />
+        <Typography color="red">{imageUploadError}</Typography>
+        <Button
+          variant="contained"
+          data-cy="submit-post-button"
+          type="submit"
+          disabled={createPost.isLoading}
+        >
+          Submit
+        </Button>
+      </>
+    </>
   );
 };
 
