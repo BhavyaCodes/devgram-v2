@@ -9,8 +9,9 @@ import React, {
 } from 'react';
 import { trpc } from '~/utils/trpc';
 import { TextInput } from './TextInput';
-// import { ImageOutlined } from '@mui/icons-material';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
+import { ProgressBar } from './ProgressBar';
 
 const NewPost: FC = () => {
   const utils = trpc.useContext();
@@ -18,6 +19,9 @@ const NewPost: FC = () => {
   const [input, setInput] = useState('');
 
   const user = trpc.user.getUser.useQuery();
+  const [imageUploadProgress, setImageUploadProgress] = useState<
+    number | undefined
+  >();
 
   const [imageUploadError, setImageUploadError] = useState<
     string | undefined
@@ -92,7 +96,12 @@ const NewPost: FC = () => {
       formData.append('transformation', 'c_scale,h_100');
 
       await axios
-        .post(uploadEndpoint, formData)
+        .post(uploadEndpoint, formData, {
+          onUploadProgress: (e) => {
+            setImageUploadProgress(e.progress);
+            console.log(e.progress);
+          },
+        })
         .then((res) => {
           imageId = res.data.public_id as string;
         })
@@ -107,8 +116,12 @@ const NewPost: FC = () => {
       .then(() => {
         setInput('');
         setFileInput(undefined);
+        setImageUploadProgress(undefined);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setImageUploadProgress(undefined);
+      });
   };
   return (
     <>
@@ -121,7 +134,9 @@ const NewPost: FC = () => {
         component="form"
         onSubmit={handleSubmit}
         display="flex"
+        position="relative"
       >
+        <ProgressBar progress={imageUploadProgress} />
         {!!user.data?.image && (
           <Box
             flexBasis="8%"
@@ -148,12 +163,40 @@ const NewPost: FC = () => {
                 overflow: 'hidden',
                 borderRadius: 5,
                 mt: 2,
+                position: 'relative',
               }}
             >
+              <Box
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    bgcolor: 'rgba(15,20,25,0.9)',
+                  },
+                }}
+                position="absolute"
+                height={36}
+                width={36}
+                bgcolor="rgba(15,20,25,0.75)"
+                left={4}
+                top={4}
+                borderRadius={200}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                onClick={() => setFileInput(undefined)}
+              >
+                <CloseRoundedIcon />
+              </Box>
               <img src={URL.createObjectURL(fileInput)} />
             </Box>
           )}
-          <Box borderTop="1px solid rgb(56, 68, 77)" mt={3} display="flex">
+          <Box
+            borderTop="1px solid rgb(56, 68, 77)"
+            mt={3}
+            pt={1}
+            display="flex"
+            justifyContent={'space-between'}
+          >
             <label htmlFor="file-input-button">
               <IconButton
                 size="small"
@@ -165,7 +208,12 @@ const NewPost: FC = () => {
                   // e.persist();
                 }}
               >
-                <ImageOutlinedIcon color="primary" sx={{ width: '90%' }} />
+                <ImageOutlinedIcon
+                  sx={{
+                    width: '90%',
+                    fill: (theme) => theme.palette.primary.dark,
+                  }}
+                />
               </IconButton>
               <input
                 type="file"
@@ -175,15 +223,18 @@ const NewPost: FC = () => {
                 onChange={handleFileChange}
               />
             </label>
+            <Box>
+              <Button
+                size="small"
+                variant="contained"
+                data-cy="submit-post-button"
+                type="submit"
+                disabled={createPost.isLoading}
+              >
+                Post
+              </Button>
+            </Box>
           </Box>
-          <Button
-            variant="contained"
-            data-cy="submit-post-button"
-            type="submit"
-            disabled={createPost.isLoading}
-          >
-            Submit
-          </Button>
         </Box>
         <>
           {/* <TextField

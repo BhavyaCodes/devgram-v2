@@ -18,9 +18,9 @@ export const TextInput = ({ input, setInput }: TextInputProps) => {
       required
       autoComplete="off"
       sx={{
-        // border: '1px solid red',
         '&::placeholder': { color: '#71767B' },
         fontSize: 20,
+        ml: 1,
       }}
       multiline
       placeholder="What is happening?!"
