@@ -282,7 +282,6 @@ const NewPost: FC = () => {
                   onChange={handleFileChange}
                 />
               </label>
-
               <IconButton
                 type="button"
                 size="small"
