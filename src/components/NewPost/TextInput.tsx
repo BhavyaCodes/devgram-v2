@@ -4,9 +4,14 @@ import React, { ChangeEventHandler, Dispatch, SetStateAction } from 'react';
 interface TextInputProps {
   input: string;
   setInput: Dispatch<SetStateAction<string>>;
+  maxInputSize: number;
 }
 
-export const TextInput = ({ input, setInput }: TextInputProps) => {
+export const TextInput = ({
+  input,
+  setInput,
+  maxInputSize,
+}: TextInputProps) => {
   const onChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     setInput(e.target.value);
   };
@@ -25,7 +30,7 @@ export const TextInput = ({ input, setInput }: TextInputProps) => {
       multiline
       placeholder="What is happening?!"
       inputProps={{
-        maxLength: 280,
+        maxLength: maxInputSize,
       }}
       onChange={onChange}
       value={input}

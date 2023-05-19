@@ -23,10 +23,10 @@ import { ProgressBar } from './ProgressBar';
 import SentimentSatisfiedOutlinedIcon from '@mui/icons-material/SentimentSatisfiedOutlined';
 import { Theme } from 'emoji-picker-react';
 import dynamic from 'next/dynamic';
+import { TextRemaining } from './TextRemaining';
 
 const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
   ssr: false,
-  loading: () => <div>Loading...</div>,
 });
 
 const NewPost: FC = () => {
@@ -37,6 +37,7 @@ const NewPost: FC = () => {
   const anchorRef = React.useRef<HTMLButtonElement>(null);
   const theme = useTheme();
 
+  const maxInputSize = 280;
   const user = trpc.user.getUser.useQuery();
   const [imageUploadProgress, setImageUploadProgress] = useState<
     number | undefined
@@ -61,7 +62,7 @@ const NewPost: FC = () => {
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = useRef(emojiPickerOpen);
-  React.useEffect(() => {
+  useEffect(() => {
     if (prevOpen.current === true && emojiPickerOpen === false) {
       anchorRef.current?.focus();
     }
@@ -206,7 +207,11 @@ const NewPost: FC = () => {
               opacity: posting ? 0.5 : 1,
             }}
           >
-            <TextInput input={input} setInput={setInput} />
+            <TextInput
+              maxInputSize={maxInputSize}
+              input={input}
+              setInput={setInput}
+            />
             {!!fileInput && (
               <Box
                 sx={{
@@ -321,7 +326,22 @@ const NewPost: FC = () => {
                 </Popper>
               </ClickAwayListener>
 
-              <Box marginLeft="auto">
+              <Box marginLeft="auto" display="flex" alignItems="center">
+                {!!input.length && (
+                  <>
+                    <Box mr={1.5}>
+                      <TextRemaining
+                        percent={(input.length / maxInputSize) * 100}
+                      />
+                    </Box>
+                    <Box
+                      width={0}
+                      borderRight="1px solid rgb(56, 68, 77)"
+                      alignSelf="stretch"
+                      mr={2}
+                    />
+                  </>
+                )}
                 <Button
                   size="small"
                   variant="contained"
@@ -335,19 +355,6 @@ const NewPost: FC = () => {
             </Box>
           )}
         </Box>
-        <>
-          {/* <TextField
-            inputRef={inputRef}
-            type="text"
-            required
-            disabled={createPost.isLoading}
-            inputProps={{
-              'data-cy': 'post-input',
-            }}
-          /> */}
-          {/* <input type="file" onChange={handleFileChange} /> */}
-          {/* <Typography color="red">{imageUploadError}</Typography> */}
-        </>
       </Box>
     </>
   );
