@@ -1,9 +1,17 @@
-import { Box, Button, IconButton } from '@mui/material';
+import {
+  Box,
+  Button,
+  ClickAwayListener,
+  IconButton,
+  Popper,
+  useTheme,
+} from '@mui/material';
 import axios from 'axios';
 import React, {
   ChangeEventHandler,
   FC,
   FormEventHandler,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -12,21 +20,54 @@ import { TextInput } from './TextInput';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import { ProgressBar } from './ProgressBar';
+import SentimentSatisfiedOutlinedIcon from '@mui/icons-material/SentimentSatisfiedOutlined';
+import { Theme } from 'emoji-picker-react';
+import dynamic from 'next/dynamic';
+
+const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>,
+});
 
 const NewPost: FC = () => {
   const utils = trpc.useContext();
   const inputRef = useRef<null | HTMLInputElement>(null);
   const [input, setInput] = useState('');
+  // const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const anchorRef = React.useRef<HTMLButtonElement>(null);
+  const theme = useTheme();
 
   const user = trpc.user.getUser.useQuery();
   const [imageUploadProgress, setImageUploadProgress] = useState<
     number | undefined
   >();
   const [posting, setPosting] = useState(false);
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const [imageUploadError, setImageUploadError] = useState<
     string | undefined
   >();
   const [fileInput, setFileInput] = useState<File | undefined>();
+
+  const handleEmojiClose = (event: Event | React.SyntheticEvent) => {
+    if (
+      anchorRef.current &&
+      anchorRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setEmojiPickerOpen(false);
+  };
+
+  // return focus to the button when we transitioned from !open -> open
+  const prevOpen = useRef(emojiPickerOpen);
+  React.useEffect(() => {
+    if (prevOpen.current === true && emojiPickerOpen === false) {
+      anchorRef.current?.focus();
+    }
+
+    prevOpen.current = emojiPickerOpen;
+  }, [emojiPickerOpen]);
 
   const createPost = trpc.post.create.useMutation({
     onSuccess(data) {
@@ -212,7 +253,8 @@ const NewPost: FC = () => {
               mt={3}
               pt={1}
               display="flex"
-              justifyContent={'space-between'}
+              justifyContent="flex-start"
+              alignItems="center"
             >
               <label htmlFor="file-input-button">
                 <IconButton
@@ -240,7 +282,47 @@ const NewPost: FC = () => {
                   onChange={handleFileChange}
                 />
               </label>
-              <Box>
+
+              <IconButton
+                type="button"
+                size="small"
+                aria-haspopup="true"
+                aria-expanded={emojiPickerOpen ? 'true' : undefined}
+                ref={anchorRef}
+                onClick={() => {
+                  setEmojiPickerOpen(true);
+                  // setAnchorEl(e.currentTarget);
+                }}
+                aria-describedby="emoji-popper"
+              >
+                <SentimentSatisfiedOutlinedIcon
+                  sx={{
+                    width: '90%',
+                    fill: (theme) => theme.palette.primary.dark,
+                  }}
+                />
+              </IconButton>
+              <ClickAwayListener onClickAway={handleEmojiClose}>
+                <Popper
+                  open={!!anchorRef.current && emojiPickerOpen}
+                  id="emoji-popper"
+                  anchorEl={anchorRef.current}
+                >
+                  <Box width={350}>
+                    <EmojiPicker
+                      searchDisabled
+                      onEmojiClick={(data) =>
+                        setInput((input) => input + data.emoji)
+                      }
+                      theme={theme.palette.mode as Theme}
+                      skinTonesDisabled
+                      width={350}
+                    />
+                  </Box>
+                </Popper>
+              </ClickAwayListener>
+
+              <Box marginLeft="auto">
                 <Button
                   size="small"
                   variant="contained"

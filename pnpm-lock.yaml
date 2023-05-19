@@ -49,6 +49,9 @@ dependencies:
   cookie:
     specifier: ^0.5.0
     version: 0.5.0
+  emoji-picker-react:
+    specifier: ^4.4.9
+    version: 4.4.9(react@18.2.0)
   jsonwebtoken:
     specifier: ^9.0.0
     version: 9.0.0
@@ -4514,6 +4517,16 @@ packages:
 
   /electron-to-chromium@1.4.397:
     resolution: {integrity: sha512-jwnPxhh350Q/aMatQia31KAIQdhEsYS0fFZ0BQQlN9tfvOEwShu6ZNwI4kL/xBabjcB/nTy6lSt17kNIluJZ8Q==}
+    dev: false
+
+  /emoji-picker-react@4.4.9(react@18.2.0):
+    resolution: {integrity: sha512-ef9MfzSJy5xrzihLLv0e1zZmiNtcekubctTBQVfIpvKfsfu4iLBBzcHCmOC2IaUVBCZuUw+GM24BAPj1MdCQXQ==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      clsx: 1.2.1
+      react: 18.2.0
     dev: false
 
   /emoji-regex@8.0.0:
