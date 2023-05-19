@@ -347,7 +347,7 @@ const NewPost: FC = () => {
                   variant="contained"
                   data-cy="submit-post-button"
                   type="submit"
-                  disabled={createPost.isLoading}
+                  disabled={createPost.isLoading || !input.length}
                 >
                   Post
                 </Button>
