@@ -1,32 +1,48 @@
 import { NextPage } from 'next';
-import React, { useEffect, useRef, useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  CircularProgress,
+  InputAdornment,
+  TextField,
+} from '@mui/material';
 import Masonry from '@mui/lab/Masonry';
 import axios from 'axios';
-// import { useDebounce } from '~/assets/hooks/useDebounce';
 import { useDebounce } from '~/hooks';
 import { GifObject } from '~/components/Gif';
 import { Tile } from '~/components/Gif/Tile';
 import { getRandomColor } from '~/utils/getRandomColor';
 import { useInView } from 'react-intersection-observer';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 
 const Gif: NextPage = () => {
-  const [searchTerm, setSearchTerm] = useState('hi');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const debouncedSearchTerm = useDebounce(searchTerm, 1000);
-  // console.log(debouncedSearchTerm);
 
-  const [imageUrl, setImageUrl] = useState<null | string>(null);
   return (
     <div>
       <TextField
+        sx={{ mb: 2, pr: 1 }}
+        fullWidth
         value={searchTerm}
+        size="small"
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <SearchRoundedIcon
+                sx={{
+                  fill: '#71767B',
+                }}
+              />
+            </InputAdornment>
+          ),
+        }}
+        placeholder="Powered by GIPHY"
         onChange={(e) => {
           setSearchTerm(e.currentTarget.value);
         }}
       />
-      {imageUrl && <img src={imageUrl} />}
-      <h2>Search Result</h2>
 
       {searchTerm ? (
         <MySearchGifGrid searchTerm={debouncedSearchTerm} />
@@ -42,8 +58,9 @@ export default Gif;
 const MySearchGifGrid = ({ searchTerm }: { searchTerm: string }) => {
   const [offset, setOffset] = useState(0);
   const [gifUrls, setGifUrls] = useState<GifObject[]>([]);
-  // const infiniteRef = useRef<HTMLElement>(null);
   const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(Infinity);
+
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const api_key = process.env.NEXT_PUBLIC_GIPHY_API_KEY!;
   const limit = 10;
@@ -52,23 +69,24 @@ const MySearchGifGrid = ({ searchTerm }: { searchTerm: string }) => {
     threshold: 0,
   });
 
-  // const decouncedInView = useDebounce(inView, 4000);
-  // console.log(decouncedInView);
   useEffect(() => {
     setLoading(true);
     axios
-      .get<{ data: { images: { downsized: GifObject } }[] }>(
-        'https://api.giphy.com/v1/gifs/search',
-        {
-          params: {
-            api_key,
-            limit,
-            offset: offset * limit,
-            q: searchTerm,
-          },
+      .get<{
+        data: {
+          images: { downsized: GifObject };
+        }[];
+        pagination: { total_count: number };
+      }>('https://api.giphy.com/v1/gifs/search', {
+        params: {
+          api_key,
+          limit,
+          offset: offset * limit,
+          q: searchTerm,
         },
-      )
+      })
       .then((res) => {
+        setTotalCount(res.data.pagination.total_count);
         setLoading(false);
         const newData = res.data.data.map((gif) => gif.images.downsized);
         setGifUrls((prev) => [...prev, ...newData]);
@@ -77,6 +95,7 @@ const MySearchGifGrid = ({ searchTerm }: { searchTerm: string }) => {
         setLoading(false);
         console.log(err);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset, searchTerm]);
 
   useEffect(() => {
@@ -90,9 +109,12 @@ const MySearchGifGrid = ({ searchTerm }: { searchTerm: string }) => {
     setGifUrls([]);
   }, [searchTerm]);
 
+  console.log(totalCount);
+  console.log(gifUrls.length);
+
   return (
     <>
-      <Masonry columns={4} spacing={2}>
+      <Masonry columns={3} spacing={1}>
         {gifUrls.map((gifObj, index) => (
           <Tile
             gifObj={gifObj}
@@ -101,60 +123,79 @@ const MySearchGifGrid = ({ searchTerm }: { searchTerm: string }) => {
           />
         ))}
       </Masonry>
-      <Box ref={ref} bgcolor="red" height={50} />
-      <Button onClick={() => setOffset((s) => s + 1)}>Load More</Button>
+      {totalCount > gifUrls.length && (
+        <Box ref={ref} py={4} display="flex" justifyContent="center">
+          <CircularProgress />
+        </Box>
+      )}
     </>
   );
 };
 
 const MyGifGrid = () => {
   const [offset, setOffset] = useState(0);
+  const [totalCount, setTotalCount] = useState(Infinity);
   const [gifUrls, setGifUrls] = useState<GifObject[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const api_key = process.env.NEXT_PUBLIC_GIPHY_API_KEY!;
 
   const limit = 10;
   useEffect(() => {
+    setLoading(true);
     axios
-      .get<{ data: { images: { downsized: GifObject } }[] }>(
-        'https://api.giphy.com/v1/gifs/trending',
-        {
-          params: {
-            api_key,
-            limit,
-            offset: offset * limit,
-          },
+      .get<{
+        data: {
+          images: { downsized: GifObject };
+        }[];
+        pagination: { total_count: number };
+      }>('https://api.giphy.com/v1/gifs/trending', {
+        params: {
+          api_key,
+          limit,
+          offset: offset * limit,
         },
-      )
+      })
       .then((res) => {
+        setTotalCount(res.data.pagination.total_count);
+        setLoading(false);
         const newData = res.data.data.map((gif) => gif.images.downsized);
         setGifUrls((prev) => [...prev, ...newData]);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset]);
 
-  // console.log(gifUrls);
+  useEffect(() => {
+    if (!loading && inView) {
+      setOffset((s) => s + 1);
+    }
+  }, [inView, loading]);
 
   return (
     <>
-      <Masonry columns={4} spacing={2}>
+      <Masonry columns={3} spacing={2}>
         {gifUrls.map((gifObj, index) => (
-          <Box
+          <Tile
+            gifObj={gifObj}
             key={gifObj.url + index}
-            sx={{
-              '& img': {
-                width: '100%',
-                display: 'block',
-                aspectRatio: (gifObj.width / gifObj.height).toString(),
-              },
-            }}
-          >
-            <img src={gifObj.url} />
-          </Box>
+            bgcolor={getRandomColor()}
+          />
         ))}
       </Masonry>
-      <Button onClick={() => setOffset((s) => s + 1)}>Load More</Button>
+      {totalCount > gifUrls.length && (
+        <Box ref={ref} py={4} display="flex" justifyContent="center">
+          <CircularProgress />
+        </Box>
+      )}
     </>
   );
 };
