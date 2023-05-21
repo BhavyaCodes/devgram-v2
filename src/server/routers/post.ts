@@ -36,6 +36,8 @@ interface PostsAggregationResult {
     name: string;
   };
   content: string;
+  imageId?: string;
+  gifUrl?: string;
   createdAt: Date;
   updatedAt: Date;
   __v: number;
@@ -49,7 +51,13 @@ export const postRouter = router({
     return input;
   }),
   create: authOnlyProcedure
-    .input(z.object({ content: z.string(), imageId: z.string().optional() }))
+    .input(
+      z.object({
+        content: z.string(),
+        imageId: z.string().optional(),
+        gifUrl: z.string().optional(),
+      }),
+    )
     .output(
       z.object({
         post: z.object({
@@ -58,6 +66,7 @@ export const postRouter = router({
           createdAt: z.date(),
           updatedAt: z.date(),
           imageId: z.string().optional(),
+          gifUrl: z.string().optional(),
           userId: z.object({
             _id: z.instanceof(ObjectId),
             image: z.string().optional(),
@@ -74,6 +83,7 @@ export const postRouter = router({
         content: input.content,
         userId: ctx.session.userId._id,
         imageId: input.imageId,
+        gifUrl: input.imageId ? undefined : input.gifUrl,
       });
 
       const savedPost = await post.save();
@@ -84,6 +94,7 @@ export const postRouter = router({
         createdAt: savedPost.createdAt,
         updatedAt: savedPost.updatedAt,
         imageId: savedPost.imageId,
+        gifUrl: savedPost.gifUrl,
         userId: {
           _id: ctx.session.userId._id,
           image: ctx.session.userId.image,
@@ -116,6 +127,7 @@ export const postRouter = router({
             createdAt: z.date(),
             updatedAt: z.date(),
             imageId: z.string().optional(),
+            gifUrl: z.string().optional(),
             userId: z.object({
               _id: z.instanceof(ObjectId),
               image: z.string().optional(),

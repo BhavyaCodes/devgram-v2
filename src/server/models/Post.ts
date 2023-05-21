@@ -9,6 +9,7 @@ export interface IPost {
   createdAt: Date;
   updatedAt: Date;
   imageId?: string;
+  gifUrl?: string;
 }
 
 const postSchema = new Schema<IPost>(
@@ -16,6 +17,7 @@ const postSchema = new Schema<IPost>(
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     content: { type: String, required: true },
     imageId: { type: String },
+    gifUrl: { type: String },
   },
   { timestamps: true },
 );
