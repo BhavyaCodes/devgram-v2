@@ -10,3 +10,4 @@
 - [ ] Conditional cloudinary import
 - [x] Add Dark mode
 - [ ] Create new post component
+- [ ] Fix Emoji bug
