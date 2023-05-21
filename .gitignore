@@ -45,3 +45,5 @@ playwright/test-results
 /cypress/screenshots
 
 /dump
+
+.eslintcache

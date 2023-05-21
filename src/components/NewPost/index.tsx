@@ -45,7 +45,9 @@ const NewPost: FC = () => {
   const [imageUploadProgress, setImageUploadProgress] = useState<
     number | undefined
   >();
-  const [selectedGifUrl, setSelectedGifUrl] = useState<null | string>(null);
+  const [selectedGifUrl, setSelectedGifUrl] = useState<undefined | string>(
+    undefined,
+  );
   const matchesSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [gifModalOpen, setGifModalOpen] = useState(false);
@@ -114,7 +116,7 @@ const NewPost: FC = () => {
 
     if (file) {
       setFileInput(file);
-      setSelectedGifUrl(null);
+      setSelectedGifUrl(undefined);
     }
   };
   const handleSubmit: FormEventHandler = async (e) => {
@@ -174,12 +176,13 @@ const NewPost: FC = () => {
     }
     const text = input;
     createPost
-      .mutateAsync({ content: text, imageId })
+      .mutateAsync({ content: text, imageId, gifUrl: selectedGifUrl })
       .then(() => {
         setInput('');
         setFileInput(undefined);
         setImageUploadProgress(undefined);
         setPosting(false);
+        setSelectedGifUrl(undefined);
       })
       .catch((err) => {
         console.log(err);
@@ -298,7 +301,7 @@ const NewPost: FC = () => {
                   borderRadius={200}
                   alignItems="center"
                   justifyContent="center"
-                  onClick={() => setSelectedGifUrl(null)}
+                  onClick={() => setSelectedGifUrl(undefined)}
                 >
                   <CloseRoundedIcon />
                 </Box>
