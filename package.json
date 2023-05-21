@@ -43,6 +43,7 @@
     "next": "^13.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-intersection-observer": "^9.4.3",
     "react-toggle-dark-mode": "^1.1.1",
     "superjson": "^1.12.3",
     "zod": "^3.21.4"
