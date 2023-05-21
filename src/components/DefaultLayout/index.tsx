@@ -5,6 +5,7 @@ import { ReactNode, useEffect } from 'react';
 import logoBlack from '~/assets/logo-black.svg';
 import logoTextBlack from '~/assets/logo-text-dark.svg';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
+import Link from 'next/link';
 
 const DynamicScrollToTop = dynamic(() => import('./ScrollToTop'), {
   ssr: false,
@@ -38,10 +39,12 @@ export const DefaultLayout = ({
             justifyContent: 'space-between',
           }}
         >
-          <Box display="flex" alignItems="center">
-            <img src={logoBlack.src} alt="devGram logo" id="nav-logo" />
-            <img src={logoTextBlack.src} alt="devGram" id="nav-logo-text" />
-          </Box>
+          <Link href="/">
+            <Box display="flex" alignItems="center">
+              <img src={logoBlack.src} alt="devGram logo" id="nav-logo" />
+              <img src={logoTextBlack.src} alt="devGram" id="nav-logo-text" />
+            </Box>
+          </Link>
           <Box display="flex" alignItems="center">
             <DarkModeSwitch
               // style={{ marginBottom: '2rem' }}
