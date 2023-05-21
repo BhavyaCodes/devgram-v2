@@ -2,8 +2,10 @@ import {
   Box,
   Button,
   ClickAwayListener,
+  Dialog,
   IconButton,
   Popper,
+  useMediaQuery,
   useTheme,
 } from '@mui/material';
 import axios from 'axios';
@@ -21,9 +23,12 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import { ProgressBar } from './ProgressBar';
 import SentimentSatisfiedOutlinedIcon from '@mui/icons-material/SentimentSatisfiedOutlined';
+import GifOutlinedIcon from '@mui/icons-material/GifOutlined';
+// import GifBoxOutlinedIcon from '@mui/icons-material/GifBoxOutlined';
 import { Theme } from 'emoji-picker-react';
 import dynamic from 'next/dynamic';
 import { TextRemaining } from './TextRemaining';
+import Gif from '../Gif';
 
 const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
   ssr: false,
@@ -33,15 +38,26 @@ const NewPost: FC = () => {
   const utils = trpc.useContext();
   const inputRef = useRef<null | HTMLInputElement>(null);
   const [input, setInput] = useState('');
-  // const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
   const theme = useTheme();
-
   const maxInputSize = 280;
   const user = trpc.user.getUser.useQuery();
   const [imageUploadProgress, setImageUploadProgress] = useState<
     number | undefined
   >();
+  const [selectedGifUrl, setSelectedGifUrl] = useState<undefined | string>(
+    undefined,
+  );
+  const matchesSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const [gifModalOpen, setGifModalOpen] = useState(false);
+
+  const handleSelectGifUrl = (url: string) => {
+    setGifModalOpen(false);
+    setSelectedGifUrl(url);
+    setFileInput(undefined);
+  };
+
   const [posting, setPosting] = useState(false);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const [imageUploadError, setImageUploadError] = useState<
@@ -100,6 +116,7 @@ const NewPost: FC = () => {
 
     if (file) {
       setFileInput(file);
+      setSelectedGifUrl(undefined);
     }
   };
   const handleSubmit: FormEventHandler = async (e) => {
@@ -159,12 +176,13 @@ const NewPost: FC = () => {
     }
     const text = input;
     createPost
-      .mutateAsync({ content: text, imageId })
+      .mutateAsync({ content: text, imageId, gifUrl: selectedGifUrl })
       .then(() => {
         setInput('');
         setFileInput(undefined);
         setImageUploadProgress(undefined);
         setPosting(false);
+        setSelectedGifUrl(undefined);
       })
       .catch((err) => {
         console.log(err);
@@ -251,6 +269,45 @@ const NewPost: FC = () => {
                 <img src={URL.createObjectURL(fileInput)} />
               </Box>
             )}
+            {!!selectedGifUrl && (
+              <Box
+                sx={{
+                  '& img': {
+                    width: '100%',
+                    display: 'block',
+                    marginBottom: posting ? 2 : 0,
+                    borderRadius: 5,
+                  },
+                  overflow: 'hidden',
+                  mt: 2,
+                  position: 'relative',
+                }}
+              >
+                <Box
+                  sx={{
+                    cursor: 'pointer',
+                    display: posting ? 'none' : 'flex',
+
+                    '&:hover': {
+                      bgcolor: 'rgba(15,20,25,0.9)',
+                    },
+                  }}
+                  position="absolute"
+                  height={36}
+                  width={36}
+                  bgcolor="rgba(15,20,25,0.75)"
+                  left={6}
+                  top={6}
+                  borderRadius={200}
+                  alignItems="center"
+                  justifyContent="center"
+                  onClick={() => setSelectedGifUrl(undefined)}
+                >
+                  <CloseRoundedIcon />
+                </Box>
+                <img src={selectedGifUrl} />
+              </Box>
+            )}
           </Box>
           {!posting && (
             <Box
@@ -295,7 +352,6 @@ const NewPost: FC = () => {
                 ref={anchorRef}
                 onClick={() => {
                   setEmojiPickerOpen(true);
-                  // setAnchorEl(e.currentTarget);
                 }}
                 aria-describedby="emoji-popper"
               >
@@ -306,6 +362,7 @@ const NewPost: FC = () => {
                   }}
                 />
               </IconButton>
+
               <ClickAwayListener onClickAway={handleEmojiClose}>
                 <Popper
                   open={!!anchorRef.current && emojiPickerOpen}
@@ -325,6 +382,30 @@ const NewPost: FC = () => {
                   </Box>
                 </Popper>
               </ClickAwayListener>
+              <IconButton
+                type="button"
+                size="small"
+                aria-haspopup="true"
+                onClick={() => setGifModalOpen(true)}
+                aria-describedby="gif-popper"
+              >
+                <GifOutlinedIcon
+                  aria-describedby="gif-popper"
+                  sx={{
+                    width: '100%',
+                    fill: (theme) => theme.palette.primary.dark,
+                  }}
+                />
+              </IconButton>
+              <Dialog
+                maxWidth="sm"
+                fullWidth
+                fullScreen={!!matchesSmallScreen}
+                open={gifModalOpen}
+                onClose={() => setGifModalOpen(false)}
+              >
+                <Gif handleSelectGifUrl={handleSelectGifUrl} />
+              </Dialog>
 
               <Box marginLeft="auto" display="flex" alignItems="center">
                 {!!input.length && (
