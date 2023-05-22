@@ -167,6 +167,7 @@ export const PostBox = ({
         p={2}
       >
         <Box
+          flexShrink={0}
           flexBasis="8%"
           sx={{
             '& img': {
