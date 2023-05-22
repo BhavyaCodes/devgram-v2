@@ -1,12 +1,14 @@
-import { Box, Button, Icon, IconButton, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { trpc } from '~/utils/trpc';
 import { AddComment } from './AddComment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CommentList } from './CommentList';
 import { timeAgo } from '~/utils/timeAgo';
-import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
+import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import { ActionButton } from './ActionButton';
+import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 
 interface PostBoxProps {
   /**
@@ -217,11 +219,12 @@ export const PostBox = ({
           >
             <ActionButton
               onClick={() => console.log('asfsasdaf')}
-              hoverBgColor="rgba(0, 176, 255, 0.1)"
-              Icon={ChatBubbleOutlineRoundedIcon}
-              color="rgba(0, 176, 255, 1)"
-              number={commentCount}
-              toolTip="Comment"
+              hoverBgColor="rgba(255, 23, 68, 0.1)"
+              Icon={hasLiked ? FavoriteRoundedIcon : FavoriteBorderRoundedIcon}
+              color="rgba(255, 23, 68, 1)"
+              iconAlwaysColored={!!hasLiked}
+              number={likeCount}
+              toolTip="Likes"
             />
 
             <ActionButton
@@ -232,9 +235,15 @@ export const PostBox = ({
               number={commentCount}
               toolTip="Comment"
             />
-            <IconButton>
-              <QuestionAnswerOutlinedIcon />
-            </IconButton>
+            <ActionButton
+              onClick={() => console.log('asfsasdaf')}
+              hoverBgColor="rgba(118, 255, 3, 0.1)"
+              Icon={ReplyRoundedIcon}
+              color="rgba(118, 255, 3, 1)"
+              toolTip="Share"
+              text="Share"
+              iconInverted
+            />
           </Box>
           {getUser.data?._id?.toString() === userId ? (
             <Button

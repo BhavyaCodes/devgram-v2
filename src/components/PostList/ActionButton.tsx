@@ -9,9 +9,12 @@ interface ActionButtonProps {
   };
   color: string;
   hoverBgColor: string;
-  number: number;
+  number?: number;
   onClick: () => void;
   toolTip: string;
+  iconAlwaysColored?: boolean;
+  text?: string;
+  iconInverted?: boolean;
 }
 
 export const ActionButton: FC<ActionButtonProps> = ({
@@ -21,6 +24,9 @@ export const ActionButton: FC<ActionButtonProps> = ({
   hoverBgColor,
   onClick,
   toolTip,
+  iconAlwaysColored,
+  text,
+  iconInverted,
 }) => {
   return (
     <Tooltip title={toolTip} enterDelay={500} leaveDelay={200}>
@@ -43,6 +49,9 @@ export const ActionButton: FC<ActionButtonProps> = ({
               fill: color,
             },
           },
+          '& svg': {
+            fill: iconAlwaysColored ? color : undefined,
+          },
         }}
       >
         <Box
@@ -51,6 +60,7 @@ export const ActionButton: FC<ActionButtonProps> = ({
           sx={{
             transition: (theme) => theme.transitions.create('all'),
             opacity: 0.4,
+            transform: iconInverted ? 'scale(-1,1)' : undefined,
           }}
           borderRadius={50}
           p={1}
@@ -59,17 +69,32 @@ export const ActionButton: FC<ActionButtonProps> = ({
         >
           <Icon sx={{ fontSize: 15 }} />
         </Box>
-        <Typography
-          component="span"
-          variant="body2"
-          fontSize={13}
-          sx={{
-            userSelect: 'none',
-            transition: (theme) => theme.transitions.create('all'),
-          }}
-        >
-          {number.toLocaleString()}
-        </Typography>
+        {typeof number !== 'undefined' && (
+          <Typography
+            component="span"
+            variant="body2"
+            fontSize={13}
+            sx={{
+              userSelect: 'none',
+              transition: (theme) => theme.transitions.create('all'),
+            }}
+          >
+            {number.toLocaleString()}
+          </Typography>
+        )}
+        {typeof text !== 'undefined' && (
+          <Typography
+            component="span"
+            variant="body2"
+            fontSize={13}
+            sx={{
+              userSelect: 'none',
+              transition: (theme) => theme.transitions.create('all'),
+            }}
+          >
+            {text}
+          </Typography>
+        )}
       </Box>
     </Tooltip>
   );
