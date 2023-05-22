@@ -1,9 +1,13 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Icon, IconButton, Typography } from '@mui/material';
 import { trpc } from '~/utils/trpc';
 import { AddComment } from './AddComment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CommentList } from './CommentList';
 import { timeAgo } from '~/utils/timeAgo';
+import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
+import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
+import { ActionButton } from './ActionButton';
+
 interface PostBoxProps {
   /**
    * postId
@@ -206,6 +210,32 @@ export const PostBox = ({
               )}
             </Box>
           )}
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <ActionButton
+              onClick={() => console.log('asfsasdaf')}
+              hoverBgColor="rgba(0, 176, 255, 0.1)"
+              Icon={ChatBubbleOutlineRoundedIcon}
+              color="rgba(0, 176, 255, 1)"
+              number={commentCount}
+              toolTip="Comment"
+            />
+
+            <ActionButton
+              onClick={() => console.log('asfsasdaf')}
+              hoverBgColor="rgba(0, 176, 255, 0.1)"
+              Icon={ChatBubbleOutlineRoundedIcon}
+              color="rgba(0, 176, 255, 1)"
+              number={commentCount}
+              toolTip="Comment"
+            />
+            <IconButton>
+              <QuestionAnswerOutlinedIcon />
+            </IconButton>
+          </Box>
           {getUser.data?._id?.toString() === userId ? (
             <Button
               variant="contained"
