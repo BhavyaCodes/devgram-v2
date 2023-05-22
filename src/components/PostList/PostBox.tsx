@@ -1,8 +1,9 @@
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { trpc } from '~/utils/trpc';
 import { AddComment } from './AddComment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CommentList } from './CommentList';
+import { timeAgo } from '~/utils/timeAgo';
 interface PostBoxProps {
   /**
    * postId
@@ -29,6 +30,7 @@ interface PostBoxProps {
   hasLiked?: boolean | null;
   imageId?: string;
   gifUrl?: string;
+  createdAt: Date;
 }
 
 export const PostBox = ({
@@ -42,6 +44,7 @@ export const PostBox = ({
   hasLiked,
   imageId,
   gifUrl,
+  createdAt,
 }: PostBoxProps) => {
   const utils = trpc.useContext();
 
@@ -144,56 +147,117 @@ export const PostBox = ({
   });
 
   return (
-    <div style={{ border: '1px solid #222222' }}>
-      <p>{name}</p>
-      <img src={image?.split('=')[0]} style={{ maxHeight: 100 }} />
-      <p data-cy="post-content">{content}</p>
-      {imageId ? (
-        <img
-          src={`${process.env.NEXT_PUBLIC_CLOUDINARY_DELIVERY_URL}/${imageId}`}
-        />
-      ) : (
-        !!gifUrl && <img src={gifUrl} />
-      )}
-      {getUser.data?._id?.toString() === userId ? (
-        <Button
-          variant="contained"
-          color="error"
-          startIcon={<DeleteIcon />}
-          type="button"
-          onClick={() => {
-            deletePostMutation.mutate(_id);
+    <>
+      <Box
+        border="1px solid rgb(56, 68, 77)"
+        sx={{
+          borderTopColor: 'rgba(0,0,0,0)',
+        }}
+        display="flex"
+        p={2}
+      >
+        <Box
+          flexBasis="8%"
+          sx={{
+            '& img': {
+              width: '100%',
+              borderRadius: 200,
+            },
+            pr: 2,
           }}
         >
-          Delete Post
-        </Button>
-      ) : null}
-      <Typography>Like Count: {likeCount}</Typography>
-      {hasLiked ? (
-        <>
-          <Typography variant="subtitle1">You liked this</Typography>
+          <img src={image} alt={`${name} avatar`} />
+        </Box>
+        <Box flexGrow={1}>
+          <Box display="flex" alignItems="center">
+            <Typography variant="h6">{name}</Typography>
+            <Box
+              ml={1}
+              mr={0.5}
+              width={2}
+              height={2}
+              borderRadius={100}
+              sx={{
+                bgcolor: (theme) => theme.palette.text.primary,
+                opacity: 0.4,
+              }}
+            />
+            <Typography component="span" variant="body2">
+              {timeAgo.format(createdAt, 'twitter')}
+            </Typography>
+          </Box>
+          <Typography variant="body1">{content}</Typography>
+          {(imageId || gifUrl) && (
+            <Box
+              mt={1}
+              sx={{
+                '& img': {
+                  maxHeight: 400,
+                  borderRadius: 4,
+                },
+              }}
+            >
+              {imageId ? (
+                <img
+                  src={`${process.env.NEXT_PUBLIC_CLOUDINARY_DELIVERY_URL}/${imageId}`}
+                />
+              ) : (
+                !!gifUrl && <img src={gifUrl} />
+              )}
+            </Box>
+          )}
+        </Box>
+      </Box>
+      <>
+        <img src={image?.split('=')[0]} style={{ maxHeight: 100 }} />
+        <p data-cy="post-content">{content}</p>
+        {imageId ? (
+          <img
+            src={`${process.env.NEXT_PUBLIC_CLOUDINARY_DELIVERY_URL}/${imageId}`}
+          />
+        ) : (
+          !!gifUrl && <img src={gifUrl} />
+        )}
+        {getUser.data?._id?.toString() === userId ? (
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            type="button"
+            onClick={() => {
+              deletePostMutation.mutate(_id);
+            }}
+          >
+            Delete Post
+          </Button>
+        ) : null}
+        <Typography>Like Count: {likeCount}</Typography>
+        {hasLiked ? (
+          <>
+            <Typography variant="subtitle1">You liked this</Typography>
+            <Button
+              type="button"
+              color="error"
+              onClick={() => unlikeMutation.mutate(_id)}
+              disabled={unlikeMutation.isLoading}
+            >
+              Unlike This Post
+            </Button>
+          </>
+        ) : (
           <Button
             type="button"
-            color="error"
-            onClick={() => unlikeMutation.mutate(_id)}
-            disabled={unlikeMutation.isLoading}
+            onClick={() => likeMutation.mutate(_id)}
+            disabled={likeMutation.isLoading}
           >
-            Unlike This Post
+            Like This Post
           </Button>
-        </>
-      ) : (
-        <Button
-          type="button"
-          onClick={() => likeMutation.mutate(_id)}
-          disabled={likeMutation.isLoading}
-        >
-          Like This Post
-        </Button>
-      )}
-      <AddComment postId={_id} />
-      <Typography>Comment count: {commentCount}</Typography>
-      {/* <CommentList postId={_id} /> */}
-      <CommentList postId={_id} />
-    </div>
+        )}
+        <AddComment postId={_id} />
+        <Typography>Comment count: {commentCount}</Typography>
+        {/* <CommentList postId={_id} /> */}
+        <CommentList postId={_id} />
+      </>
+    </>
   );
 };

@@ -46,6 +46,7 @@ const PostsList = () => {
             userId={post.userId._id.toString()}
             imageId={post.imageId}
             gifUrl={post.gifUrl}
+            createdAt={post.createdAt}
           />
         ))}
       </div>

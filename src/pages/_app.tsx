@@ -64,6 +64,17 @@ const MyApp = (({
         },
         typography: {
           fontFamily: roboto.style.fontFamily,
+          h6: {
+            fontSize: 15,
+            fontWeight: 700,
+            // display: 'inline',
+          },
+          body1: {
+            fontSize: 15,
+          },
+          body2: {
+            opacity: 0.4,
+          },
         },
         components: {
           MuiIconButton: {
