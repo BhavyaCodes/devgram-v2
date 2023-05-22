@@ -1,5 +1,6 @@
 ## TODO
 
+- [x] Add close modal button on gifpicker
 - [x] Delete Comment and likes when deleting post
 - [ ] Show comments only when clicking view comments
 - [ ] show who liked the post
@@ -9,5 +10,9 @@
 - [x] Delete image when deleting post
 - [ ] Conditional cloudinary import
 - [x] Add Dark mode
-- [ ] Create new post component
+- [x] Create new post component
+
+### LP
+
 - [ ] Fix Emoji bug
+- [ ] fixed height modal for gif picker

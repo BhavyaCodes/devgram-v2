@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import {
   Box,
   CircularProgress,
+  IconButton,
   InputAdornment,
   TextField,
 } from '@mui/material';
@@ -12,6 +13,7 @@ import { Tile } from './Tile';
 import { getRandomColor } from '~/utils/getRandomColor';
 import { useInView } from 'react-intersection-observer';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 export interface GifObject {
   url: string;
@@ -22,43 +24,71 @@ export interface GifObject {
 
 const Gif: FC<{
   handleSelectGifUrl: (url: string) => void;
-}> = ({ handleSelectGifUrl }) => {
+  handleModalClose: () => void;
+}> = ({ handleSelectGifUrl, handleModalClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const debouncedSearchTerm = useDebounce(searchTerm, 1000);
 
   return (
-    <Box p={2}>
-      <TextField
-        sx={{ mb: 2, pr: 1 }}
-        fullWidth
-        value={searchTerm}
-        size="small"
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <SearchRoundedIcon
-                sx={{
-                  fill: '#71767B',
-                }}
-              />
-            </InputAdornment>
-          ),
-        }}
-        placeholder="Powered by GIPHY"
-        onChange={(e) => {
-          setSearchTerm(e.currentTarget.value);
-        }}
-      />
+    <Box display="flex" alignItems="stretch">
+      <Box
+        flexGrow={1}
+        px={2}
+        // sx={{ height: '100%' }}
 
-      {searchTerm ? (
-        <MySearchGifGrid
-          searchTerm={debouncedSearchTerm}
-          handleSelectGifUrl={handleSelectGifUrl}
-        />
-      ) : (
-        <MyGifGrid handleSelectGifUrl={handleSelectGifUrl} />
-      )}
+        // minHeight="calc(100vh - 64px)"
+        bgcolor="#111"
+        // sx={{ bgcolor: (theme) => theme.components?.MuiDialog?.styleOverrides }}
+      >
+        <Box
+          pt={2}
+          display="flex"
+          alignItems="center"
+          pb={2}
+          pr={1}
+          position="sticky"
+          top={0}
+          bgcolor="inherit"
+        >
+          <IconButton
+            sx={{ flexShrink: 0, mr: 1 }}
+            type="button"
+            onClick={handleModalClose}
+          >
+            <CloseRoundedIcon />
+          </IconButton>
+          <TextField
+            fullWidth
+            value={searchTerm}
+            size="small"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchRoundedIcon
+                    sx={{
+                      fill: '#71767B',
+                    }}
+                  />
+                </InputAdornment>
+              ),
+            }}
+            placeholder="Powered by GIPHY"
+            onChange={(e) => {
+              setSearchTerm(e.currentTarget.value);
+            }}
+          />
+        </Box>
+
+        {searchTerm ? (
+          <MySearchGifGrid
+            searchTerm={debouncedSearchTerm}
+            handleSelectGifUrl={handleSelectGifUrl}
+          />
+        ) : (
+          <MyGifGrid handleSelectGifUrl={handleSelectGifUrl} />
+        )}
+      </Box>
     </Box>
   );
 };
@@ -88,6 +118,9 @@ const MySearchGifGrid = ({
 
   useEffect(() => {
     setLoading(true);
+
+    const controller = new AbortController();
+
     axios
       .get<{
         data: {
@@ -101,6 +134,7 @@ const MySearchGifGrid = ({
           offset: offset * limit,
           q: searchTerm,
         },
+        signal: controller.signal,
       })
       .then((res) => {
         setTotalCount(res.data.pagination.total_count);
@@ -112,6 +146,7 @@ const MySearchGifGrid = ({
         setLoading(false);
         console.log(err);
       });
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset, searchTerm]);
 
@@ -169,6 +204,8 @@ const MyGifGrid = ({
 
   const limit = 10;
   useEffect(() => {
+    const controller = new AbortController();
+
     setLoading(true);
     axios
       .get<{
@@ -182,6 +219,7 @@ const MyGifGrid = ({
           limit,
           offset: offset * limit,
         },
+        signal: controller.signal,
       })
       .then((res) => {
         setTotalCount(res.data.pagination.total_count);
@@ -193,6 +231,8 @@ const MyGifGrid = ({
         setLoading(false);
         console.log(err);
       });
+
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset]);
 

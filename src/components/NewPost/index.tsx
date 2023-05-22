@@ -234,11 +234,13 @@ const NewPost: FC = () => {
               <Box
                 sx={{
                   '& img': {
-                    width: '100%',
+                    // width: '100%',
                     display: 'block',
                     marginBottom: posting ? 2 : 0,
                     borderRadius: 5,
+                    maxHeight: 400,
                   },
+
                   overflow: 'hidden',
                   mt: 2,
                   position: 'relative',
@@ -273,10 +275,10 @@ const NewPost: FC = () => {
               <Box
                 sx={{
                   '& img': {
-                    width: '100%',
                     display: 'block',
                     marginBottom: posting ? 2 : 0,
                     borderRadius: 5,
+                    maxHeight: 400,
                   },
                   overflow: 'hidden',
                   mt: 2,
@@ -404,7 +406,10 @@ const NewPost: FC = () => {
                 open={gifModalOpen}
                 onClose={() => setGifModalOpen(false)}
               >
-                <Gif handleSelectGifUrl={handleSelectGifUrl} />
+                <Gif
+                  handleSelectGifUrl={handleSelectGifUrl}
+                  handleModalClose={() => setGifModalOpen(false)}
+                />
               </Dialog>
 
               <Box marginLeft="auto" display="flex" alignItems="center">
