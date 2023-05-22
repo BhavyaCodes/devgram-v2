@@ -1,13 +1,16 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, IconButton, Typography, useTheme } from '@mui/material';
 import { trpc } from '~/utils/trpc';
 import { AddComment } from './AddComment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CommentList } from './CommentList';
 import { timeAgo } from '~/utils/timeAgo';
+import { ActionButton } from './ActionButton';
+
+// Icons
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
-import { ActionButton } from './ActionButton';
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 
 interface PostBoxProps {
@@ -53,6 +56,7 @@ export const PostBox = ({
   createdAt,
 }: PostBoxProps) => {
   const utils = trpc.useContext();
+  const theme = useTheme();
 
   const likeMutation = trpc.post.likePost.useMutation({
     onSuccess(data, variables, context) {
@@ -167,7 +171,11 @@ export const PostBox = ({
           sx={{
             '& img': {
               width: '100%',
+              maxWidth: '100%',
               borderRadius: 200,
+            },
+            [theme.breakpoints.down('md')]: {
+              flexBasis: '20%',
             },
             pr: 2,
           }}
@@ -175,22 +183,38 @@ export const PostBox = ({
           <img src={image} alt={`${name} avatar`} />
         </Box>
         <Box flexGrow={1}>
-          <Box display="flex" alignItems="center">
-            <Typography variant="h6">{name}</Typography>
-            <Box
-              ml={1}
-              mr={0.5}
-              width={2}
-              height={2}
-              borderRadius={100}
+          <Box display="flex" justifyContent="space-between">
+            <Box display="flex" alignItems="center">
+              <Typography variant="h6">{name}</Typography>
+              <Box
+                ml={1}
+                mr={0.5}
+                width={2}
+                height={2}
+                borderRadius={100}
+                sx={{
+                  bgcolor: (theme) => theme.palette.text.primary,
+                  opacity: 0.4,
+                }}
+              />
+              <Typography component="span" variant="body2">
+                {timeAgo.format(createdAt, 'twitter')}
+              </Typography>
+            </Box>
+            <IconButton
+              disableFocusRipple
+              disableTouchRipple
               sx={{
-                bgcolor: (theme) => theme.palette.text.primary,
-                opacity: 0.4,
+                '&:hover': {
+                  bgcolor: 'transparent',
+                  '& svg': {
+                    fill: '#fff',
+                  },
+                },
               }}
-            />
-            <Typography component="span" variant="body2">
-              {timeAgo.format(createdAt, 'twitter')}
-            </Typography>
+            >
+              <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
+            </IconButton>
           </Box>
           <Typography variant="body1">{content}</Typography>
           {(imageId || gifUrl) && (
@@ -199,6 +223,7 @@ export const PostBox = ({
               sx={{
                 '& img': {
                   maxHeight: 400,
+                  maxWidth: '100%',
                   borderRadius: 4,
                 },
               }}

@@ -204,12 +204,16 @@ const NewPost: FC = () => {
         <ProgressBar progress={imageUploadProgress} />
         {!!user.data?.image && (
           <Box
+            flexShrink={0}
             flexBasis="8%"
             sx={{
               '& img': {
                 width: '100%',
                 borderRadius: 200,
                 opacity: posting ? 0.5 : 1,
+              },
+              [theme.breakpoints.down('md')]: {
+                flexBasis: '20%',
               },
               pr: 2,
             }}
