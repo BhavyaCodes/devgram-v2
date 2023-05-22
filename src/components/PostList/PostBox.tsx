@@ -206,58 +206,47 @@ export const PostBox = ({
               )}
             </Box>
           )}
-        </Box>
-      </Box>
-      <>
-        <img src={image?.split('=')[0]} style={{ maxHeight: 100 }} />
-        <p data-cy="post-content">{content}</p>
-        {imageId ? (
-          <img
-            src={`${process.env.NEXT_PUBLIC_CLOUDINARY_DELIVERY_URL}/${imageId}`}
-          />
-        ) : (
-          !!gifUrl && <img src={gifUrl} />
-        )}
-        {getUser.data?._id?.toString() === userId ? (
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<DeleteIcon />}
-            type="button"
-            onClick={() => {
-              deletePostMutation.mutate(_id);
-            }}
-          >
-            Delete Post
-          </Button>
-        ) : null}
-        <Typography>Like Count: {likeCount}</Typography>
-        {hasLiked ? (
-          <>
-            <Typography variant="subtitle1">You liked this</Typography>
+          {getUser.data?._id?.toString() === userId ? (
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
+              type="button"
+              onClick={() => {
+                deletePostMutation.mutate(_id);
+              }}
+            >
+              Delete Post
+            </Button>
+          ) : null}
+          <Typography>Like Count: {likeCount}</Typography>
+          {hasLiked ? (
+            <>
+              <Typography variant="subtitle1">You liked this</Typography>
+              <Button
+                type="button"
+                color="error"
+                onClick={() => unlikeMutation.mutate(_id)}
+                disabled={unlikeMutation.isLoading}
+              >
+                Unlike This Post
+              </Button>
+            </>
+          ) : (
             <Button
               type="button"
-              color="error"
-              onClick={() => unlikeMutation.mutate(_id)}
-              disabled={unlikeMutation.isLoading}
+              onClick={() => likeMutation.mutate(_id)}
+              disabled={likeMutation.isLoading}
             >
-              Unlike This Post
+              Like This Post
             </Button>
-          </>
-        ) : (
-          <Button
-            type="button"
-            onClick={() => likeMutation.mutate(_id)}
-            disabled={likeMutation.isLoading}
-          >
-            Like This Post
-          </Button>
-        )}
-        <AddComment postId={_id} />
-        <Typography>Comment count: {commentCount}</Typography>
-        {/* <CommentList postId={_id} /> */}
-        <CommentList postId={_id} />
-      </>
+          )}
+          <AddComment postId={_id} />
+          <Typography>Comment count: {commentCount}</Typography>
+          <CommentList postId={_id} />
+        </Box>
+      </Box>
+      <></>
     </>
   );
 };
