@@ -43,18 +43,20 @@ interface PostBoxProps {
   gifUrl?: string;
   createdAt: Date;
 
-  lastComment?: {
+  lastComment?: Comment | null;
+}
+
+export interface Comment {
+  _id: ObjectId;
+  userId: {
     _id: ObjectId;
-    userId: {
-      _id: ObjectId;
-      image?: string;
-      name: string;
-    };
-    postId: ObjectId;
-    content: string;
-    createdAt: Date;
-    updatedAt: Date;
-  } | null;
+    image?: string;
+    name: string;
+  };
+  postId: ObjectId;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const PostBox = ({
@@ -77,6 +79,10 @@ export const PostBox = ({
     undefined,
   );
 
+  const [additionalComments, setAdditionalComments] = useState<Comment[]>([]);
+
+  const [displayAdditionalComments, setDisplayAdditionalComments] =
+    useState(false);
   useEffect(() => {
     setTimeAgoString(timeAgo.format(createdAt, 'twitter'));
   }, [createdAt]);
@@ -178,6 +184,16 @@ export const PostBox = ({
       }
     },
   });
+
+  const onAddingNewComment = (comment: Comment): void => {
+    setAdditionalComments((s) => {
+      if (lastComment && !displayAdditionalComments) {
+        return [comment, lastComment, ...s];
+      }
+      return [comment, ...s];
+    });
+    setDisplayAdditionalComments(true);
+  };
 
   return (
     <>
@@ -300,7 +316,7 @@ export const PostBox = ({
             />
           </Box>
 
-          <AddComment postId={_id} />
+          <AddComment onAddingNewComment={onAddingNewComment} postId={_id} />
           {/* <Typography>Comment count: {commentCount}</Typography> */}
           {/* <CommentList postId={_id} /> */}
 
@@ -340,7 +356,7 @@ export const PostBox = ({
             </Button>
           )}
         </Box>
-        {!!lastComment && (
+        {!!(lastComment && additionalComments.length === 0) && (
           <>
             <CommentBox
               userId={{
@@ -355,21 +371,40 @@ export const PostBox = ({
               // createdAt: Date;
               // updatedAt: Date;
             />
-            <Typography
-              mt={1}
-              mb={-1}
-              fontWeight={500}
-              color={theme.palette.grey.A700}
-              sx={{
-                cursor: 'pointer',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              View more comments
-            </Typography>
           </>
+        )}
+        {additionalComments.map((comment) => (
+          <CommentBox
+            key={comment._id.toString()}
+            userId={{
+              _id: comment.userId._id.toString(),
+              image: comment.userId.image,
+              name: comment.userId.name,
+            }}
+            postId={comment.postId.toString()}
+            content={comment.content}
+            createdAt={comment.createdAt}
+            postUserId={userId}
+            // createdAt: Date;
+            // updatedAt: Date;
+          />
+        ))}
+
+        {!!lastComment && (
+          <Typography
+            mt={1}
+            mb={-1}
+            fontWeight={500}
+            color={theme.palette.grey.A700}
+            sx={{
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            View more comments
+          </Typography>
         )}
       </Box>
     </>
