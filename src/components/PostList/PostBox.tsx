@@ -13,6 +13,7 @@ import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import CommentBox from './CommentBox';
 import { ObjectId } from 'mongodb';
 import { AddComment } from './AddComment';
+import { useEffect, useState } from 'react';
 
 interface PostBoxProps {
   /**
@@ -72,6 +73,13 @@ export const PostBox = ({
 }: PostBoxProps) => {
   const utils = trpc.useContext();
   const theme = useTheme();
+  const [timeAgoString, setTimeAgoString] = useState<string | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    setTimeAgoString(timeAgo.format(createdAt, 'twitter'));
+  }, [createdAt]);
 
   const likeMutation = trpc.post.likePost.useMutation({
     onSuccess(data, variables, context) {
@@ -214,9 +222,11 @@ export const PostBox = ({
                   opacity: 0.4,
                 }}
               />
-              <Typography component="span" variant="body2">
-                {timeAgo.format(createdAt, 'twitter')}
-              </Typography>
+              {!!timeAgoString && (
+                <Typography component="span" variant="body2">
+                  {timeAgoString}
+                </Typography>
+              )}
             </Box>
             <IconButton
               disableFocusRipple
