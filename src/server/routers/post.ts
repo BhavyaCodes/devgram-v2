@@ -44,6 +44,18 @@ interface PostsAggregationResult {
   likeCount: number;
   commentCount: number;
   hasLiked?: boolean | null;
+  lastComment: {
+    _id: ObjectId;
+    userId: {
+      _id: ObjectId;
+      image: string;
+      name: string;
+    };
+    postId: ObjectId;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 }
 
 export const postRouter = router({
@@ -136,6 +148,20 @@ export const postRouter = router({
             likeCount: z.number(),
             commentCount: z.number(),
             hasLiked: z.boolean().nullish(),
+            lastComment: z
+              .object({
+                _id: z.instanceof(ObjectId),
+                postId: z.instanceof(ObjectId),
+                content: z.string(),
+                createdAt: z.date(),
+                updatedAt: z.date(),
+                userId: z.object({
+                  _id: z.instanceof(ObjectId),
+                  image: z.string().optional(),
+                  name: z.string(),
+                }),
+              })
+              .nullish(),
           }),
         ),
         nextCursor: z
@@ -289,6 +315,54 @@ export const postRouter = router({
                   else: undefined,
                 },
               },
+            },
+          },
+          {
+            $lookup: {
+              from: 'comments',
+              localField: '_id',
+              pipeline: [
+                {
+                  $sort: {
+                    createdAt: -1,
+                  },
+                },
+                {
+                  $limit: 1,
+                },
+                {
+                  $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    pipeline: [
+                      {
+                        $project: {
+                          _id: 1,
+                          name: 1,
+                          image: 1,
+                        },
+                      },
+                    ],
+                    foreignField: '_id',
+                    as: 'userId',
+                  },
+                },
+              ],
+              foreignField: 'postId',
+              as: 'lastComment',
+            },
+          },
+          {
+            $unwind: {
+              path: '$lastComment',
+
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $unwind: {
+              path: '$lastComment.userId',
+              preserveNullAndEmptyArrays: true,
             },
           },
         );
