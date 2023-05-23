@@ -47,6 +47,7 @@ const PostsList = () => {
             imageId={post.imageId}
             gifUrl={post.gifUrl}
             createdAt={post.createdAt}
+            lastComment={post.lastComment}
           />
         ))}
       </div>

@@ -32,23 +32,23 @@ interface PostsAggregationResult {
   _id: ObjectId;
   userId: {
     _id: ObjectId;
-    image: string;
+    image?: string;
     name: string;
   };
   content: string;
   imageId?: string;
-  gifUrl?: string;
   createdAt: Date;
+  gifUrl?: string;
   updatedAt: Date;
   __v: number;
   likeCount: number;
   commentCount: number;
   hasLiked?: boolean | null;
-  lastComment: {
+  lastComment?: {
     _id: ObjectId;
     userId: {
       _id: ObjectId;
-      image: string;
+      image?: string;
       name: string;
     };
     postId: ObjectId;

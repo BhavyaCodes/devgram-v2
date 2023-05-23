@@ -1,8 +1,6 @@
 import { Box, Button, IconButton, Typography, useTheme } from '@mui/material';
 import { trpc } from '~/utils/trpc';
-import { AddComment } from './AddComment';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { CommentList } from './CommentList';
 import { timeAgo } from '~/utils/timeAgo';
 import { ActionButton } from './ActionButton';
 
@@ -12,6 +10,8 @@ import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
+import CommentBox from './CommentBox';
+import { ObjectId } from 'mongodb';
 
 interface PostBoxProps {
   /**
@@ -40,6 +40,19 @@ interface PostBoxProps {
   imageId?: string;
   gifUrl?: string;
   createdAt: Date;
+
+  lastComment?: {
+    _id: ObjectId;
+    userId: {
+      _id: ObjectId;
+      image?: string;
+      name: string;
+    };
+    postId: ObjectId;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
+  } | null;
 }
 
 export const PostBox = ({
@@ -54,6 +67,7 @@ export const PostBox = ({
   imageId,
   gifUrl,
   createdAt,
+  lastComment,
 }: PostBoxProps) => {
   const utils = trpc.useContext();
   const theme = useTheme();
@@ -165,6 +179,7 @@ export const PostBox = ({
         }}
         display="flex"
         p={2}
+        flexWrap="wrap"
       >
         <Box
           flexShrink={0}
@@ -271,6 +286,11 @@ export const PostBox = ({
               iconInverted
             />
           </Box>
+
+          {/* <AddComment postId={_id} /> */}
+          {/* <Typography>Comment count: {commentCount}</Typography> */}
+          {/* <CommentList postId={_id} /> */}
+
           {getUser.data?._id?.toString() === userId ? (
             <Button
               variant="contained"
@@ -306,12 +326,22 @@ export const PostBox = ({
               Like This Post
             </Button>
           )}
-          <AddComment postId={_id} />
-          <Typography>Comment count: {commentCount}</Typography>
-          <CommentList postId={_id} />
         </Box>
+        {!!lastComment && (
+          <CommentBox
+            userId={{
+              _id: lastComment.userId._id.toString(),
+              image: lastComment.userId.image,
+              name: lastComment.userId.name,
+            }}
+            postId={lastComment.postId.toString()}
+            content={lastComment.content}
+            createdAt={lastComment.createdAt}
+            // createdAt: Date;
+            // updatedAt: Date;
+          />
+        )}
       </Box>
-      <></>
     </>
   );
 };
