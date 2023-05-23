@@ -328,18 +328,34 @@ export const PostBox = ({
           )}
         </Box>
         {!!lastComment && (
-          <CommentBox
-            userId={{
-              _id: lastComment.userId._id.toString(),
-              image: lastComment.userId.image,
-              name: lastComment.userId.name,
-            }}
-            postId={lastComment.postId.toString()}
-            content={lastComment.content}
-            createdAt={lastComment.createdAt}
-            // createdAt: Date;
-            // updatedAt: Date;
-          />
+          <>
+            <CommentBox
+              userId={{
+                _id: lastComment.userId._id.toString(),
+                image: lastComment.userId.image,
+                name: lastComment.userId.name,
+              }}
+              postId={lastComment.postId.toString()}
+              content={lastComment.content}
+              createdAt={lastComment.createdAt}
+              // createdAt: Date;
+              // updatedAt: Date;
+            />
+            <Typography
+              mt={1}
+              mb={-1}
+              fontWeight={500}
+              color={theme.palette.grey.A700}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              View more comments
+            </Typography>
+          </>
         )}
       </Box>
     </>
