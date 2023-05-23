@@ -58,9 +58,9 @@ const IndexPage: NextPageWithLayout = () => {
 
   return (
     <>
-      <Typography variant="h2" component="h1">
+      {/* <Typography variant="h2" component="h1">
         Devgram
-      </Typography>
+      </Typography> */}
       {getUser.data ? (
         <h3 data-test="welcome-text">Welcome {getUser.data.name}</h3>
       ) : (

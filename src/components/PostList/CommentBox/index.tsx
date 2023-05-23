@@ -1,8 +1,11 @@
 import { Box, IconButton, Paper, Typography, useTheme } from '@mui/material';
 import { timeAgo } from '~/utils/timeAgo';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import { trpc } from '~/utils/trpc';
+import { useEffect, useState } from 'react';
 
 interface CommentBoxProps {
+  postUserId: string;
   userId: {
     _id: string;
     image?: string;
@@ -13,8 +16,26 @@ interface CommentBoxProps {
   createdAt: Date;
 }
 
-const CommentBox = ({ content, userId, createdAt }: CommentBoxProps) => {
+const CommentBox = ({
+  content,
+  userId,
+  createdAt,
+  postUserId,
+}: CommentBoxProps) => {
   const theme = useTheme();
+  const [timeAgoString, setTimeAgoString] = useState<string | undefined>(
+    undefined,
+  );
+  const userQuery = trpc.user.getUser.useQuery();
+
+  useEffect(() => {
+    setTimeAgoString(timeAgo.format(createdAt, 'twitter'));
+  }, [createdAt]);
+
+  const isDeletable =
+    userQuery.data?._id.toString() === userId._id ||
+    userQuery.data?._id.toString() === postUserId;
+
   return (
     <Paper
       sx={{
@@ -59,25 +80,30 @@ const CommentBox = ({ content, userId, createdAt }: CommentBoxProps) => {
                 opacity: 0.4,
               }}
             />
-            <Typography component="span" variant="body2">
-              {timeAgo.format(createdAt, 'twitter')}
-            </Typography>
+
+            {!!timeAgoString && (
+              <Typography component="span" variant="body2">
+                {timeAgoString}
+              </Typography>
+            )}
           </Box>
-          <IconButton
-            disableFocusRipple
-            disableTouchRipple
-            size="small"
-            sx={{
-              '&:hover': {
-                bgcolor: 'transparent',
-                '& svg': {
-                  fill: '#fff',
+          {isDeletable && (
+            <IconButton
+              disableFocusRipple
+              disableTouchRipple
+              size="small"
+              sx={{
+                '&:hover': {
+                  bgcolor: 'transparent',
+                  '& svg': {
+                    fill: '#fff',
+                  },
                 },
-              },
-            }}
-          >
-            <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
-          </IconButton>
+              }}
+            >
+              <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
+            </IconButton>
+          )}
         </Box>
         <Typography variant="body1">{content}</Typography>
       </Box>

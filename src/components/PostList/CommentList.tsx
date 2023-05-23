@@ -31,7 +31,6 @@ export const CommentList = ({ postId }: CommentListInfiniteProps) => {
             pageParams: [],
           };
         }
-
         const newPages = oldData.pages.map((page) => {
           const newPosts = page.posts.map((post) => {
             if (post._id.toString() === variables.postId) {
@@ -49,7 +48,6 @@ export const CommentList = ({ postId }: CommentListInfiniteProps) => {
           pages: newPages,
         };
       });
-
       utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
         { postId: variables.postId },
         (oldData) => {
@@ -59,7 +57,6 @@ export const CommentList = ({ postId }: CommentListInfiniteProps) => {
               pageParams: [],
             };
           }
-
           const newPages = oldData.pages.map((page) => {
             const newComments = page.comments.filter(
               (comment) => comment._id.toString() !== variables.commentId,

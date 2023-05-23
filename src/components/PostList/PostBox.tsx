@@ -12,6 +12,7 @@ import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import CommentBox from './CommentBox';
 import { ObjectId } from 'mongodb';
+import { AddComment } from './AddComment';
 
 interface PostBoxProps {
   /**
@@ -289,7 +290,7 @@ export const PostBox = ({
             />
           </Box>
 
-          {/* <AddComment postId={_id} /> */}
+          <AddComment postId={_id} />
           {/* <Typography>Comment count: {commentCount}</Typography> */}
           {/* <CommentList postId={_id} /> */}
 
@@ -340,6 +341,7 @@ export const PostBox = ({
               postId={lastComment.postId.toString()}
               content={lastComment.content}
               createdAt={lastComment.createdAt}
+              postUserId={userId}
               // createdAt: Date;
               // updatedAt: Date;
             />
