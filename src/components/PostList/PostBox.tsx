@@ -232,7 +232,9 @@ export const PostBox = ({
               <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
             </IconButton>
           </Box>
-          <Typography variant="body1">{content}</Typography>
+          <Typography variant="body1" sx={{ overflowWrap: 'anywhere' }}>
+            {content}
+          </Typography>
           {(imageId || gifUrl) && (
             <Box
               mt={1}
