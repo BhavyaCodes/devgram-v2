@@ -79,10 +79,8 @@ export const PostBox = ({
     undefined,
   );
 
-  const [additionalComments, setAdditionalComments] = useState<Comment[]>([]);
+  const [viewMoreCommentsClicked, setViewMoreCommentsClicked] = useState(false);
 
-  const [displayAdditionalComments, setDisplayAdditionalComments] =
-    useState(false);
   useEffect(() => {
     setTimeAgoString(timeAgo.format(createdAt, 'twitter'));
   }, [createdAt]);
@@ -185,15 +183,94 @@ export const PostBox = ({
     },
   });
 
-  const onAddingNewComment = (comment: Comment): void => {
-    setAdditionalComments((s) => {
-      if (lastComment && !displayAdditionalComments) {
-        return [comment, lastComment, ...s];
-      }
-      return [comment, ...s];
-    });
-    setDisplayAdditionalComments(true);
-  };
+  const {
+    error,
+    data,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = trpc.post.comment.getCommentsByPostIdPaginated.useInfiniteQuery(
+    { postId: _id, limit: 5 },
+    {
+      getNextPageParam: (lastPage) => lastPage?.nextCursor || null,
+      enabled: viewMoreCommentsClicked,
+    },
+  );
+  const deleteCommentMutation = trpc.post.comment.deleteComment.useMutation({
+    onSuccess(data, variables, context) {
+      utils.post.getAll.setInfiniteData({}, (oldData) => {
+        if (!oldData) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+        const newPages = oldData.pages.map((page) => {
+          const newPosts = page.posts.map((post) => {
+            if (post._id.toString() === variables.postId) {
+              return {
+                ...post,
+                commentCount: post.commentCount - 1,
+              };
+            }
+            return post;
+          });
+          return { posts: newPosts, nextCursor: page.nextCursor };
+        });
+        return {
+          pageParams: oldData.pageParams,
+          pages: newPages,
+        };
+      });
+      utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
+        { postId: variables.postId },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+          const newPages = oldData.pages.map((page) => {
+            const newComments = page.comments.filter(
+              (comment) => comment._id.toString() !== variables.commentId,
+            );
+            return { comments: newComments, nextCursor: page.nextCursor };
+          });
+          return {
+            pageParams: oldData.pageParams,
+            pages: newPages,
+          };
+        },
+      );
+    },
+  });
+
+  useEffect(() => {
+    if (lastComment?._id) {
+      utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
+        { postId: _id, limit: 5 },
+        (oldData) => {
+          const newPage = {
+            comments: [lastComment],
+            nextCursor: {
+              createdAt: lastComment.createdAt,
+              _id: lastComment._id.toString(),
+              exclude: true,
+            },
+          };
+
+          const newPages = [newPage];
+
+          return { pages: newPages, pageParams: [null] };
+        },
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_id, lastComment?.content]);
+
+  const paginatedComments = data?.pages.flatMap((page) => page.comments);
 
   return (
     <>
@@ -316,7 +393,7 @@ export const PostBox = ({
             />
           </Box>
 
-          <AddComment onAddingNewComment={onAddingNewComment} postId={_id} />
+          <AddComment postId={_id} />
           {/* <Typography>Comment count: {commentCount}</Typography> */}
           {/* <CommentList postId={_id} /> */}
 
@@ -356,24 +433,8 @@ export const PostBox = ({
             </Button>
           )}
         </Box>
-        {!!(lastComment && additionalComments.length === 0) && (
-          <>
-            <CommentBox
-              userId={{
-                _id: lastComment.userId._id.toString(),
-                image: lastComment.userId.image,
-                name: lastComment.userId.name,
-              }}
-              postId={lastComment.postId.toString()}
-              content={lastComment.content}
-              createdAt={lastComment.createdAt}
-              postUserId={userId}
-              // createdAt: Date;
-              // updatedAt: Date;
-            />
-          </>
-        )}
-        {additionalComments.map((comment) => (
+
+        {paginatedComments?.map((comment) => (
           <CommentBox
             key={comment._id.toString()}
             userId={{
@@ -385,14 +446,15 @@ export const PostBox = ({
             content={comment.content}
             createdAt={comment.createdAt}
             postUserId={userId}
-            // createdAt: Date;
-            // updatedAt: Date;
           />
         ))}
 
-        {!!lastComment && (
+        {hasNextPage && (
           <Typography
-            mt={1}
+            onClick={() => {
+              fetchNextPage();
+              setViewMoreCommentsClicked(true);
+            }}
             mb={-1}
             fontWeight={500}
             color={theme.palette.grey.A700}

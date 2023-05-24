@@ -1,19 +1,16 @@
 import { Button, TextField } from '@mui/material';
 import { FormEventHandler, useRef } from 'react';
 import { trpc } from '~/utils/trpc';
-import { Comment } from './PostBox';
 
 interface AddCommentProps {
   postId: string;
-  onAddingNewComment: (data: Comment) => void;
 }
 
-export const AddComment = ({ postId, onAddingNewComment }: AddCommentProps) => {
+export const AddComment = ({ postId }: AddCommentProps) => {
   const commentInputRef = useRef<HTMLInputElement | null>(null);
   const utils = trpc.useContext();
   const addCommentMutation = trpc.post.comment.addComment.useMutation({
     onSuccess(data, variables) {
-      onAddingNewComment(data.comment);
       utils.post.getAll.setInfiniteData({}, (oldData) => {
         if (!oldData) {
           return {
@@ -42,17 +39,31 @@ export const AddComment = ({ postId, onAddingNewComment }: AddCommentProps) => {
       utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
         {
           postId: variables.postId,
+          limit: 5,
         },
         (oldData) => {
           if (!oldData) {
-            return {
-              pages: [],
-              pageParams: [],
+            const newPage = {
+              comments: [data.comment],
+              nextCursor: {
+                createdAt: data.comment.createdAt,
+                _id: data.comment._id.toString(),
+                exclude: true,
+              },
             };
+
+            const newPages = [newPage];
+
+            return { pages: newPages, pageParams: [null] };
           }
 
           const newPage = {
             comments: [data.comment],
+            nextCursor: {
+              createdAt: data.comment.createdAt,
+              _id: data.comment._id.toString(),
+              exclude: true,
+            },
           };
 
           const newPages = [newPage, ...oldData.pages];

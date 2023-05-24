@@ -93,9 +93,11 @@ export const commentRouter = router({
           .object({
             createdAt: z.date(),
             _id: z.string(),
+            exclude: z.boolean().optional(),
           })
           .nullish(),
         postId: z.string(),
+        limit: z.number().optional(),
       }),
     )
     .output(
@@ -123,19 +125,26 @@ export const commentRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const limit = 5;
+      const limit = input.limit || 5;
       const cursor = input.cursor;
       const createdAt = input.cursor?.createdAt;
       const _id = input?.cursor?._id;
+
+      const operator = input.cursor?.exclude ? '$lt' : '$lte';
 
       const query: FilterQuery<IComment> =
         createdAt && _id
           ? {
               $or: [
                 {
-                  createdAt: { $lte: createdAt },
+                  createdAt: { [operator]: createdAt },
+                  postId: input.postId,
                 },
-                { createdAt, _id: { $lte: new Types.ObjectId(_id) } },
+                {
+                  createdAt,
+                  _id: { [operator]: new Types.ObjectId(_id) },
+                  postId: input.postId,
+                },
               ],
             }
           : { postId: input.postId };
@@ -143,7 +152,7 @@ export const commentRouter = router({
       const comments = await Comment.find(query)
         .populate('userId', { _id: 1, image: 1, name: 1 })
         .sort({ createdAt: -1 })
-        .limit(limit + 1)
+        .limit(Math.min(limit, 50) + 1)
         .lean();
 
       let nextCursor: typeof cursor = undefined;
