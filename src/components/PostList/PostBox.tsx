@@ -193,7 +193,7 @@ export const PostBox = ({
   } = trpc.post.comment.getCommentsByPostIdPaginated.useInfiniteQuery(
     { postId: _id, limit: 5 },
     {
-      getNextPageParam: (lastPage) => lastPage?.nextCursor || null,
+      getNextPageParam: (lastPage) => null || lastPage?.nextCursor,
       enabled: viewMoreCommentsClicked,
     },
   );
@@ -248,6 +248,7 @@ export const PostBox = ({
   });
 
   useEffect(() => {
+    console.log('hiiiiiiiiiiiiiiiiiiiiiiiiii');
     if (lastComment?._id) {
       utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
         { postId: _id, limit: 5 },
