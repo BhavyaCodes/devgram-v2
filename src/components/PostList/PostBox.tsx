@@ -79,7 +79,7 @@ export const PostBox = ({
     undefined,
   );
 
-  const [viewMoreCommentsClicked, setViewMoreCommentsClicked] = useState(false);
+  const [viewMoreComments, setViewMoreComments] = useState(false);
 
   useEffect(() => {
     setTimeAgoString(timeAgo.format(createdAt, 'twitter'));
@@ -193,8 +193,9 @@ export const PostBox = ({
   } = trpc.post.comment.getCommentsByPostIdPaginated.useInfiniteQuery(
     { postId: _id, limit: 5 },
     {
-      getNextPageParam: (lastPage) => null || lastPage?.nextCursor,
-      enabled: viewMoreCommentsClicked,
+      getNextPageParam: (lastPage) => lastPage?.nextCursor,
+      refetchOnWindowFocus: false,
+      enabled: viewMoreComments,
     },
   );
   const deleteCommentMutation = trpc.post.comment.deleteComment.useMutation({
@@ -248,7 +249,6 @@ export const PostBox = ({
   });
 
   useEffect(() => {
-    console.log('hiiiiiiiiiiiiiiiiiiiiiiiiii');
     if (lastComment?._id) {
       utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
         { postId: _id, limit: 5 },
@@ -269,7 +269,7 @@ export const PostBox = ({
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_id, lastComment?.content]);
+  }, [_id]);
 
   const paginatedComments = data?.pages.flatMap((page) => page.comments);
 
@@ -456,7 +456,7 @@ export const PostBox = ({
             <Typography
               onClick={() => {
                 fetchNextPage();
-                setViewMoreCommentsClicked(true);
+                setViewMoreComments(true);
               }}
               mb={-1}
               fontWeight={500}
@@ -475,7 +475,7 @@ export const PostBox = ({
           <Typography
             onClick={() => {
               fetchNextPage();
-              setViewMoreCommentsClicked(true);
+              setViewMoreComments(true);
             }}
             mb={-1}
             fontWeight={500}

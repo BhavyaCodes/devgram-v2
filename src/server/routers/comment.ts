@@ -95,7 +95,7 @@ export const commentRouter = router({
             _id: z.string(),
             exclude: z.boolean().optional(),
           })
-          .nullish(),
+          .optional(),
         postId: z.string(),
         limit: z.number().optional(),
       }),
@@ -121,7 +121,7 @@ export const commentRouter = router({
             createdAt: z.date(),
             _id: z.string(),
           })
-          .nullish(),
+          .optional(),
       }),
     )
     .query(async ({ input }) => {
