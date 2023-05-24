@@ -1,4 +1,15 @@
-import { Box, Button, IconButton, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { trpc } from '~/utils/trpc';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { timeAgo } from '~/utils/timeAgo';
@@ -78,6 +89,10 @@ export const PostBox = ({
   const [timeAgoString, setTimeAgoString] = useState<string | undefined>(
     undefined,
   );
+  const [deleteCommentData, setDeleteCommentData] = useState<null | {
+    commentId: string;
+    commentContent: string;
+  }>(null);
 
   const [viewMoreComments, setViewMoreComments] = useState(false);
 
@@ -275,6 +290,27 @@ export const PostBox = ({
 
   return (
     <>
+      {/* Delete comment Modal */}
+      <Dialog
+        open={!!deleteCommentData}
+        onClose={() => setDeleteCommentData(null)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Are you sure you want to delete this comment?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {deleteCommentData?.commentContent}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="error" onClick={() => setDeleteCommentData(null)}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Box
         border="1px solid rgb(56, 68, 77)"
         sx={{
@@ -437,6 +473,7 @@ export const PostBox = ({
 
         {paginatedComments?.map((comment) => (
           <CommentBox
+            commentId={comment._id.toString()}
             key={comment._id.toString()}
             userId={{
               _id: comment.userId._id.toString(),
@@ -447,6 +484,7 @@ export const PostBox = ({
             content={comment.content}
             createdAt={comment.createdAt}
             postUserId={userId}
+            setDeleteCommentData={setDeleteCommentData}
           />
         ))}
 

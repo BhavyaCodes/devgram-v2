@@ -1,10 +1,21 @@
-import { Box, IconButton, Paper, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { timeAgo } from '~/utils/timeAgo';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import { trpc } from '~/utils/trpc';
-import { useEffect, useState } from 'react';
-
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 interface CommentBoxProps {
+  commentId: string;
   postUserId: string;
   userId: {
     _id: string;
@@ -14,14 +25,30 @@ interface CommentBoxProps {
   postId: string;
   content: string;
   createdAt: Date;
+  setDeleteCommentData: Dispatch<
+    SetStateAction<{
+      commentId: string;
+      commentContent: string;
+    } | null>
+  >;
 }
 
 const CommentBox = ({
+  commentId,
   content,
   userId,
   createdAt,
   postUserId,
+  setDeleteCommentData,
 }: CommentBoxProps) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
   const theme = useTheme();
   const [timeAgoString, setTimeAgoString] = useState<string | undefined>(
     undefined,
@@ -90,21 +117,46 @@ const CommentBox = ({
             )}
           </Box>
           {isDeletable && (
-            <IconButton
-              disableFocusRipple
-              disableTouchRipple
-              size="small"
-              sx={{
-                '&:hover': {
-                  bgcolor: 'transparent',
-                  '& svg': {
-                    fill: '#fff',
+            <>
+              <IconButton
+                disableFocusRipple
+                disableTouchRipple
+                onClick={handleMenuOpen}
+                size="small"
+                sx={{
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                    '& svg': {
+                      fill: '#fff',
+                    },
                   },
-                },
-              }}
-            >
-              <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
-            </IconButton>
+                }}
+              >
+                <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
+              </IconButton>
+              <Menu
+                open={menuOpen}
+                anchorEl={anchorEl}
+                onClose={handleMenuClose}
+              >
+                <MenuItem>
+                  <ListItemIcon>
+                    <DeleteOutlineRoundedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    onClick={() => {
+                      handleMenuClose();
+                      setDeleteCommentData({
+                        commentId,
+                        commentContent: content,
+                      });
+                    }}
+                  >
+                    Delete comment
+                  </ListItemText>
+                </MenuItem>
+              </Menu>
+            </>
           )}
         </Box>
         <Typography variant="body1">{content}</Typography>
