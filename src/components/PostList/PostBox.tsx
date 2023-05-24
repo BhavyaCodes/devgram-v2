@@ -194,7 +194,7 @@ export const PostBox = ({
     { postId: _id, limit: 5 },
     {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
-      refetchOnWindowFocus: false,
+      // refetchOnWindowFocus: false,
       enabled: viewMoreComments,
     },
   );
