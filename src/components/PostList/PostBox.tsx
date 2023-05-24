@@ -240,7 +240,7 @@ export const PostBox = ({
         };
       });
       utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
-        { postId: variables.postId },
+        { postId: variables.postId, limit: 5 },
         (oldData) => {
           if (!oldData) {
             return {
@@ -291,26 +291,37 @@ export const PostBox = ({
   return (
     <>
       {/* Delete comment Modal */}
-      <Dialog
-        open={!!deleteCommentData}
-        onClose={() => setDeleteCommentData(null)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          Are you sure you want to delete this comment?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {deleteCommentData?.commentContent}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button color="error" onClick={() => setDeleteCommentData(null)}>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {!!deleteCommentData && (
+        <Dialog
+          open={!!deleteCommentData}
+          onClose={() => setDeleteCommentData(null)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Are you sure you want to delete this comment?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {deleteCommentData?.commentContent}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="error"
+              onClick={() => {
+                deleteCommentMutation.mutate({
+                  commentId: deleteCommentData.commentId,
+                  postId: _id,
+                });
+                setDeleteCommentData(null);
+              }}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
       <Box
         border="1px solid rgb(56, 68, 77)"
         sx={{
