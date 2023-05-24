@@ -65,6 +65,7 @@ const CommentBox = ({
 
   return (
     <Paper
+      elevation={6}
       sx={{
         flexBasis: '100%',
         px: 2,

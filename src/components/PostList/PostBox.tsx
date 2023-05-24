@@ -458,8 +458,8 @@ export const PostBox = ({
               Delete Post
             </Button>
           ) : null}
-          <Typography>Like Count: {likeCount}</Typography>
-          {hasLiked ? (
+
+          {/* {hasLiked ? (
             <>
               <Typography variant="subtitle1">You liked this</Typography>
               <Button
@@ -479,7 +479,87 @@ export const PostBox = ({
             >
               Like This Post
             </Button>
-          )}
+          )} */}
+        </Box>
+        <Box
+          borderTop="1px solid rgb(56, 68, 77)"
+          borderBottom="1px solid rgb(56, 68, 77)"
+          sx={{ flexBasis: '100%', p: 1, display: 'flex', mb: 0.5 }}
+        >
+          <Box
+            flexGrow={1}
+            mr={1}
+            bgcolor="#1E1E1E"
+            borderRadius={1}
+            py={0.5}
+            sx={{
+              '&:hover': {
+                bgcolor: '#424242',
+              },
+              '&:active': {
+                bgcolor: '#1E1E1E',
+              },
+              cursor: 'pointer',
+              transition: (theme) =>
+                theme.transitions.create('background-color', {
+                  duration: '0.1s',
+                }),
+            }}
+            onClick={() => {
+              console.log('click');
+              console.log(hasLiked);
+              if (!hasLiked) {
+                likeMutation.mutate(_id);
+              } else {
+                unlikeMutation.mutate(_id);
+              }
+              // hasLiked ? likeMutation.mutate(_id) : unlikeMutation.mutate(_id);
+            }}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            fontSize={20}
+            flexShrink={0}
+          >
+            {hasLiked ? (
+              <FavoriteRoundedIcon
+                sx={{ fill: 'rgba(255, 23, 68, 1)' }}
+                fontSize="inherit"
+              />
+            ) : (
+              <FavoriteBorderRoundedIcon fontSize="inherit" />
+            )}
+            <Typography
+              color={hasLiked ? 'rgba(255, 23, 68, 1)' : undefined}
+              component="span"
+              fontSize={16}
+              flexShrink={0}
+              variant="subtitle2"
+              ml={1}
+            >
+              Like
+            </Typography>
+          </Box>
+          <Box
+            flexGrow={1}
+            mr={1}
+            textAlign="center"
+            bgcolor="#1E1E1E"
+            borderRadius={1}
+            py={0.5}
+            sx={{
+              '&:hover': {
+                bgcolor: '#424242',
+              },
+              cursor: 'pointer',
+              transition: (theme) =>
+                theme.transitions.create('background-color', {
+                  duration: '0.3s',
+                }),
+            }}
+          >
+            asdasd
+          </Box>
         </Box>
 
         {paginatedComments?.map((comment) => (
