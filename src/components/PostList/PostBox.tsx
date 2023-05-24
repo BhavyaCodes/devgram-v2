@@ -449,7 +449,28 @@ export const PostBox = ({
           />
         ))}
 
-        {hasNextPage && (
+        {paginatedComments &&
+          paginatedComments.length < commentCount &&
+          hasNextPage && (
+            <Typography
+              onClick={() => {
+                fetchNextPage();
+                setViewMoreCommentsClicked(true);
+              }}
+              mb={-1}
+              fontWeight={500}
+              color={theme.palette.grey.A700}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              View more comments
+            </Typography>
+          )}
+        {/* {hasNextPage && (
           <Typography
             onClick={() => {
               fetchNextPage();
@@ -467,7 +488,7 @@ export const PostBox = ({
           >
             View more comments
           </Typography>
-        )}
+        )} */}
       </Box>
     </>
   );
