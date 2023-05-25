@@ -64,21 +64,22 @@ const CommentBox = ({
     userQuery.data?._id.toString() === postUserId;
 
   return (
-    <Paper
-      elevation={6}
+    <Box
+      // elevation={6}
       sx={{
         flexBasis: '100%',
-        px: 2,
-        py: 1,
+        // px: 1,
+        // py: 1,
         mb: 1,
         // border: '1px solid rgb(56, 68, 77)',
-        borderRadius: 3,
+        // borderRadius: 3,
         display: 'flex',
       }}
     >
       <Box
         flexShrink={0}
-        flexBasis="8%"
+        flexBasis="6%"
+        alignSelf="flex-start"
         sx={{
           '& img': {
             width: '100%',
@@ -88,14 +89,17 @@ const CommentBox = ({
           [theme.breakpoints.down('md')]: {
             flexBasis: '20%',
           },
-          pr: 2,
+          pr: 1.5,
           display: 'flex',
           alignItems: 'center',
         }}
       >
         <img src={userId.image} alt={`${userId.name} avatar`} />
       </Box>
-      <Box flexGrow={1}>
+      <Paper
+        elevation={6}
+        sx={{ flexGrow: 1, pb: 1, pl: 2, pr: 1, borderRadius: 2 }}
+      >
         <Box display="flex" justifyContent="space-between">
           <Box display="flex" alignItems="center">
             <Typography variant="h6">{userId.name}</Typography>
@@ -161,8 +165,8 @@ const CommentBox = ({
           )}
         </Box>
         <Typography variant="body1">{content}</Typography>
-      </Box>
-    </Paper>
+      </Paper>
+    </Box>
   );
 };
 
