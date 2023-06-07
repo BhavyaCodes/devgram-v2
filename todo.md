@@ -2,7 +2,7 @@
 
 - [x] Add close modal button on gifpicker
 - [x] Delete Comment and likes when deleting post
-- [ ] Show comments only when clicking view comments
+- [x] Show comments only when clicking view comments
 - [ ] show who liked the post
 - [ ] show profile page
 - [ ] Error Handling

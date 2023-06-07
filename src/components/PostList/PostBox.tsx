@@ -24,7 +24,7 @@ import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import CommentBox from './CommentBox';
 import { ObjectId } from 'mongodb';
 import { AddComment } from './AddComment';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface PostBoxProps {
   /**
@@ -84,6 +84,7 @@ export const PostBox = ({
   createdAt,
   lastComment,
 }: PostBoxProps) => {
+  const commentInputRef = useRef<HTMLInputElement>(null);
   const utils = trpc.useContext();
   const theme = useTheme();
   const [timeAgoString, setTimeAgoString] = useState<string | undefined>(
@@ -445,9 +446,6 @@ export const PostBox = ({
             />
           </Box>
 
-          {/* <Typography>Comment count: {commentCount}</Typography> */}
-          {/* <CommentList postId={_id} /> */}
-
           {getUser.data?._id?.toString() === userId ? (
             <Button
               variant="contained"
@@ -509,14 +507,11 @@ export const PostBox = ({
                 }),
             }}
             onClick={() => {
-              console.log('click');
-              console.log(hasLiked);
               if (!hasLiked) {
                 likeMutation.mutate(_id);
               } else {
                 unlikeMutation.mutate(_id);
               }
-              // hasLiked ? likeMutation.mutate(_id) : unlikeMutation.mutate(_id);
             }}
             display="flex"
             alignItems="center"
@@ -549,6 +544,18 @@ export const PostBox = ({
             textAlign="center"
             bgcolor="#1E1E1E"
             borderRadius={1}
+            fontSize={20}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            onClick={() => {
+              commentInputRef.current?.focus();
+              commentInputRef.current?.scrollIntoView({
+                block: 'center',
+                inline: 'center',
+                behavior: 'smooth',
+              });
+            }}
             py={0.5}
             sx={{
               '&:hover': {
@@ -561,11 +568,21 @@ export const PostBox = ({
                 }),
             }}
           >
-            asdasd
+            <ChatBubbleOutlineRoundedIcon fontSize="inherit" />
+
+            <Typography
+              component="span"
+              fontSize={16}
+              flexShrink={0}
+              variant="subtitle2"
+              ml={1}
+            >
+              Comment
+            </Typography>
           </Box>
         </Box>
 
-        <AddComment postId={_id} />
+        <AddComment postId={_id} ref={commentInputRef} />
         {paginatedComments?.map((comment) => (
           <CommentBox
             commentId={comment._id.toString()}
