@@ -156,7 +156,7 @@ const CommentBox = ({
                   <ListItemIcon>
                     <DeleteOutlineRoundedIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText>Delete comment</ListItemText>
+                  <ListItemText>Delete</ListItemText>
                 </MenuItem>
               </Menu>
             </>

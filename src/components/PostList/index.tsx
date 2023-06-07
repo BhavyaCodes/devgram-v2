@@ -90,6 +90,14 @@ const PostsList = () => {
             </DialogContent>
             <DialogActions>
               <Button
+                color="info"
+                onClick={() => {
+                  setDeletePostData(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
                 color="error"
                 onClick={() => {
                   deletePostMutation.mutate(deletePostData.postId);

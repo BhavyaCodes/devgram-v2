@@ -329,6 +329,14 @@ export const PostBox = ({
           </DialogContent>
           <DialogActions>
             <Button
+              color="info"
+              onClick={() => {
+                setDeleteCommentData(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
               color="error"
               onClick={() => {
                 deleteCommentMutation.mutate({
@@ -407,16 +415,16 @@ export const PostBox = ({
             </IconButton>
             <Menu open={menuOpen} anchorEl={anchorEl} onClose={handleMenuClose}>
               {getUser.data?._id.toString() === userId ? (
-                <MenuItem>
-                  <ListItemIcon
-                    onClick={() => {
-                      handleMenuClose();
-                      setDeletePostData({
-                        postId: _id,
-                        postContent: content,
-                      });
-                    }}
-                  >
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    setDeletePostData({
+                      postId: _id,
+                      postContent: content,
+                    });
+                  }}
+                >
+                  <ListItemIcon>
                     <DeleteOutlineRoundedIcon fontSize="small" />
                   </ListItemIcon>
                   <ListItemText>Delete</ListItemText>
