@@ -164,7 +164,9 @@ const CommentBox = ({
             </>
           )}
         </Box>
-        <Typography variant="body1">{content}</Typography>
+        <Typography variant="body1" whiteSpace="pre-wrap">
+          {content.replace(/\n+/g, '\n')}
+        </Typography>
       </Paper>
     </Box>
   );

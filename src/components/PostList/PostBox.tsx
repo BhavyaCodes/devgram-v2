@@ -384,8 +384,12 @@ export const PostBox = ({
               <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
             </IconButton>
           </Box>
-          <Typography variant="body1" sx={{ overflowWrap: 'anywhere' }}>
-            {content}
+          <Typography
+            variant="body1"
+            sx={{ overflowWrap: 'anywhere' }}
+            whiteSpace="pre-wrap"
+          >
+            {content.replace(/\n+/g, '\n')}
           </Typography>
           {(imageId || gifUrl) && (
             <Box
@@ -441,7 +445,6 @@ export const PostBox = ({
             />
           </Box>
 
-          <AddComment postId={_id} />
           {/* <Typography>Comment count: {commentCount}</Typography> */}
           {/* <CommentList postId={_id} /> */}
 
@@ -562,6 +565,7 @@ export const PostBox = ({
           </Box>
         </Box>
 
+        <AddComment postId={_id} />
         {paginatedComments?.map((comment) => (
           <CommentBox
             commentId={comment._id.toString()}
