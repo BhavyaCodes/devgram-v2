@@ -485,7 +485,7 @@ export const PostBox = ({
         <Box
           borderTop="1px solid rgb(56, 68, 77)"
           borderBottom="1px solid rgb(56, 68, 77)"
-          sx={{ flexBasis: '100%', p: 1, display: 'flex', mb: 0.5 }}
+          sx={{ flexBasis: '100%', py: 1, display: 'flex', mb: 0.5 }}
         >
           <Box
             flexGrow={1}
@@ -540,7 +540,6 @@ export const PostBox = ({
           </Box>
           <Box
             flexGrow={1}
-            mr={1}
             textAlign="center"
             bgcolor="#1E1E1E"
             borderRadius={1}
