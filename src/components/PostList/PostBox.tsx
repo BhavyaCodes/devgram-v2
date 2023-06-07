@@ -408,21 +408,18 @@ export const PostBox = ({
             <Menu open={menuOpen} anchorEl={anchorEl} onClose={handleMenuClose}>
               {getUser.data?._id.toString() === userId ? (
                 <MenuItem>
-                  <ListItemIcon>
-                    <DeleteOutlineRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText
+                  <ListItemIcon
                     onClick={() => {
                       handleMenuClose();
                       setDeletePostData({
                         postId: _id,
-                        // commentContent: content,
                         postContent: content,
                       });
                     }}
                   >
-                    Delete
-                  </ListItemText>
+                    <DeleteOutlineRoundedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>Delete</ListItemText>
                 </MenuItem>
               ) : null}
             </Menu>

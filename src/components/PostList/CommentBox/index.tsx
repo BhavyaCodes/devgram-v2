@@ -144,21 +144,19 @@ const CommentBox = ({
                 anchorEl={anchorEl}
                 onClose={handleMenuClose}
               >
-                <MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    setDeleteCommentData({
+                      commentId,
+                      commentContent: content,
+                    });
+                  }}
+                >
                   <ListItemIcon>
                     <DeleteOutlineRoundedIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText
-                    onClick={() => {
-                      handleMenuClose();
-                      setDeleteCommentData({
-                        commentId,
-                        commentContent: content,
-                      });
-                    }}
-                  >
-                    Delete comment
-                  </ListItemText>
+                  <ListItemText>Delete comment</ListItemText>
                 </MenuItem>
               </Menu>
             </>
