@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] Post has been deleted message when deleting post
 - [x] Add close modal button on gifpicker
 - [x] Delete Comment and likes when deleting post
 - [x] Show comments only when clicking view comments
