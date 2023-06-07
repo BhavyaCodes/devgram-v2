@@ -7,11 +7,14 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Typography,
   useTheme,
 } from '@mui/material';
 import { trpc } from '~/utils/trpc';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { timeAgo } from '~/utils/timeAgo';
 import { ActionButton } from './ActionButton';
 
@@ -21,10 +24,11 @@ import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import CommentBox from './CommentBox';
 import { ObjectId } from 'mongodb';
 import { AddComment } from './AddComment';
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 
 interface PostBoxProps {
   /**
@@ -55,6 +59,13 @@ interface PostBoxProps {
   createdAt: Date;
 
   lastComment?: Comment | null;
+
+  setDeletePostData: Dispatch<
+    SetStateAction<{
+      postId: string;
+      postContent: string;
+    } | null>
+  >;
 }
 
 export interface Comment {
@@ -83,7 +94,16 @@ export const PostBox = ({
   gifUrl,
   createdAt,
   lastComment,
+  setDeletePostData,
 }: PostBoxProps) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
   const commentInputRef = useRef<HTMLInputElement>(null);
   const utils = trpc.useContext();
   const theme = useTheme();
@@ -373,6 +393,7 @@ export const PostBox = ({
             <IconButton
               disableFocusRipple
               disableTouchRipple
+              onClick={handleMenuOpen}
               sx={{
                 '&:hover': {
                   bgcolor: 'transparent',
@@ -384,6 +405,27 @@ export const PostBox = ({
             >
               <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
             </IconButton>
+            <Menu open={menuOpen} anchorEl={anchorEl} onClose={handleMenuClose}>
+              {getUser.data?._id.toString() === userId ? (
+                <MenuItem>
+                  <ListItemIcon>
+                    <DeleteOutlineRoundedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    onClick={() => {
+                      handleMenuClose();
+                      setDeletePostData({
+                        postId: _id,
+                        // commentContent: content,
+                        postContent: content,
+                      });
+                    }}
+                  >
+                    Delete
+                  </ListItemText>
+                </MenuItem>
+              ) : null}
+            </Menu>
           </Box>
           <Typography
             variant="body1"
@@ -445,42 +487,6 @@ export const PostBox = ({
               iconInverted
             />
           </Box>
-
-          {getUser.data?._id?.toString() === userId ? (
-            <Button
-              variant="contained"
-              color="error"
-              startIcon={<DeleteIcon />}
-              type="button"
-              onClick={() => {
-                deletePostMutation.mutate(_id);
-              }}
-            >
-              Delete Post
-            </Button>
-          ) : null}
-
-          {/* {hasLiked ? (
-            <>
-              <Typography variant="subtitle1">You liked this</Typography>
-              <Button
-                type="button"
-                color="error"
-                onClick={() => unlikeMutation.mutate(_id)}
-                disabled={unlikeMutation.isLoading}
-              >
-                Unlike This Post
-              </Button>
-            </>
-          ) : (
-            <Button
-              type="button"
-              onClick={() => likeMutation.mutate(_id)}
-              disabled={likeMutation.isLoading}
-            >
-              Like This Post
-            </Button>
-          )} */}
         </Box>
         <Box
           borderTop="1px solid rgb(56, 68, 77)"

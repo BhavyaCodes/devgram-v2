@@ -1,6 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { trpc } from '~/utils/trpc';
 import { PostBox } from './PostBox';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from '@mui/material';
 
 const PostsList = () => {
   const {
@@ -20,6 +28,38 @@ const PostsList = () => {
     },
   );
 
+  const utils = trpc.useContext();
+
+  const deletePostMutation = trpc.post.deletePost.useMutation({
+    onSuccess(data, variables, context) {
+      //variable -> postId
+      utils.post.getAll.setInfiniteData({}, (oldData) => {
+        if (!oldData) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        const newPages = oldData.pages.map((page) => {
+          const newPosts = page.posts.filter(
+            (post) => post._id.toString() !== variables,
+          );
+          return { posts: newPosts, nextCursor: page.nextCursor };
+        });
+        return {
+          pageParams: oldData.pageParams,
+          pages: newPages,
+        };
+      });
+    },
+  });
+
+  const [deletePostData, setDeletePostData] = useState<null | {
+    postId: string;
+    postContent: string;
+  }>(null);
+
   if (isLoading) {
     return <div>Loading....</div>;
   }
@@ -33,6 +73,34 @@ const PostsList = () => {
   return (
     <>
       <div>
+        {!!deletePostData && (
+          <Dialog
+            open={!!deletePostData}
+            onClose={() => setDeletePostData(null)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              Are you sure you want to delete this post?
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {deletePostData?.postContent}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                color="error"
+                onClick={() => {
+                  deletePostMutation.mutate(deletePostData.postId);
+                  setDeletePostData(null);
+                }}
+              >
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
         {posts.map((post) => (
           <PostBox
             key={post._id.toString()}
@@ -48,6 +116,7 @@ const PostsList = () => {
             gifUrl={post.gifUrl}
             createdAt={post.createdAt}
             lastComment={post.lastComment}
+            setDeletePostData={setDeletePostData}
           />
         ))}
       </div>
