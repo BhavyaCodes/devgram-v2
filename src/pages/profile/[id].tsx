@@ -1,11 +1,16 @@
+import { Box } from '@mui/material';
 import { useRouter } from 'next/router';
 import React from 'react';
+import PostsList from '~/components/PostList';
 
 const ProfilePage = () => {
   const router = useRouter();
-  console.log(router);
   const profileId = router.query.id as string;
-  return <div>{profileId}</div>;
+  return (
+    <Box>
+      <PostsList profileId={profileId} />
+    </Box>
+  );
 };
 
 export default ProfilePage;

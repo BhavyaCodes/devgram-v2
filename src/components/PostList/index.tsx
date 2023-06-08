@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { trpc } from '~/utils/trpc';
 import { PostBox } from './PostBox';
 import {
@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@mui/material';
 
-const PostsList = () => {
+const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
   const {
     // status,
     error,
@@ -20,7 +20,9 @@ const PostsList = () => {
     hasNextPage,
     fetchNextPage,
   } = trpc.post.getAll.useInfiniteQuery(
-    {},
+    {
+      ...(profileId ? { profileId } : {}),
+    },
     {
       getNextPageParam: (lastPage) => {
         return lastPage.nextCursor;
