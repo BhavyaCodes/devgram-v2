@@ -122,6 +122,7 @@ export const postRouter = router({
   getAll: currentSessionProcedure
     .input(
       z.object({
+        profileId: z.string().optional(),
         cursor: z
           .object({
             createdAt: z.date(),
@@ -173,6 +174,7 @@ export const postRouter = router({
       }),
     )
     .query(async ({ input, ctx }) => {
+      const profileId = input.profileId;
       const userId = ctx.session?.userId;
       const limit = 5;
       const cursor = input.cursor;
@@ -187,8 +189,11 @@ export const postRouter = router({
                 },
                 { createdAt, _id: { $lte: new Types.ObjectId(_id) } },
               ],
+              ...(profileId ? { userId: new Types.ObjectId(profileId) } : {}),
             }
-          : {};
+          : {
+              ...(profileId ? { userId: new Types.ObjectId(profileId) } : {}),
+            };
 
       const pipeLine: PipelineStage[] = [
         {
