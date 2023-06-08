@@ -7,6 +7,7 @@ import { authOnlyProcedure, currentSessionProcedure } from '../middleware';
 import Session from '../models/Session';
 import User from '../models/User';
 import isMongoId from 'validator/lib/isMongoId';
+import { Types } from 'mongoose';
 export const userRouter = router({
   getUser: authOnlyProcedure
     .output(
@@ -36,6 +37,7 @@ export const userRouter = router({
         image: z.string().url().optional(),
         createdAt: z.date(),
         name: z.string(),
+        postCount: z.number(),
       }),
     )
     .query(async ({ input }) => {
@@ -45,12 +47,47 @@ export const userRouter = router({
           message: 'invalid profile id',
         });
       }
-      const userProfile = await User.findById(input.profileId, {
-        _id: 1,
-        image: 1,
-        createdAt: 1,
-        name: 1,
-      }).lean();
+      const aggregationResult = await User.aggregate([
+        {
+          $match: {
+            _id: new Types.ObjectId(input.profileId),
+          },
+        },
+        {
+          $lookup: {
+            from: 'posts',
+            localField: '_id',
+            pipeline: [
+              {
+                $group: {
+                  _id: '$userId',
+                  postCount: {
+                    $sum: 1,
+                  },
+                },
+              },
+            ],
+            foreignField: 'userId',
+            as: 'posts',
+          },
+        },
+        {
+          $unwind: {
+            path: '$posts',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            postCount: '$posts.postCount',
+          },
+        },
+        {
+          $unset: ['email', 'posts'],
+        },
+      ]);
+
+      const userProfile = aggregationResult[0];
 
       if (!userProfile) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'user not found' });
