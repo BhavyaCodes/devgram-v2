@@ -95,13 +95,15 @@ const NewPost: FC = () => {
             pageParams: [],
           };
         }
-
         const newPage = {
           posts: [data.post],
+          nextCursor: {
+            createdAt: data.post.createdAt,
+            _id: data.post._id.toString(),
+            exclude: true,
+          },
         };
-
         const newPages = [newPage, ...oldData.pages];
-
         return { pages: newPages, pageParams: oldData.pageParams };
       });
 

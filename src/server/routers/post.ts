@@ -122,12 +122,14 @@ export const postRouter = router({
   getAll: currentSessionProcedure
     .input(
       z.object({
+        profileId: z.string().optional(),
         cursor: z
           .object({
             createdAt: z.date(),
             _id: z.string(),
+            exclude: z.boolean().optional(),
           })
-          .nullish(),
+          .optional(),
       }),
     )
     .output(
@@ -173,22 +175,28 @@ export const postRouter = router({
       }),
     )
     .query(async ({ input, ctx }) => {
+      const profileId = input.profileId;
       const userId = ctx.session?.userId;
       const limit = 5;
       const cursor = input.cursor;
       const createdAt = input.cursor?.createdAt;
       const _id = input?.cursor?._id;
+      const operator = input.cursor?.exclude ? '$lt' : '$lte';
+
       const query: FilterQuery<IPost> =
         createdAt && _id
           ? {
               $or: [
                 {
-                  createdAt: { $lte: createdAt },
+                  createdAt: { [operator]: createdAt },
                 },
-                { createdAt, _id: { $lte: new Types.ObjectId(_id) } },
+                { createdAt, _id: { [operator]: new Types.ObjectId(_id) } },
               ],
+              ...(profileId ? { userId: new Types.ObjectId(profileId) } : {}),
             }
-          : {};
+          : {
+              ...(profileId ? { userId: new Types.ObjectId(profileId) } : {}),
+            };
 
       const pipeLine: PipelineStage[] = [
         {
@@ -285,6 +293,54 @@ export const postRouter = router({
             preserveNullAndEmptyArrays: false,
           },
         },
+        {
+          $lookup: {
+            from: 'comments',
+            localField: '_id',
+            pipeline: [
+              {
+                $sort: {
+                  createdAt: -1,
+                },
+              },
+              {
+                $limit: 1,
+              },
+              {
+                $lookup: {
+                  from: 'users',
+                  localField: 'userId',
+                  pipeline: [
+                    {
+                      $project: {
+                        _id: 1,
+                        name: 1,
+                        image: 1,
+                      },
+                    },
+                  ],
+                  foreignField: '_id',
+                  as: 'userId',
+                },
+              },
+            ],
+            foreignField: 'postId',
+            as: 'lastComment',
+          },
+        },
+        {
+          $unwind: {
+            path: '$lastComment',
+
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $unwind: {
+            path: '$lastComment.userId',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
       ];
 
       if (userId) {
@@ -315,54 +371,6 @@ export const postRouter = router({
                   else: undefined,
                 },
               },
-            },
-          },
-          {
-            $lookup: {
-              from: 'comments',
-              localField: '_id',
-              pipeline: [
-                {
-                  $sort: {
-                    createdAt: -1,
-                  },
-                },
-                {
-                  $limit: 1,
-                },
-                {
-                  $lookup: {
-                    from: 'users',
-                    localField: 'userId',
-                    pipeline: [
-                      {
-                        $project: {
-                          _id: 1,
-                          name: 1,
-                          image: 1,
-                        },
-                      },
-                    ],
-                    foreignField: '_id',
-                    as: 'userId',
-                  },
-                },
-              ],
-              foreignField: 'postId',
-              as: 'lastComment',
-            },
-          },
-          {
-            $unwind: {
-              path: '$lastComment',
-
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          {
-            $unwind: {
-              path: '$lastComment.userId',
-              preserveNullAndEmptyArrays: true,
             },
           },
         );
