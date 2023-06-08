@@ -127,8 +127,9 @@ export const postRouter = router({
           .object({
             createdAt: z.date(),
             _id: z.string(),
+            exclude: z.boolean().optional(),
           })
-          .nullish(),
+          .optional(),
       }),
     )
     .output(
@@ -180,14 +181,16 @@ export const postRouter = router({
       const cursor = input.cursor;
       const createdAt = input.cursor?.createdAt;
       const _id = input?.cursor?._id;
+      const operator = input.cursor?.exclude ? '$lt' : '$lte';
+
       const query: FilterQuery<IPost> =
         createdAt && _id
           ? {
               $or: [
                 {
-                  createdAt: { $lte: createdAt },
+                  createdAt: { [operator]: createdAt },
                 },
-                { createdAt, _id: { $lte: new Types.ObjectId(_id) } },
+                { createdAt, _id: { [operator]: new Types.ObjectId(_id) } },
               ],
               ...(profileId ? { userId: new Types.ObjectId(profileId) } : {}),
             }
