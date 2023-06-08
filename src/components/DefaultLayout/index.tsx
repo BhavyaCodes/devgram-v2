@@ -5,7 +5,7 @@ import { ReactNode, useEffect } from 'react';
 import logoBlack from '~/assets/logo-black.svg';
 import logoTextBlack from '~/assets/logo-text-dark.svg';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
-import Link from 'next/link';
+import Link from '../common/Link';
 
 const DynamicScrollToTop = dynamic(() => import('./ScrollToTop'), {
   ssr: false,

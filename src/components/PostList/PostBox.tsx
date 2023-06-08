@@ -29,6 +29,7 @@ import CommentBox from './CommentBox';
 import { ObjectId } from 'mongodb';
 import { AddComment } from './AddComment';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import Link from '../common/Link';
 
 interface PostBoxProps {
   /**
@@ -380,7 +381,9 @@ export const PostBox = ({
         <Box flexGrow={1}>
           <Box display="flex" justifyContent="space-between">
             <Box display="flex" alignItems="center">
-              <Typography variant="h6">{name}</Typography>
+              <Link sx={{ textDecoration: 'none' }} href={`/profile/${userId}`}>
+                <Typography variant="h6">{name}</Typography>
+              </Link>
               <Box
                 ml={1}
                 mr={0.5}
