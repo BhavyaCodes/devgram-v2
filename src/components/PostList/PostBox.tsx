@@ -302,13 +302,8 @@ export const PostBox = ({
 
   const paginatedComments = data?.pages.flatMap((page) => page.comments);
 
-  if (postDeleted) {
-    return <Box>Post Deleted</Box>;
-  }
-
   return (
     <>
-      {/* Delete comment Modal */}
       {!!deleteCommentData && (
         <Dialog
           open={!!deleteCommentData}
@@ -357,283 +352,305 @@ export const PostBox = ({
         p={2}
         flexWrap="wrap"
       >
-        <Box
-          flexShrink={0}
-          flexBasis="8%"
-          sx={{
-            '& img': {
-              width: '100%',
-              maxWidth: '100%',
-              borderRadius: 200,
-            },
-            [theme.breakpoints.down('md')]: {
-              flexBasis: '20%',
-            },
-            pr: 2,
-          }}
-        >
-          <img src={image} alt={`${name} avatar`} />
-        </Box>
-        <Box flexGrow={1}>
-          <Box display="flex" justifyContent="space-between">
-            <Box display="flex" alignItems="center">
-              <Link sx={{ textDecoration: 'none' }} href={`/profile/${userId}`}>
-                <Typography variant="h6">{name}</Typography>
-              </Link>
-              <Box
-                ml={1}
-                mr={0.5}
-                width={2}
-                height={2}
-                borderRadius={100}
-                sx={{
-                  bgcolor: (theme) => theme.palette.text.primary,
-                  opacity: 0.4,
-                }}
-              />
-              {!!timeAgoString && (
-                <Typography component="span" variant="body2">
-                  {timeAgoString}
-                </Typography>
-              )}
-            </Box>
-            <IconButton
-              disableFocusRipple
-              disableTouchRipple
-              onClick={handleMenuOpen}
-              sx={{
-                '&:hover': {
-                  bgcolor: 'transparent',
-                  '& svg': {
-                    fill: '#fff',
-                  },
-                },
-              }}
-            >
-              <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
-            </IconButton>
-            <Menu open={menuOpen} anchorEl={anchorEl} onClose={handleMenuClose}>
-              {getUser.data?._id.toString() === userId ? (
-                <MenuItem
-                  onClick={() => {
-                    handleMenuClose();
-                    setDeletePostData({
-                      postId: _id,
-                      postContent: content,
-                      cb: () => {
-                        setPostDeleted(true);
-                        setDeletePostData(null);
-                      },
-                    });
-                  }}
-                >
-                  <ListItemIcon>
-                    <DeleteOutlineRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Delete</ListItemText>
-                </MenuItem>
-              ) : null}
-            </Menu>
-          </Box>
+        {postDeleted ? (
           <Typography
-            variant="body1"
-            sx={{ overflowWrap: 'anywhere' }}
-            whiteSpace="pre-wrap"
+            flexGrow={1}
+            fontWeight={500}
+            sx={{ opacity: 0.5 }}
+            textAlign="center"
           >
-            {content.replace(/\n+/g, '\n')}
+            Post deleted
           </Typography>
-          {(imageId || gifUrl) && (
+        ) : (
+          <>
             <Box
-              mt={1}
+              flexShrink={0}
+              flexBasis="8%"
               sx={{
                 '& img': {
-                  maxHeight: 400,
+                  width: '100%',
                   maxWidth: '100%',
-                  borderRadius: 4,
+                  borderRadius: 200,
                 },
+                [theme.breakpoints.down('md')]: {
+                  flexBasis: '20%',
+                },
+                pr: 2,
               }}
             >
-              {imageId ? (
-                <img
-                  src={`${process.env.NEXT_PUBLIC_CLOUDINARY_DELIVERY_URL}/${imageId}`}
-                />
-              ) : (
-                !!gifUrl && <img src={gifUrl} />
-              )}
+              <img src={image} alt={`${name} avatar`} />
             </Box>
-          )}
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <ActionButton
-              onClick={() => console.log('asfsasdaf')}
-              hoverBgColor="rgba(255, 23, 68, 0.1)"
-              Icon={hasLiked ? FavoriteRoundedIcon : FavoriteBorderRoundedIcon}
-              color="rgba(255, 23, 68, 1)"
-              iconAlwaysColored={!!hasLiked}
-              number={likeCount}
-              toolTip="Likes"
-            />
+            <Box flexGrow={1}>
+              <Box display="flex" justifyContent="space-between">
+                <Box display="flex" alignItems="center">
+                  <Link
+                    sx={{ textDecoration: 'none' }}
+                    href={`/profile/${userId}`}
+                  >
+                    <Typography variant="h6">{name}</Typography>
+                  </Link>
+                  <Box
+                    ml={1}
+                    mr={0.5}
+                    width={2}
+                    height={2}
+                    borderRadius={100}
+                    sx={{
+                      bgcolor: (theme) => theme.palette.text.primary,
+                      opacity: 0.4,
+                    }}
+                  />
+                  {!!timeAgoString && (
+                    <Typography component="span" variant="body2">
+                      {timeAgoString}
+                    </Typography>
+                  )}
+                </Box>
+                <IconButton
+                  disableFocusRipple
+                  disableTouchRipple
+                  onClick={handleMenuOpen}
+                  sx={{
+                    '&:hover': {
+                      bgcolor: 'transparent',
+                      '& svg': {
+                        fill: '#fff',
+                      },
+                    },
+                  }}
+                >
+                  <MoreHorizRoundedIcon sx={{ color: 'rgb(56, 68, 77)' }} />
+                </IconButton>
+                <Menu
+                  open={menuOpen}
+                  anchorEl={anchorEl}
+                  onClose={handleMenuClose}
+                >
+                  {getUser.data?._id.toString() === userId ? (
+                    <MenuItem
+                      onClick={() => {
+                        handleMenuClose();
+                        setDeletePostData({
+                          postId: _id,
+                          postContent: content,
+                          cb: () => {
+                            setPostDeleted(true);
+                            setDeletePostData(null);
+                          },
+                        });
+                      }}
+                    >
+                      <ListItemIcon>
+                        <DeleteOutlineRoundedIcon fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText>Delete</ListItemText>
+                    </MenuItem>
+                  ) : null}
+                </Menu>
+              </Box>
+              <Typography
+                variant="body1"
+                sx={{ overflowWrap: 'anywhere' }}
+                whiteSpace="pre-wrap"
+              >
+                {content.replace(/\n+/g, '\n')}
+              </Typography>
+              {(imageId || gifUrl) && (
+                <Box
+                  mt={1}
+                  sx={{
+                    '& img': {
+                      maxHeight: 400,
+                      maxWidth: '100%',
+                      borderRadius: 4,
+                    },
+                  }}
+                >
+                  {imageId ? (
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_CLOUDINARY_DELIVERY_URL}/${imageId}`}
+                    />
+                  ) : (
+                    !!gifUrl && <img src={gifUrl} />
+                  )}
+                </Box>
+              )}
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <ActionButton
+                  onClick={() => console.log('asfsasdaf')}
+                  hoverBgColor="rgba(255, 23, 68, 0.1)"
+                  Icon={
+                    hasLiked ? FavoriteRoundedIcon : FavoriteBorderRoundedIcon
+                  }
+                  color="rgba(255, 23, 68, 1)"
+                  iconAlwaysColored={!!hasLiked}
+                  number={likeCount}
+                  toolTip="Likes"
+                />
 
-            <ActionButton
-              onClick={() => console.log('asfsasdaf')}
-              hoverBgColor="rgba(0, 176, 255, 0.1)"
-              Icon={ChatBubbleOutlineRoundedIcon}
-              color="rgba(0, 176, 255, 1)"
-              number={commentCount}
-              toolTip="Comment"
-            />
-            <ActionButton
-              onClick={() => console.log('asfsasdaf')}
-              hoverBgColor="rgba(118, 255, 3, 0.1)"
-              Icon={ReplyRoundedIcon}
-              color="rgba(118, 255, 3, 1)"
-              toolTip="Share"
-              text="Share"
-              iconInverted
-            />
-          </Box>
-        </Box>
-        <Box
-          borderTop="1px solid rgb(56, 68, 77)"
-          borderBottom="1px solid rgb(56, 68, 77)"
-          sx={{ flexBasis: '100%', py: 1, display: 'flex', mb: 0.5 }}
-        >
-          <Box
-            flexGrow={1}
-            mr={1}
-            bgcolor="#1E1E1E"
-            borderRadius={1}
-            py={0.5}
-            sx={{
-              '&:hover': {
-                bgcolor: '#424242',
-              },
-              '&:active': {
-                bgcolor: '#1E1E1E',
-              },
-              cursor: 'pointer',
-              transition: (theme) =>
-                theme.transitions.create('background-color', {
-                  duration: '0.1s',
-                }),
-            }}
-            onClick={() => {
-              if (!hasLiked) {
-                likeMutation.mutate(_id);
-              } else {
-                unlikeMutation.mutate(_id);
-              }
-            }}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            fontSize={20}
-            flexShrink={0}
-          >
-            {hasLiked ? (
-              <FavoriteRoundedIcon
-                sx={{ fill: 'rgba(255, 23, 68, 1)' }}
-                fontSize="inherit"
+                <ActionButton
+                  onClick={() => console.log('asfsasdaf')}
+                  hoverBgColor="rgba(0, 176, 255, 0.1)"
+                  Icon={ChatBubbleOutlineRoundedIcon}
+                  color="rgba(0, 176, 255, 1)"
+                  number={commentCount}
+                  toolTip="Comment"
+                />
+                <ActionButton
+                  onClick={() => console.log('asfsasdaf')}
+                  hoverBgColor="rgba(118, 255, 3, 0.1)"
+                  Icon={ReplyRoundedIcon}
+                  color="rgba(118, 255, 3, 1)"
+                  toolTip="Share"
+                  text="Share"
+                  iconInverted
+                />
+              </Box>
+            </Box>
+            <Box
+              borderTop="1px solid rgb(56, 68, 77)"
+              borderBottom="1px solid rgb(56, 68, 77)"
+              sx={{ flexBasis: '100%', py: 1, display: 'flex', mb: 0.5 }}
+            >
+              <Box
+                flexGrow={1}
+                mr={1}
+                bgcolor="#1E1E1E"
+                borderRadius={1}
+                py={0.5}
+                sx={{
+                  '&:hover': {
+                    bgcolor: '#424242',
+                  },
+                  '&:active': {
+                    bgcolor: '#1E1E1E',
+                  },
+                  cursor: 'pointer',
+                  transition: (theme) =>
+                    theme.transitions.create('background-color', {
+                      duration: '0.1s',
+                    }),
+                }}
+                onClick={() => {
+                  if (!hasLiked) {
+                    likeMutation.mutate(_id);
+                  } else {
+                    unlikeMutation.mutate(_id);
+                  }
+                }}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                fontSize={20}
+                flexShrink={0}
+              >
+                {hasLiked ? (
+                  <FavoriteRoundedIcon
+                    sx={{ fill: 'rgba(255, 23, 68, 1)' }}
+                    fontSize="inherit"
+                  />
+                ) : (
+                  <FavoriteBorderRoundedIcon fontSize="inherit" />
+                )}
+                <Typography
+                  color={hasLiked ? 'rgba(255, 23, 68, 1)' : undefined}
+                  component="span"
+                  fontSize={16}
+                  flexShrink={0}
+                  variant="subtitle2"
+                  ml={1}
+                >
+                  Like
+                </Typography>
+              </Box>
+              <Box
+                flexGrow={1}
+                textAlign="center"
+                bgcolor="#1E1E1E"
+                borderRadius={1}
+                fontSize={20}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                onClick={() => {
+                  commentInputRef.current?.focus();
+                  commentInputRef.current?.scrollIntoView({
+                    block: 'center',
+                    inline: 'center',
+                    behavior: 'smooth',
+                  });
+                }}
+                py={0.5}
+                sx={{
+                  '&:hover': {
+                    bgcolor: '#424242',
+                  },
+                  cursor: 'pointer',
+                  transition: (theme) =>
+                    theme.transitions.create('background-color', {
+                      duration: '0.3s',
+                    }),
+                }}
+              >
+                <ChatBubbleOutlineRoundedIcon fontSize="inherit" />
+
+                <Typography
+                  component="span"
+                  fontSize={16}
+                  flexShrink={0}
+                  variant="subtitle2"
+                  ml={1}
+                >
+                  Comment
+                </Typography>
+              </Box>
+            </Box>
+
+            <AddComment postId={_id} ref={commentInputRef} />
+            {paginatedComments?.map((comment) => (
+              <CommentBox
+                commentId={comment._id.toString()}
+                key={comment._id.toString()}
+                userId={{
+                  _id: comment.userId._id.toString(),
+                  image: comment.userId.image,
+                  name: comment.userId.name,
+                }}
+                postId={comment.postId.toString()}
+                content={comment.content}
+                createdAt={comment.createdAt}
+                postUserId={userId}
+                setDeleteCommentData={setDeleteCommentData}
               />
-            ) : (
-              <FavoriteBorderRoundedIcon fontSize="inherit" />
-            )}
-            <Typography
-              color={hasLiked ? 'rgba(255, 23, 68, 1)' : undefined}
-              component="span"
-              fontSize={16}
-              flexShrink={0}
-              variant="subtitle2"
-              ml={1}
-            >
-              Like
-            </Typography>
-          </Box>
-          <Box
-            flexGrow={1}
-            textAlign="center"
-            bgcolor="#1E1E1E"
-            borderRadius={1}
-            fontSize={20}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            onClick={() => {
-              commentInputRef.current?.focus();
-              commentInputRef.current?.scrollIntoView({
-                block: 'center',
-                inline: 'center',
-                behavior: 'smooth',
-              });
-            }}
-            py={0.5}
-            sx={{
-              '&:hover': {
-                bgcolor: '#424242',
-              },
-              cursor: 'pointer',
-              transition: (theme) =>
-                theme.transitions.create('background-color', {
-                  duration: '0.3s',
-                }),
-            }}
-          >
-            <ChatBubbleOutlineRoundedIcon fontSize="inherit" />
+            ))}
 
-            <Typography
-              component="span"
-              fontSize={16}
-              flexShrink={0}
-              variant="subtitle2"
-              ml={1}
-            >
-              Comment
-            </Typography>
-          </Box>
-        </Box>
-
-        <AddComment postId={_id} ref={commentInputRef} />
-        {paginatedComments?.map((comment) => (
-          <CommentBox
-            commentId={comment._id.toString()}
-            key={comment._id.toString()}
-            userId={{
-              _id: comment.userId._id.toString(),
-              image: comment.userId.image,
-              name: comment.userId.name,
-            }}
-            postId={comment.postId.toString()}
-            content={comment.content}
-            createdAt={comment.createdAt}
-            postUserId={userId}
-            setDeleteCommentData={setDeleteCommentData}
-          />
-        ))}
-
-        {paginatedComments &&
-          paginatedComments.length < commentCount &&
-          hasNextPage && (
-            <Typography
-              onClick={() => {
-                fetchNextPage();
-                setViewMoreComments(true);
-              }}
-              mb={-1}
-              fontWeight={500}
-              color={theme.palette.grey.A700}
-              sx={{
-                cursor: 'pointer',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              View more comments
-            </Typography>
-          )}
+            {paginatedComments &&
+              paginatedComments.length < commentCount &&
+              hasNextPage && (
+                <Typography
+                  onClick={() => {
+                    fetchNextPage();
+                    setViewMoreComments(true);
+                  }}
+                  mb={-1}
+                  fontWeight={500}
+                  color={theme.palette.grey.A700}
+                  sx={{
+                    cursor: 'pointer',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
+                  }}
+                >
+                  View more comments
+                </Typography>
+              )}
+          </>
+        )}
         {/* {hasNextPage && (
           <Typography
             onClick={() => {
