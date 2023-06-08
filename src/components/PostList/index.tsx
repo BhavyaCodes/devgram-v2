@@ -35,25 +35,30 @@ const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
   const deletePostMutation = trpc.post.deletePost.useMutation({
     onSuccess(data, variables, context) {
       //variable -> postId
-      utils.post.getAll.setInfiniteData({}, (oldData) => {
-        if (!oldData) {
-          return {
-            pages: [],
-            pageParams: [],
-          };
-        }
+      utils.post.getAll.setInfiniteData(
+        {
+          profileId,
+        },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
 
-        const newPages = oldData.pages.map((page) => {
-          const newPosts = page.posts.filter(
-            (post) => post._id.toString() !== variables,
-          );
-          return { posts: newPosts, nextCursor: page.nextCursor };
-        });
-        return {
-          pageParams: oldData.pageParams,
-          pages: newPages,
-        };
-      });
+          const newPages = oldData.pages.map((page) => {
+            const newPosts = page.posts.filter(
+              (post) => post._id.toString() !== variables,
+            );
+            return { posts: newPosts, nextCursor: page.nextCursor };
+          });
+          return {
+            pageParams: oldData.pageParams,
+            pages: newPages,
+          };
+        },
+      );
     },
   });
 

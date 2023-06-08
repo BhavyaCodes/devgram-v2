@@ -37,7 +37,6 @@ const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
 
 const NewPost: FC = () => {
   const router = useRouter();
-  console.log(router);
   const profileId = router.query.id as string | undefined;
   const utils = trpc.useContext();
   const inputRef = useRef<null | HTMLInputElement>(null);
