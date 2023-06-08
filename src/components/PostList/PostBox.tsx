@@ -66,6 +66,7 @@ interface PostBoxProps {
     SetStateAction<{
       postId: string;
       postContent: string;
+      cb: () => void;
     } | null>
   >;
 }
@@ -114,6 +115,9 @@ export const PostBox = ({
   const [timeAgoString, setTimeAgoString] = useState<string | undefined>(
     undefined,
   );
+
+  const [postDeleted, setPostDeleted] = useState(false);
+
   const [deleteCommentData, setDeleteCommentData] = useState<null | {
     commentId: string;
     commentContent: string;
@@ -298,6 +302,10 @@ export const PostBox = ({
 
   const paginatedComments = data?.pages.flatMap((page) => page.comments);
 
+  if (postDeleted) {
+    return <Box>Post Deleted</Box>;
+  }
+
   return (
     <>
       {/* Delete comment Modal */}
@@ -412,6 +420,10 @@ export const PostBox = ({
                     setDeletePostData({
                       postId: _id,
                       postContent: content,
+                      cb: () => {
+                        setPostDeleted(true);
+                        setDeletePostData(null);
+                      },
                     });
                   }}
                 >
