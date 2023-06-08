@@ -15,6 +15,7 @@ import { commentRouter } from './comment';
 import Comment from '../models/Comment';
 import { env } from '../env';
 import { v2 as cloudinary } from 'cloudinary';
+import isMongoId from 'validator/lib/isMongoId';
 /**
  * Default selector for Post.
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -176,6 +177,14 @@ export const postRouter = router({
     )
     .query(async ({ input, ctx }) => {
       const profileId = input.profileId;
+      if (profileId) {
+        if (!isMongoId(profileId)) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'invalid profile id',
+          });
+        }
+      }
       const userId = ctx.session?.userId;
       const limit = 5;
       const cursor = input.cursor;
