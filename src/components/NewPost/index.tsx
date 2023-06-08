@@ -29,12 +29,16 @@ import { Theme } from 'emoji-picker-react';
 import dynamic from 'next/dynamic';
 import { TextRemaining } from './TextRemaining';
 import Gif from '../Gif';
+import { useRouter } from 'next/router';
 
 const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
   ssr: false,
 });
 
 const NewPost: FC = () => {
+  const router = useRouter();
+  console.log(router);
+  const profileId = router.query.id as string | undefined;
   const utils = trpc.useContext();
   const inputRef = useRef<null | HTMLInputElement>(null);
   const [input, setInput] = useState('');
@@ -88,24 +92,29 @@ const NewPost: FC = () => {
 
   const createPost = trpc.post.create.useMutation({
     onSuccess(data) {
-      utils.post.getAll.setInfiniteData({}, (oldData) => {
-        if (!oldData) {
-          return {
-            pages: [],
-            pageParams: [],
+      utils.post.getAll.setInfiniteData(
+        {
+          profileId,
+        },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+          const newPage = {
+            posts: [data.post],
+            nextCursor: {
+              createdAt: data.post.createdAt,
+              _id: data.post._id.toString(),
+              exclude: true,
+            },
           };
-        }
-        const newPage = {
-          posts: [data.post],
-          nextCursor: {
-            createdAt: data.post.createdAt,
-            _id: data.post._id.toString(),
-            exclude: true,
-          },
-        };
-        const newPages = [newPage, ...oldData.pages];
-        return { pages: newPages, pageParams: oldData.pageParams };
-      });
+          const newPages = [newPage, ...oldData.pages];
+          return { pages: newPages, pageParams: oldData.pageParams };
+        },
+      );
 
       if (inputRef.current) {
         inputRef.current.value = '';
