@@ -290,6 +290,54 @@ export const postRouter = router({
             preserveNullAndEmptyArrays: false,
           },
         },
+        {
+          $lookup: {
+            from: 'comments',
+            localField: '_id',
+            pipeline: [
+              {
+                $sort: {
+                  createdAt: -1,
+                },
+              },
+              {
+                $limit: 1,
+              },
+              {
+                $lookup: {
+                  from: 'users',
+                  localField: 'userId',
+                  pipeline: [
+                    {
+                      $project: {
+                        _id: 1,
+                        name: 1,
+                        image: 1,
+                      },
+                    },
+                  ],
+                  foreignField: '_id',
+                  as: 'userId',
+                },
+              },
+            ],
+            foreignField: 'postId',
+            as: 'lastComment',
+          },
+        },
+        {
+          $unwind: {
+            path: '$lastComment',
+
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $unwind: {
+            path: '$lastComment.userId',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
       ];
 
       if (userId) {
@@ -320,54 +368,6 @@ export const postRouter = router({
                   else: undefined,
                 },
               },
-            },
-          },
-          {
-            $lookup: {
-              from: 'comments',
-              localField: '_id',
-              pipeline: [
-                {
-                  $sort: {
-                    createdAt: -1,
-                  },
-                },
-                {
-                  $limit: 1,
-                },
-                {
-                  $lookup: {
-                    from: 'users',
-                    localField: 'userId',
-                    pipeline: [
-                      {
-                        $project: {
-                          _id: 1,
-                          name: 1,
-                          image: 1,
-                        },
-                      },
-                    ],
-                    foreignField: '_id',
-                    as: 'userId',
-                  },
-                },
-              ],
-              foreignField: 'postId',
-              as: 'lastComment',
-            },
-          },
-          {
-            $unwind: {
-              path: '$lastComment',
-
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          {
-            $unwind: {
-              path: '$lastComment.userId',
-              preserveNullAndEmptyArrays: true,
             },
           },
         );
