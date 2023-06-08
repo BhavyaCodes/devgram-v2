@@ -14,6 +14,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import Link from '~/components/common/Link';
 interface CommentBoxProps {
   commentId: string;
   postUserId: string;
@@ -76,7 +77,8 @@ const CommentBox = ({
         display: 'flex',
       }}
     >
-      <Box
+      <Link
+        href={`/profile/${userId._id}`}
         flexShrink={0}
         flexBasis="6%"
         alignSelf="flex-start"
@@ -95,14 +97,19 @@ const CommentBox = ({
         }}
       >
         <img src={userId.image} alt={`${userId.name} avatar`} />
-      </Box>
+      </Link>
       <Paper
         elevation={6}
         sx={{ flexGrow: 1, pb: 1, pl: 2, pr: 1, borderRadius: 2 }}
       >
         <Box display="flex" justifyContent="space-between">
           <Box display="flex" alignItems="center">
-            <Typography variant="h6">{userId.name}</Typography>
+            <Link
+              href={`/profile/${userId._id}`}
+              sx={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <Typography variant="h6">{userId.name}</Typography>
+            </Link>
             <Box
               ml={1}
               mr={0.5}

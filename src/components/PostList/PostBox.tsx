@@ -363,7 +363,8 @@ export const PostBox = ({
           </Typography>
         ) : (
           <>
-            <Box
+            <Link
+              href={`/profile/${userId}`}
               flexShrink={0}
               flexBasis="8%"
               sx={{
@@ -379,12 +380,12 @@ export const PostBox = ({
               }}
             >
               <img src={image} alt={`${name} avatar`} />
-            </Box>
+            </Link>
             <Box flexGrow={1}>
               <Box display="flex" justifyContent="space-between">
                 <Box display="flex" alignItems="center">
                   <Link
-                    sx={{ textDecoration: 'none' }}
+                    sx={{ textDecoration: 'none', color: 'inherit' }}
                     href={`/profile/${userId}`}
                   >
                     <Typography variant="h6">{name}</Typography>

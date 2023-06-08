@@ -29,6 +29,7 @@ import dynamic from 'next/dynamic';
 import { TextRemaining } from './TextRemaining';
 import Gif from '../Gif';
 import { useRouter } from 'next/router';
+import Link from '../common/Link';
 
 const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
   ssr: false,
@@ -212,7 +213,8 @@ const NewPost: FC = () => {
       >
         <ProgressBar progress={imageUploadProgress} />
         {!!user.data?.image && (
-          <Box
+          <Link
+            href={`/profile/${user.data._id.toString()}`}
             flexShrink={0}
             flexBasis="8%"
             sx={{
@@ -228,7 +230,7 @@ const NewPost: FC = () => {
             }}
           >
             <img src={user.data.image} alt={`${user.data.name} avatar`} />
-          </Box>
+          </Link>
         )}
         <Box flexGrow={1}>
           <Box
