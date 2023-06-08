@@ -30,6 +30,7 @@ import { ObjectId } from 'mongodb';
 import { AddComment } from './AddComment';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import Link from '../common/Link';
+import { useRouter } from 'next/router';
 
 interface PostBoxProps {
   /**
@@ -97,6 +98,8 @@ export const PostBox = ({
   lastComment,
   setDeletePostData,
 }: PostBoxProps) => {
+  const router = useRouter();
+  const profileId = router.query.id as string | undefined;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -125,88 +128,73 @@ export const PostBox = ({
   const likeMutation = trpc.post.likePost.useMutation({
     onSuccess(data, variables, context) {
       //variable -> postId
-      utils.post.getAll.setInfiniteData({}, (oldData) => {
-        if (!oldData) {
-          return {
-            pages: [],
-            pageParams: [],
-          };
-        }
+      utils.post.getAll.setInfiniteData(
+        {
+          profileId,
+        },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
 
-        const newPages = oldData.pages.map((page) => {
-          const newPosts = page.posts.map((post) => {
-            if (post._id.toString() === variables) {
-              return {
-                ...post,
-                hasLiked: true,
-                likeCount: post.likeCount + 1,
-              };
-            }
-            return post;
+          const newPages = oldData.pages.map((page) => {
+            const newPosts = page.posts.map((post) => {
+              if (post._id.toString() === variables) {
+                return {
+                  ...post,
+                  hasLiked: true,
+                  likeCount: post.likeCount + 1,
+                };
+              }
+              return post;
+            });
+            return { posts: newPosts, nextCursor: page.nextCursor };
           });
-          return { posts: newPosts, nextCursor: page.nextCursor };
-        });
-        return {
-          pageParams: oldData.pageParams,
-          pages: newPages,
-        };
-      });
+          return {
+            pageParams: oldData.pageParams,
+            pages: newPages,
+          };
+        },
+      );
     },
   });
   const unlikeMutation = trpc.post.unlikePost.useMutation({
     onSuccess(data, variables, context) {
       //variable -> postId
-      utils.post.getAll.setInfiniteData({}, (oldData) => {
-        if (!oldData) {
-          return {
-            pages: [],
-            pageParams: [],
-          };
-        }
+      utils.post.getAll.setInfiniteData(
+        {
+          profileId,
+        },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
 
-        const newPages = oldData.pages.map((page) => {
-          const newPosts = page.posts.map((post) => {
-            if (post._id.toString() === variables) {
-              return {
-                ...post,
-                hasLiked: undefined,
-                likeCount: post.likeCount - 1,
-              };
-            }
-            return post;
+          const newPages = oldData.pages.map((page) => {
+            const newPosts = page.posts.map((post) => {
+              if (post._id.toString() === variables) {
+                return {
+                  ...post,
+                  hasLiked: undefined,
+                  likeCount: post.likeCount - 1,
+                };
+              }
+              return post;
+            });
+            return { posts: newPosts, nextCursor: page.nextCursor };
           });
-          return { posts: newPosts, nextCursor: page.nextCursor };
-        });
-        return {
-          pageParams: oldData.pageParams,
-          pages: newPages,
-        };
-      });
-    },
-  });
-
-  const deletePostMutation = trpc.post.deletePost.useMutation({
-    onSuccess(data, variables, context) {
-      //variable -> postId
-      utils.post.getAll.setInfiniteData({}, (oldData) => {
-        if (!oldData) {
           return {
-            pages: [],
-            pageParams: [],
+            pageParams: oldData.pageParams,
+            pages: newPages,
           };
-        }
-
-        const newPages = oldData.pages.map((page) => {
-          const newPosts = page.posts.filter(
-            (post) => post._id.toString() !== variables,
-          );
-          return { posts: newPosts, nextCursor: page.nextCursor };
-        });
-        return {
-          pageParams: oldData.pageParams,
-          pages: newPages,
-        };
-      });
+        },
+      );
     },
   });
 
