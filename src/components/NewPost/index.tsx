@@ -24,7 +24,6 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import { ProgressBar } from './ProgressBar';
 import SentimentSatisfiedOutlinedIcon from '@mui/icons-material/SentimentSatisfiedOutlined';
 import GifOutlinedIcon from '@mui/icons-material/GifOutlined';
-// import GifBoxOutlinedIcon from '@mui/icons-material/GifBoxOutlined';
 import { Theme } from 'emoji-picker-react';
 import dynamic from 'next/dynamic';
 import { TextRemaining } from './TextRemaining';
@@ -323,135 +322,143 @@ const NewPost: FC = () => {
               </Box>
             )}
           </Box>
-          {!posting && (
-            <Box
-              borderTop="1px solid rgb(56, 68, 77)"
-              mt={3}
-              pt={1}
-              display="flex"
-              justifyContent="flex-start"
-              alignItems="center"
-            >
-              <label htmlFor="file-input-button">
-                <IconButton
-                  size="small"
-                  type="button"
-                  onClick={(e) => {
-                    document.getElementById('file-input-button')?.click();
-                    e.preventDefault();
-                    // console.log(e);
-                    // e.persist();
-                  }}
-                >
-                  <ImageOutlinedIcon
-                    sx={{
-                      width: '90%',
-                      fill: (theme) => theme.palette.primary.dark,
-                    }}
-                  />
-                </IconButton>
-                <input
-                  type="file"
-                  style={{ display: 'none' }}
-                  id="file-input-button"
-                  placeholder="asdfasdf"
-                  onChange={handleFileChange}
-                />
-              </label>
+          <Box
+            borderTop="1px solid rgb(56, 68, 77)"
+            mt={3}
+            pt={1}
+            display="flex"
+            justifyContent="flex-start"
+            alignItems="center"
+          >
+            <label htmlFor="file-input-button">
               <IconButton
-                type="button"
                 size="small"
-                aria-haspopup="true"
-                aria-expanded={emojiPickerOpen ? 'true' : undefined}
-                ref={anchorRef}
-                onClick={() => {
-                  setEmojiPickerOpen(true);
+                type="button"
+                disabled={posting}
+                onClick={(e) => {
+                  if (posting) {
+                    return;
+                  }
+                  document.getElementById('file-input-button')?.click();
+                  e.preventDefault();
                 }}
-                aria-describedby="emoji-popper"
               >
-                <SentimentSatisfiedOutlinedIcon
+                <ImageOutlinedIcon
                   sx={{
                     width: '90%',
+                    opacity: posting ? 0.2 : 1,
                     fill: (theme) => theme.palette.primary.dark,
                   }}
                 />
               </IconButton>
+              <input
+                type="file"
+                style={{ display: 'none' }}
+                id="file-input-button"
+                placeholder="asdfasdf"
+                disabled={posting}
+                onChange={handleFileChange}
+              />
+            </label>
+            <IconButton
+              type="button"
+              size="small"
+              aria-haspopup="true"
+              aria-expanded={emojiPickerOpen ? 'true' : undefined}
+              ref={anchorRef}
+              disabled={posting}
+              onClick={() => {
+                setEmojiPickerOpen(true);
+              }}
+              aria-describedby="emoji-popper"
+            >
+              <SentimentSatisfiedOutlinedIcon
+                sx={{
+                  width: '90%',
+                  opacity: posting ? 0.2 : 1,
 
-              <ClickAwayListener onClickAway={handleEmojiClose}>
-                <Popper
-                  open={!!anchorRef.current && emojiPickerOpen}
-                  id="emoji-popper"
-                  anchorEl={anchorRef.current}
-                >
-                  <Box width={350}>
-                    <EmojiPicker
-                      searchDisabled
-                      onEmojiClick={(data) =>
-                        setInput((input) => input + data.emoji)
-                      }
-                      theme={theme.palette.mode as Theme}
-                      skinTonesDisabled
-                      width={350}
+                  fill: (theme) => theme.palette.primary.dark,
+                }}
+              />
+            </IconButton>
+
+            <ClickAwayListener onClickAway={handleEmojiClose}>
+              <Popper
+                open={!!anchorRef.current && emojiPickerOpen}
+                id="emoji-popper"
+                anchorEl={anchorRef.current}
+              >
+                <Box width={350}>
+                  <EmojiPicker
+                    searchDisabled
+                    onEmojiClick={(data) =>
+                      setInput((input) => input + data.emoji)
+                    }
+                    theme={theme.palette.mode as Theme}
+                    skinTonesDisabled
+                    width={350}
+                  />
+                </Box>
+              </Popper>
+            </ClickAwayListener>
+            <IconButton
+              type="button"
+              size="small"
+              aria-haspopup="true"
+              onClick={() => setGifModalOpen(true)}
+              aria-describedby="gif-popper"
+              disabled={posting}
+            >
+              <GifOutlinedIcon
+                aria-describedby="gif-popper"
+                sx={{
+                  width: '100%',
+                  opacity: posting ? 0.2 : 1,
+
+                  fill: (theme) => theme.palette.primary.dark,
+                }}
+              />
+            </IconButton>
+            <Dialog
+              maxWidth="sm"
+              fullWidth
+              fullScreen={!!matchesSmallScreen}
+              open={gifModalOpen}
+              onClose={() => setGifModalOpen(false)}
+            >
+              <Gif
+                handleSelectGifUrl={handleSelectGifUrl}
+                handleModalClose={() => setGifModalOpen(false)}
+              />
+            </Dialog>
+
+            <Box marginLeft="auto" display="flex" alignItems="center">
+              {!!input.length && (
+                <>
+                  <Box mr={1.5}>
+                    <TextRemaining
+                      percent={(input.length / maxInputSize) * 100}
                     />
                   </Box>
-                </Popper>
-              </ClickAwayListener>
-              <IconButton
-                type="button"
+                  <Box
+                    width={0}
+                    borderRight="1px solid rgb(56, 68, 77)"
+                    alignSelf="stretch"
+                    mr={2}
+                  />
+                </>
+              )}
+              <Button
                 size="small"
-                aria-haspopup="true"
-                onClick={() => setGifModalOpen(true)}
-                aria-describedby="gif-popper"
+                variant="contained"
+                data-cy="submit-post-button"
+                type="submit"
+                disabled={createPost.isLoading || !input.length}
               >
-                <GifOutlinedIcon
-                  aria-describedby="gif-popper"
-                  sx={{
-                    width: '100%',
-                    fill: (theme) => theme.palette.primary.dark,
-                  }}
-                />
-              </IconButton>
-              <Dialog
-                maxWidth="sm"
-                fullWidth
-                fullScreen={!!matchesSmallScreen}
-                open={gifModalOpen}
-                onClose={() => setGifModalOpen(false)}
-              >
-                <Gif
-                  handleSelectGifUrl={handleSelectGifUrl}
-                  handleModalClose={() => setGifModalOpen(false)}
-                />
-              </Dialog>
-
-              <Box marginLeft="auto" display="flex" alignItems="center">
-                {!!input.length && (
-                  <>
-                    <Box mr={1.5}>
-                      <TextRemaining
-                        percent={(input.length / maxInputSize) * 100}
-                      />
-                    </Box>
-                    <Box
-                      width={0}
-                      borderRight="1px solid rgb(56, 68, 77)"
-                      alignSelf="stretch"
-                      mr={2}
-                    />
-                  </>
-                )}
-                <Button
-                  size="small"
-                  variant="contained"
-                  data-cy="submit-post-button"
-                  type="submit"
-                  disabled={createPost.isLoading || !input.length}
-                >
-                  Post
-                </Button>
-              </Box>
+                Post
+              </Button>
             </Box>
-          )}
+          </Box>
         </Box>
       </Box>
     </>
