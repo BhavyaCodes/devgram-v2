@@ -13,10 +13,15 @@ const ProfilePage = () => {
   const profileUserQuery = trpc.user.getPublicProfile.useQuery(
     { profileId },
     {
-      staleTime: 60000,
+      // staleTime: 60000,
       onError: ({ data }) => {
         if (data?.code === 'NOT_FOUND') {
           console.log('user not found');
+          // router.replace()
+        }
+
+        if (data?.code === 'BAD_REQUEST') {
+          console.log('bad__request');
           // router.replace()
         }
       },
@@ -35,7 +40,11 @@ const ProfilePage = () => {
 
   return (
     <Box>
-      <ProfileHeader />
+      <ProfileHeader
+        name={profileUserQuery.data?.name}
+        image={profileUserQuery.data?.image}
+        postCount={profileUserQuery.data?.postCount}
+      />
       {getUser.data?._id.toString() === profileId ? <NewPost /> : null}
       <PostsList profileId={profileId} />
     </Box>
