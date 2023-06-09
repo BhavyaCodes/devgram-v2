@@ -8,6 +8,7 @@ import Session from '../models/Session';
 import User from '../models/User';
 import isMongoId from 'validator/lib/isMongoId';
 import { Types } from 'mongoose';
+import Follower from '../models/Follower';
 export const userRouter = router({
   getUser: authOnlyProcedure
     .output(
@@ -95,6 +96,18 @@ export const userRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'user not found' });
       }
       return userProfile;
+    }),
+
+  followUser: authOnlyProcedure
+    .input(z.object({ userId: z.string() }))
+    .output(z.boolean())
+    .mutation(async ({ ctx, input }) => {
+      const result = await Follower.updateOne({
+        followerId: ctx.session.userId,
+        userId: input.userId,
+      });
+
+      return true;
     }),
 
   logout: currentSessionProcedure.mutation(async ({ ctx }) => {
