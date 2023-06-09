@@ -8,6 +8,7 @@ interface ProfileHeaderProps {
   name?: string;
   image?: string;
   postCount?: number;
+  followerCount?: number;
 }
 
 export const ProfileHeader = ({
@@ -15,6 +16,7 @@ export const ProfileHeader = ({
   name,
   image,
   postCount,
+  followerCount,
 }: ProfileHeaderProps) => {
   const router = useRouter();
 
@@ -73,6 +75,7 @@ export const ProfileHeader = ({
         <Button onClick={handleFollowUser}>Follow</Button>
         <Button onClick={handleUnFollowUser}>UnFollow</Button>
       </Box>
+      <Box>Followers: {followerCount}</Box>
     </>
   );
 };

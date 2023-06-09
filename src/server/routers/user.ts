@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { publicProcedure, router } from '../trpc';
+import { router } from '../trpc';
 
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
@@ -7,7 +7,7 @@ import { authOnlyProcedure, currentSessionProcedure } from '../middleware';
 import Session from '../models/Session';
 import User from '../models/User';
 import isMongoId from 'validator/lib/isMongoId';
-import { Types } from 'mongoose';
+import { PipelineStage, Types } from 'mongoose';
 import Follower from '../models/Follower';
 export const userRouter = router({
   getUser: authOnlyProcedure
@@ -30,7 +30,7 @@ export const userRouter = router({
       return session.userId;
     }),
 
-  getPublicProfile: publicProcedure
+  getPublicProfile: currentSessionProcedure
     .input(z.object({ profileId: z.string() }))
     .output(
       z.object({
@@ -39,16 +39,22 @@ export const userRouter = router({
         createdAt: z.date(),
         name: z.string(),
         postCount: z.number(),
+        followerCount: z.number(),
+        // followed: z.boolean().nullish(),
+        // followsYou: z.boolean().nullish(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       if (!isMongoId(input.profileId)) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'invalid profile id',
         });
       }
-      const aggregationResult = await User.aggregate([
+
+      const loggedInUserId = ctx.session?.userId._id.toString();
+
+      const pipeline: PipelineStage[] = [
         {
           $match: {
             _id: new Types.ObjectId(input.profileId),
@@ -86,9 +92,46 @@ export const userRouter = router({
           },
         },
         {
-          $unset: ['email', 'posts'],
+          $lookup: {
+            from: 'followers',
+            localField: '_id',
+            pipeline: [
+              {
+                $group: {
+                  _id: '$userId',
+                  followerCount: {
+                    $sum: 1,
+                  },
+                },
+              },
+            ],
+            foreignField: 'userId',
+            as: 'followers',
+          },
         },
-      ]);
+        {
+          $unwind: {
+            path: '$followers',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            followerCount: {
+              $ifNull: ['$followers.followerCount', 0],
+            },
+          },
+        },
+        {
+          $unset: ['followers', 'email', 'posts'],
+        },
+      ];
+
+      // if (loggedInUserId) {
+      //   pipeline.push()
+      // }
+
+      const aggregationResult = await User.aggregate(pipeline);
 
       const userProfile = aggregationResult[0];
 
@@ -104,7 +147,7 @@ export const userRouter = router({
     .mutation(async ({ ctx, input }) => {
       const result = await Follower.updateOne(
         {
-          followerId: ctx.session.userId,
+          followerId: ctx.session.userId._id,
           userId: input.userId,
         },
         {},
@@ -118,7 +161,7 @@ export const userRouter = router({
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
       const result = await Follower.deleteOne({
-        followerId: ctx.session.userId,
+        followerId: ctx.session.userId._id,
         userId: input.userId,
       });
       return result.acknowledged;
