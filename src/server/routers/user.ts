@@ -40,8 +40,8 @@ export const userRouter = router({
         name: z.string(),
         postCount: z.number(),
         followerCount: z.number(),
-        // followed: z.boolean().nullish(),
-        // followsYou: z.boolean().nullish(),
+        followed: z.boolean().nullish(),
+        followsYou: z.boolean().nullish(),
       }),
     )
     .query(async ({ input, ctx }) => {
@@ -51,8 +51,6 @@ export const userRouter = router({
           message: 'invalid profile id',
         });
       }
-
-      const loggedInUserId = ctx.session?.userId._id.toString();
 
       const pipeline: PipelineStage[] = [
         {
@@ -126,10 +124,64 @@ export const userRouter = router({
           $unset: ['followers', 'email', 'posts'],
         },
       ];
+      const loggedInUserId = ctx.session?.userId._id;
 
-      // if (loggedInUserId) {
-      //   pipeline.push()
-      // }
+      if (loggedInUserId) {
+        pipeline.push(
+          {
+            $lookup: {
+              from: 'followers',
+              localField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    followerId: loggedInUserId,
+                  },
+                },
+              ],
+              foreignField: 'userId',
+              as: 'followed',
+            },
+          },
+          {
+            $unwind: {
+              path: '$followed',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: 'followers',
+              localField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    userId: loggedInUserId,
+                  },
+                },
+              ],
+              foreignField: 'followerId',
+              as: 'followsYou',
+            },
+          },
+          {
+            $unwind: {
+              path: '$followsYou',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              followed: {
+                $toBool: '$followed',
+              },
+              followsYou: {
+                $toBool: '$followsYou',
+              },
+            },
+          },
+        );
+      }
 
       const aggregationResult = await User.aggregate(pipeline);
 
