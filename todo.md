@@ -1,9 +1,14 @@
 ## BUGS
 
 - [x] Fix profile query for users with no posts
+- [ ] Can't follow yourself logic
 
 ## TODO
 
+- [x] follow backend
+- [ ] follow frontend
+- [x] unfollow backend
+- [ ] unfollow frontend
 - [ ] Post has been deleted message when deleting post
 - [x] use add comment logic for adding new post
 - [x] Add close modal button on gifpicker
