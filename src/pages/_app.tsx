@@ -95,9 +95,6 @@ const MyApp = (({
     Component.getLayout ??
     ((page) => (
       <CacheProvider value={emotionCache}>
-        <button type="button" onClick={handleToggleTheme}>
-          Toggle
-        </button>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <DefaultLayout toggleTheme={handleToggleTheme}>

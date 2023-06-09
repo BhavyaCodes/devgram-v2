@@ -1,4 +1,11 @@
-import { AppBar, Box, Container, Toolbar, useTheme } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Container,
+  Toolbar,
+  styled,
+  useTheme,
+} from '@mui/material';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { ReactNode, useEffect } from 'react';
@@ -12,6 +19,8 @@ const DynamicScrollToTop = dynamic(() => import('./ScrollToTop'), {
 });
 
 type DefaultLayoutProps = { children: ReactNode; toggleTheme: () => void };
+
+const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 export const DefaultLayout = ({
   children,
@@ -56,7 +65,7 @@ export const DefaultLayout = ({
           </Box>
         </Toolbar>
       </AppBar>
-      <Toolbar id="back-to-top-anchor" />
+      <Offset id="back-to-top-anchor" />
 
       <Container maxWidth="md" component="main">
         {children}

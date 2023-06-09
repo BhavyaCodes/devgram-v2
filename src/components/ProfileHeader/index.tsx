@@ -14,15 +14,21 @@ export const ProfileHeader = ({
   postCount,
 }: ProfileHeaderProps) => {
   const router = useRouter();
+
   return (
-    <>
-      <Box
-        py={0.25}
-        display="flex"
-        border="1px solid rgb(56, 68, 77)"
-        borderBottom="0px"
-        alignItems="center"
-      >
+    <Box
+      width="100%"
+      overflow="hidden"
+      border="1px solid rgb(56, 68, 77)"
+      borderTop={0}
+      position="sticky"
+      top={64}
+      bgcolor="rgba(0, 0, 0, 0)"
+      sx={{
+        backdropFilter: 'blur(12px)',
+      }}
+    >
+      <Box display="flex" alignItems="center" position="sticky">
         <IconButton onClick={router.back} sx={{ flexShrink: 0, mx: 1 }}>
           <ArrowBackRoundedIcon />
         </IconButton>
@@ -35,6 +41,6 @@ export const ProfileHeader = ({
           </Typography>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 };
