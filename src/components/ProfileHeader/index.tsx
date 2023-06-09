@@ -9,6 +9,8 @@ interface ProfileHeaderProps {
   image?: string;
   postCount?: number;
   followerCount?: number;
+  followed?: boolean | null;
+  followsYou?: boolean | null;
 }
 
 export const ProfileHeader = ({
@@ -17,6 +19,8 @@ export const ProfileHeader = ({
   image,
   postCount,
   followerCount,
+  followed,
+  followsYou,
 }: ProfileHeaderProps) => {
   const router = useRouter();
 
@@ -76,6 +80,8 @@ export const ProfileHeader = ({
         <Button onClick={handleUnFollowUser}>UnFollow</Button>
       </Box>
       <Box>Followers: {followerCount}</Box>
+      <Box>Followed: {followed ? 'true' : 'false'}</Box>
+      <Box>Follows you: {followsYou ? 'true' : 'false'}</Box>
     </>
   );
 };

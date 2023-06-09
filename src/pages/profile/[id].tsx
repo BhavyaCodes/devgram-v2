@@ -46,6 +46,8 @@ const ProfilePage = () => {
         postCount={profileUserQuery.data?.postCount}
         userId={profileUserQuery.data?._id.toString()}
         followerCount={profileUserQuery.data?.followerCount}
+        followed={profileUserQuery.data?.followed}
+        followsYou={profileUserQuery.data?.followsYou}
       />
       {getUser.data?._id.toString() === profileId ? <NewPost /> : null}
       <PostsList profileId={profileId} />
