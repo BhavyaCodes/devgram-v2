@@ -19,12 +19,20 @@ export const ProfileHeader = ({
   const router = useRouter();
 
   const followUserMutation = trpc.user.followUser.useMutation();
+  const unfollowUserMutation = trpc.user.unfollowUser.useMutation();
 
   const handleFollowUser = () => {
     if (!userId) {
       return;
     }
     followUserMutation.mutate({ userId });
+  };
+
+  const handleUnFollowUser = () => {
+    if (!userId) {
+      return;
+    }
+    unfollowUserMutation.mutate({ userId });
   };
 
   return (
@@ -63,6 +71,7 @@ export const ProfileHeader = ({
       </Box>
       <Box>
         <Button onClick={handleFollowUser}>Follow</Button>
+        <Button onClick={handleUnFollowUser}>UnFollow</Button>
       </Box>
     </>
   );

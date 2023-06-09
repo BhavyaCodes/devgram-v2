@@ -113,6 +113,17 @@ export const userRouter = router({
       return result.acknowledged;
     }),
 
+  unfollowUser: authOnlyProcedure
+    .input(z.object({ userId: z.string() }))
+    .output(z.boolean())
+    .mutation(async ({ ctx, input }) => {
+      const result = await Follower.deleteOne({
+        followerId: ctx.session.userId,
+        userId: input.userId,
+      });
+      return result.acknowledged;
+    }),
+
   logout: currentSessionProcedure.mutation(async ({ ctx }) => {
     await Session.deleteOne({ _id: ctx?.session?._id });
     ctx.res.setHeader('Set-Cookie', `token=; HttpOnly; Path=/; Max-Age=0`);
