@@ -197,6 +197,13 @@ export const userRouter = router({
     .input(z.object({ userId: z.string() }))
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
+      if (input.userId === ctx.session.userId._id.toString()) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: "can't follow yourself",
+        });
+      }
+
       const result = await Follower.updateOne(
         {
           followerId: ctx.session.userId._id,
