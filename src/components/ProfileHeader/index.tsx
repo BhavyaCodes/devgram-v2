@@ -8,6 +8,16 @@ export const ProfileHeader = ({}) => {
 
   const profileId = router.query.id as string;
 
+  const currentUserQuery = trpc.user.getUser.useQuery(undefined, {
+    staleTime: 60000,
+    retry: false,
+    onError: ({ data }) => {
+      if (data?.code === 'UNAUTHORIZED') {
+        console.log('not logged in');
+      }
+    },
+  });
+
   const { data, refetch } = trpc.user.getPublicProfile.useQuery(
     { profileId },
     {
@@ -123,7 +133,9 @@ export const ProfileHeader = ({}) => {
             <img src={data?.image} alt={`${data?.name} avatar`} />
           </Box>
           <Box p={2}>
-            {data?.followed ? (
+            {currentUserQuery.data?._id.toString() === data?._id.toString() ? (
+              <Box>My Profile</Box>
+            ) : data?.followed ? (
               <Button variant="contained" onClick={handleUnFollowUser}>
                 UnFollow
               </Button>
