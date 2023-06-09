@@ -3,42 +3,52 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
 
-interface ProfileHeaderProps {
-  userId?: string;
-  name?: string;
-  image?: string;
-  postCount?: number;
-  followerCount?: number;
-  followed?: boolean | null;
-  followsYou?: boolean | null;
-}
-
-export const ProfileHeader = ({
-  userId,
-  name,
-  image,
-  postCount,
-  followerCount,
-  followed,
-  followsYou,
-}: ProfileHeaderProps) => {
+export const ProfileHeader = ({}) => {
   const router = useRouter();
+
+  const profileId = router.query.id as string;
+
+  const { data, refetch } = trpc.user.getPublicProfile.useQuery(
+    { profileId },
+    {
+      // staleTime: 60000,
+      onError: ({ data }) => {
+        if (data?.code === 'NOT_FOUND') {
+          console.log('user not found');
+          // router.replace()
+        }
+
+        if (data?.code === 'BAD_REQUEST') {
+          console.log('bad__request');
+          // router.replace()
+        }
+      },
+    },
+  );
 
   const followUserMutation = trpc.user.followUser.useMutation();
   const unfollowUserMutation = trpc.user.unfollowUser.useMutation();
 
   const handleFollowUser = () => {
-    if (!userId) {
+    if (!data?._id) {
       return;
     }
-    followUserMutation.mutate({ userId });
+    followUserMutation
+      .mutateAsync({
+        userId: data?._id.toString(),
+      })
+      .then(() => refetch());
   };
 
   const handleUnFollowUser = () => {
-    if (!userId) {
+    if (!data?._id) {
       return;
     }
-    unfollowUserMutation.mutate({ userId });
+    unfollowUserMutation
+      .mutateAsync({
+        userId: data?._id.toString(),
+      })
+      .then(() => refetch());
   };
 
   return (
@@ -46,7 +56,6 @@ export const ProfileHeader = ({
       <Box
         width="100%"
         overflow="hidden"
-        borderBottom="1px solid rgb(56, 68, 77)"
         borderTop={0}
         position="sticky"
         top={0}
@@ -67,11 +76,62 @@ export const ProfileHeader = ({
           </IconButton>
           <Box display="flex" flexDirection="column" flexGrow={1}>
             <Typography fontWeight={700} fontSize={20}>
-              {name || ''}
+              {data?.name || ''}
             </Typography>
             <Typography fontSize={13} color="rgb(113, 118, 123)">
-              {postCount} Posts
+              {data?.postCount} Posts
             </Typography>
+          </Box>
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          borderLeft: {
+            md: '1px solid rgb(56, 68, 77)',
+          },
+          borderRight: {
+            md: '1px solid rgb(56, 68, 77)',
+          },
+        }}
+      >
+        <Box height={120} bgcolor="#ccc" />
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="flex-start"
+        >
+          <Box
+            border="4px solid black"
+            borderRadius={50}
+            overflow="hidden"
+            position="relative"
+            top={-67}
+            height={134}
+            ml={2}
+            sx={{
+              aspectRatio: '1',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              '& img': {
+                objectFit: 'cover',
+                minWidth: '100%',
+                minHeight: '100%',
+              },
+            }}
+          >
+            <img src={data?.image} alt={`${data?.name} avatar`} />
+          </Box>
+          <Box p={2}>
+            {data?.followed ? (
+              <Button variant="contained" onClick={handleUnFollowUser}>
+                UnFollow
+              </Button>
+            ) : (
+              <Button variant="contained" onClick={handleFollowUser}>
+                Follow
+              </Button>
+            )}
           </Box>
         </Box>
       </Box>
@@ -79,9 +139,9 @@ export const ProfileHeader = ({
         <Button onClick={handleFollowUser}>Follow</Button>
         <Button onClick={handleUnFollowUser}>UnFollow</Button>
       </Box>
-      <Box>Followers: {followerCount}</Box>
-      <Box>Followed: {followed ? 'true' : 'false'}</Box>
-      <Box>Follows you: {followsYou ? 'true' : 'false'}</Box>
+      <Box>Followers: {data?.followerCount}</Box>
+      <Box>Followed: {data?.followed ? 'true' : 'false'}</Box>
+      <Box>Follows you: {data?.followsYou ? 'true' : 'false'}</Box>
     </>
   );
 };
