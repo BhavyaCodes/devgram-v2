@@ -78,7 +78,7 @@ export const ProfileHeader = ({}) => {
           },
           backdropFilter: 'blur(12px)',
         }}
-        bgcolor="rgba(0, 0, 0, 0)"
+        bgcolor="rgba(0, 0, 0, 0.65)"
       >
         <Box display="flex" alignItems="center" position="sticky">
           <IconButton onClick={router.back} sx={{ flexShrink: 0, mx: 1 }}>
