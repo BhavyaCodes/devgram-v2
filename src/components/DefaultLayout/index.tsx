@@ -67,8 +67,18 @@ export const DefaultLayout = ({
       </AppBar> */}
       <Box height={0} id="back-to-top-anchor" />
 
-      <Container maxWidth="md" component="main" disableGutters>
-        {children}
+      <Container maxWidth="lg" component="main" disableGutters>
+        <Box display="flex" alignItems="stretch" justifyContent="center">
+          <Box bgcolor="red" flexGrow={1}>
+            {/* asfsdfsdfsfsdf */}
+          </Box>
+          <Box flexBasis="600px" maxWidth="100%" flexShrink={0}>
+            {children}
+          </Box>
+          <Box bgcolor="red" flexGrow={1}>
+            {/* sdfsdf */}
+          </Box>
+        </Box>
       </Container>
 
       <DynamicScrollToTop />
