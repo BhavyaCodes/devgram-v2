@@ -65,7 +65,7 @@ export const DefaultLayout = ({
           </Box>
         </Toolbar>
       </AppBar> */}
-      {/* <Offset id="back-to-top-anchor" /> */}
+      <Box height={0} id="back-to-top-anchor" />
 
       <Container maxWidth="md" component="main" disableGutters>
         {children}
