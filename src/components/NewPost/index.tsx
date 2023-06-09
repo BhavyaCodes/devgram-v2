@@ -205,7 +205,16 @@ const NewPost: FC = () => {
       <Box
         p={2}
         pb={0.5}
-        border="1px solid rgb(56, 68, 77)"
+        borderTop="1px solid rgb(56, 68, 77)"
+        borderBottom="1px solid rgb(56, 68, 77)"
+        sx={{
+          borderLeft: {
+            md: '1px solid rgb(56, 68, 77)',
+          },
+          borderRight: {
+            md: '1px solid rgb(56, 68, 77)',
+          },
+        }}
         component="form"
         onSubmit={handleSubmit}
         display="flex"

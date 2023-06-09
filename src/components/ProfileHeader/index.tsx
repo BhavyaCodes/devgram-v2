@@ -19,14 +19,20 @@ export const ProfileHeader = ({
     <Box
       width="100%"
       overflow="hidden"
-      border="1px solid rgb(56, 68, 77)"
+      borderBottom="1px solid rgb(56, 68, 77)"
       borderTop={0}
       position="sticky"
-      top={64}
-      bgcolor="rgba(0, 0, 0, 0)"
+      top={0}
       sx={{
+        borderLeft: {
+          md: '1px solid rgb(56, 68, 77)',
+        },
+        borderRight: {
+          md: '1px solid rgb(56, 68, 77)',
+        },
         backdropFilter: 'blur(12px)',
       }}
+      bgcolor="rgba(0, 0, 0, 0)"
     >
       <Box display="flex" alignItems="center" position="sticky">
         <IconButton onClick={router.back} sx={{ flexShrink: 0, mx: 1 }}>

@@ -37,7 +37,7 @@ export const DefaultLayout = ({
         <title>devGram</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <AppBar enableColorOnDark>
+      {/* <AppBar enableColorOnDark>
         <Toolbar
           sx={{
             p: 2,
@@ -64,10 +64,10 @@ export const DefaultLayout = ({
             />
           </Box>
         </Toolbar>
-      </AppBar>
-      <Offset id="back-to-top-anchor" />
+      </AppBar> */}
+      {/* <Offset id="back-to-top-anchor" /> */}
 
-      <Container maxWidth="md" component="main">
+      <Container maxWidth="md" component="main" disableGutters>
         {children}
       </Container>
 
