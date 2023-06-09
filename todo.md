@@ -1,3 +1,7 @@
+## BUGS
+
+- [x] Fix profile query for users with no posts
+
 ## TODO
 
 - [ ] Post has been deleted message when deleting post

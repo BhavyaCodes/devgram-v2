@@ -79,7 +79,9 @@ export const userRouter = router({
         },
         {
           $addFields: {
-            postCount: '$posts.postCount',
+            postCount: {
+              $ifNull: ['$posts.postCount', 0],
+            },
           },
         },
         {
