@@ -1,19 +1,31 @@
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useRouter } from 'next/router';
+import { trpc } from '~/utils/trpc';
 
 interface ProfileHeaderProps {
+  userId?: string;
   name?: string;
   image?: string;
   postCount?: number;
 }
 
 export const ProfileHeader = ({
+  userId,
   name,
   image,
   postCount,
 }: ProfileHeaderProps) => {
   const router = useRouter();
+
+  const followUserMutation = trpc.user.followUser.useMutation();
+
+  const handleFollowUser = () => {
+    if (!userId) {
+      return;
+    }
+    followUserMutation.mutate({ userId });
+  };
 
   return (
     <>
@@ -50,7 +62,7 @@ export const ProfileHeader = ({
         </Box>
       </Box>
       <Box>
-        <Button>Follow</Button>
+        <Button onClick={handleFollowUser}>Follow</Button>
       </Box>
     </>
   );

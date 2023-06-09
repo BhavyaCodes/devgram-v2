@@ -44,6 +44,7 @@ const ProfilePage = () => {
         name={profileUserQuery.data?.name}
         image={profileUserQuery.data?.image}
         postCount={profileUserQuery.data?.postCount}
+        userId={profileUserQuery.data?._id.toString()}
       />
       {getUser.data?._id.toString() === profileId ? <NewPost /> : null}
       <PostsList profileId={profileId} />

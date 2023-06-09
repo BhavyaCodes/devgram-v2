@@ -102,12 +102,15 @@ export const userRouter = router({
     .input(z.object({ userId: z.string() }))
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
-      const result = await Follower.updateOne({
-        followerId: ctx.session.userId,
-        userId: input.userId,
-      });
-
-      return true;
+      const result = await Follower.updateOne(
+        {
+          followerId: ctx.session.userId,
+          userId: input.userId,
+        },
+        {},
+        { upsert: true },
+      );
+      return result.acknowledged;
     }),
 
   logout: currentSessionProcedure.mutation(async ({ ctx }) => {
