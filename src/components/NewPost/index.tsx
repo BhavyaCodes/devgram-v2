@@ -147,8 +147,13 @@ const NewPost: FC = () => {
     let imageId: string | undefined;
 
     if (fileInput) {
-      const { signature, timestamp } = (await axios.get('/api/upload-image'))
-        .data;
+      const { signature, timestamp } = (
+        await axios.get('/api/upload-image', {
+          params: {
+            type: 'post',
+          },
+        })
+      ).data;
 
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
 
@@ -165,7 +170,8 @@ const NewPost: FC = () => {
       formData.append('signature', signature);
       formData.append(
         'folder',
-        process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER as string,
+        // process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER as string,
+        `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/post`,
       );
       formData.append('timestamp', timestamp.toString());
       formData.append('transformation', 'c_scale,h_100');
@@ -260,13 +266,13 @@ const NewPost: FC = () => {
               <Box
                 sx={{
                   '& img': {
-                    // width: '100%',
+                    maxWidth: '100%',
                     display: 'block',
                     marginBottom: posting ? 2 : 0,
                     borderRadius: 5,
                     maxHeight: 400,
                   },
-
+                  maxWidth: '100%',
                   overflow: 'hidden',
                   mt: 2,
                   position: 'relative',

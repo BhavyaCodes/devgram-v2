@@ -2,12 +2,16 @@
 
 - [x] Fix profile query for users with no posts
 - [x] Can't follow yourself logic
+- [ ] Don't post after image upload error
 
 ## Edit Profile
 
 - [x] Backend
 - [x] frontend
 - [ ] images
+- [ ] delete old image when updating new
+  - [ ] avatar
+  - [ ] banner
 
 ## TODO
 
