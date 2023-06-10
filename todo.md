@@ -3,14 +3,16 @@
 - [x] Fix profile query for users with no posts
 - [x] Can't follow yourself logic
 - [ ] Don't post after image upload error
+- [ ] fix non square image avatars
 
 ## Edit Profile
 
+- [ ] Disable form submittion twice
 - [x] Backend
 - [x] frontend
 - [ ] images
 - [ ] delete old image when updating new
-  - [ ] avatar
+  - [x] avatar
   - [ ] banner
 
 ## TODO
