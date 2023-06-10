@@ -5,6 +5,8 @@ import { trpc } from '~/utils/trpc';
 import { useState } from 'react';
 import EditProfileModal from '../EditProfileModal';
 import { formatText } from '~/utils/formatText';
+import { formatDate } from '~/utils/formatDate';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 export const ProfileHeader = () => {
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -188,6 +190,23 @@ export const ProfileHeader = () => {
             color="rgb(231, 233, 234)"
           >
             {formatText(data?.bio)}
+          </Typography>
+
+          <Typography
+            variant="body2"
+            display="flex"
+            alignItems="baseline"
+            mt={1}
+          >
+            <CalendarMonthIcon
+              sx={{
+                fontSize: 'inherit',
+                position: 'relative',
+                top: 1,
+                mr: 0.75,
+              }}
+            />
+            <Typography>Joined {formatDate(data?.createdAt)}</Typography>
           </Typography>
         </Box>
       </Box>

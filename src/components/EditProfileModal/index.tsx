@@ -19,6 +19,8 @@ interface EditProfileModalProps {
 }
 
 const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
+  const nameLength = 50;
+  const bioLength = 200;
   const utils = trpc.useContext();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down('md'));
@@ -85,8 +87,19 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
             label="Name"
             value={name || ''}
             onChange={(e) => setName(e.target.value)}
+            inputProps={{
+              maxLength: nameLength,
+            }}
           />
-          <Typography component="p" ml="auto" textAlign="right" gutterBottom>
+          <Typography
+            component="p"
+            ml="auto"
+            textAlign="right"
+            gutterBottom
+            fontSize={12}
+            variant="body2"
+            mt={0.5}
+          >
             {`${name.length}/50`}
           </Typography>
 
@@ -95,8 +108,20 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
             label="Bio"
             value={bio || ''}
             onChange={(e) => setBio(e.target.value)}
+            multiline
+            inputProps={{
+              maxLength: bioLength,
+            }}
           />
-          <Typography component="p" ml="auto" textAlign="right" gutterBottom>
+          <Typography
+            component="p"
+            ml="auto"
+            textAlign="right"
+            gutterBottom
+            fontSize={12}
+            mt={0.5}
+            variant="body2"
+          >
             {`${bio.length}/200`}
           </Typography>
         </DialogContent>
