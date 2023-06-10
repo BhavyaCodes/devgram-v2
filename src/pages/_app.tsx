@@ -76,17 +76,17 @@ const MyApp = (({
             opacity: 0.4,
           },
         },
-        components: {
-          MuiIconButton: {
-            styleOverrides: {
-              root: {
-                '&:hover': {
-                  backgroundColor: 'rgba(0, 186,124,0.1)',
-                },
-              },
-            },
-          },
-        },
+        // components: {
+        //   MuiIconButton: {
+        //     styleOverrides: {
+        //       root: {
+        //         '&:hover': {
+        //           backgroundColor: 'rgba(0, 186,124,0.1)',
+        //         },
+        //       },
+        //     },
+        //   },
+        // },
       }),
     [mode],
   );

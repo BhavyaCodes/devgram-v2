@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   TextField,
   Typography,
   useMediaQuery,
@@ -17,6 +18,8 @@ import React, {
   useState,
 } from 'react';
 import { trpc } from '~/utils/trpc';
+
+import AddAPhotoRoundedIcon from '@mui/icons-material/AddAPhotoRounded';
 
 interface EditProfileModalProps {
   open: boolean;
@@ -67,6 +70,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
     e.preventDefault();
     editUser.mutateAsync({ name, bio }).then(() => {
       handleClose();
+      setSelectedAvatar(undefined);
     });
   };
 
@@ -91,7 +95,10 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       fullScreen={matches}
       fullWidth
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose();
+        setSelectedAvatar(undefined);
+      }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
@@ -101,8 +108,6 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
         <Box height={120} bgcolor="#ccc" />
 
         <Box
-          htmlFor="edit-avatar-input"
-          component="label"
           border="4px solid black"
           borderRadius={50}
           overflow="hidden"
@@ -120,10 +125,23 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
               objectFit: 'cover',
               minWidth: '100%',
               minHeight: '100%',
-              cursor: 'pointer',
             },
           }}
         >
+          <Box
+            htmlFor="edit-avatar-input"
+            component="label"
+            onClick={(e) => {
+              if (e.target !== e.currentTarget) {
+                e.currentTarget.click();
+              }
+            }}
+            sx={{ position: 'absolute', zIndex: 10000, display: 'block' }}
+          >
+            <IconButton type="button">
+              <AddAPhotoRoundedIcon />
+            </IconButton>
+          </Box>
           <img
             src={
               selectedAvatar
@@ -189,7 +207,14 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button color="info" type="button" onClick={handleClose}>
+          <Button
+            color="info"
+            type="button"
+            onClick={() => {
+              handleClose();
+              setSelectedAvatar(undefined);
+            }}
+          >
             Cancel
           </Button>
           <Button color="primary" type="submit">
