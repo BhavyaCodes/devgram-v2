@@ -12,15 +12,13 @@ import Follower from '../models/Follower';
 export const userRouter = router({
   getUser: authOnlyProcedure
     .output(
-      z
-        .object({
-          _id: z.instanceof(ObjectId),
-          image: z.string().url().optional(),
-          createdAt: z.date(),
-          updatedAt: z.date(),
-          name: z.string(),
-        })
-        .or(z.undefined()),
+      z.object({
+        _id: z.instanceof(ObjectId),
+        image: z.string().url().optional(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+        name: z.string(),
+      }),
     )
     .query(({ ctx }) => {
       const session = ctx.session;
@@ -191,6 +189,37 @@ export const userRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'user not found' });
       }
       return userProfile;
+    }),
+
+  editProfile: authOnlyProcedure
+    .input(
+      z.object({
+        name: z.string().optional(),
+      }),
+    )
+    .output(
+      z.object({
+        _id: z.instanceof(ObjectId),
+        image: z.string().url().optional(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+        name: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: ctx.session.userId._id },
+        input,
+        {
+          new: true,
+        },
+      ).lean();
+
+      if (!updatedUser) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+
+      return updatedUser;
     }),
 
   followUser: authOnlyProcedure
