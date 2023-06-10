@@ -9,6 +9,7 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
   name: string;
+  banner?: string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -17,6 +18,7 @@ const userSchema = new Schema<IUser>(
     image: { type: String },
     name: { type: String, required: true },
     bio: { type: String },
+    banner: { type: String },
   },
 
   { timestamps: true },

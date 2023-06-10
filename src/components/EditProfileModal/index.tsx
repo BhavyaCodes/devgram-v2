@@ -10,7 +10,12 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import React, { FormEventHandler, useEffect, useState } from 'react';
+import React, {
+  ChangeEventHandler,
+  FormEventHandler,
+  useEffect,
+  useState,
+} from 'react';
 import { trpc } from '~/utils/trpc';
 
 interface EditProfileModalProps {
@@ -19,6 +24,9 @@ interface EditProfileModalProps {
 }
 
 const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
+  const [selectedAvatar, setSelectedAvatar] = useState<File | undefined>(
+    undefined,
+  );
   const nameLength = 50;
   const bioLength = 200;
   const utils = trpc.useContext();
@@ -62,6 +70,14 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
     });
   };
 
+  const handleAvatarChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setSelectedAvatar(file);
+    }
+  };
+
   if (getUser.isLoading) {
     return <div>Loading</div>;
   }
@@ -85,6 +101,8 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
         <Box height={120} bgcolor="#ccc" />
 
         <Box
+          htmlFor="edit-avatar-input"
+          component="label"
           border="4px solid black"
           borderRadius={50}
           overflow="hidden"
@@ -93,6 +111,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           height={134}
           ml={2}
           sx={{
+            userSelect: 'none',
             aspectRatio: '1',
             display: 'flex',
             alignItems: 'center',
@@ -101,14 +120,30 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
               objectFit: 'cover',
               minWidth: '100%',
               minHeight: '100%',
+              cursor: 'pointer',
             },
           }}
         >
-          <img src={getUser.data?.image} alt={`${getUser.data?.name} avatar`} />
+          <img
+            src={
+              selectedAvatar
+                ? URL.createObjectURL(selectedAvatar)
+                : getUser.data?.image
+            }
+            alt={`${getUser.data?.name} avatar`}
+          />
         </Box>
       </Box>
 
       <Box component="form" mt={-6} onSubmit={handleSubmit}>
+        <input
+          type="file"
+          onChange={handleAvatarChange}
+          style={{ display: 'none' }}
+          id="edit-avatar-input"
+          //TODO: update disabled logic
+          disabled={false}
+        />
         <DialogContent>
           <TextField
             fullWidth

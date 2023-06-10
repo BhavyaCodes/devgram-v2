@@ -39,6 +39,7 @@ export const userRouter = router({
         name: z.string(),
         bio: z.string().optional(),
         postCount: z.number(),
+        banner: z.string().optional(),
         followerCount: z.number(),
         followed: z.boolean().nullish(),
         followsYou: z.boolean().nullish(),

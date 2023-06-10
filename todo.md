@@ -11,11 +11,12 @@
 
 ## TODO
 
+- [ ] image picker validations
 - [x] follow backend
-- [ ] follow frontend
+- [x] follow frontend
 - [x] unfollow backend
-- [ ] unfollow frontend
-- [ ] Post has been deleted message when deleting post
+- [x] unfollow frontend
+- [x] Post has been deleted message when deleting post
 - [x] use add comment logic for adding new post
 - [x] Add close modal button on gifpicker
 - [x] Delete Comment and likes when deleting post

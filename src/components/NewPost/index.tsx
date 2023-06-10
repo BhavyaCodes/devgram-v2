@@ -366,7 +366,6 @@ const NewPost: FC = () => {
                 type="file"
                 style={{ display: 'none' }}
                 id="file-input-button"
-                placeholder="asdfasdf"
                 disabled={posting}
                 onChange={handleFileChange}
               />
