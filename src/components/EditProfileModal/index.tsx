@@ -22,6 +22,7 @@ import { trpc } from '~/utils/trpc';
 import AddAPhotoRoundedIcon from '@mui/icons-material/AddAPhotoRounded';
 import axios from 'axios';
 import { getImageUrl } from '~/utils/getImageUrl';
+import { CloudinaryFolderName } from '~/types';
 
 interface EditProfileModalProps {
   open: boolean;
@@ -74,8 +75,15 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
     let imageId: string | undefined;
 
     if (selectedAvatar) {
-      const { signature, timestamp } = (await axios.get('/api/upload-image'))
-        .data;
+      const folderName: CloudinaryFolderName = 'avatar';
+
+      const { signature, timestamp } = (
+        await axios.get('/api/upload-image', {
+          params: {
+            type: folderName,
+          },
+        })
+      ).data;
 
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
 
@@ -92,7 +100,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       formData.append('signature', signature);
       formData.append(
         'folder',
-        process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER as string,
+        `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folderName}`,
       );
       formData.append('timestamp', timestamp.toString());
       formData.append('transformation', 'c_scale,h_100');

@@ -147,9 +147,8 @@ const NewPost: FC = () => {
 
     let imageId: string | undefined;
 
-    const folderName: CloudinaryFolderName = 'post';
-
     if (fileInput) {
+      const folderName: CloudinaryFolderName = 'post';
       const { signature, timestamp } = (
         await axios.get('/api/upload-image', {
           params: {
