@@ -9,6 +9,9 @@ import User from '../models/User';
 import isMongoId from 'validator/lib/isMongoId';
 import { PipelineStage, Types } from 'mongoose';
 import Follower from '../models/Follower';
+import { v2 as cloudinary } from 'cloudinary';
+import { env } from '../env';
+
 export const userRouter = router({
   getUser: authOnlyProcedure
     .output(
@@ -213,6 +216,26 @@ export const userRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (
+        // new avatar image and existing image is from cloudinary
+        input.image &&
+        !z.string().url().safeParse(ctx.session.userId.image).success &&
+        ctx.session.userId.image
+      ) {
+        // delete existing image from cloudinary
+        cloudinary.config({
+          cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+          api_key: env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+          api_secret: env.CLOUDINARY_API_SECRET,
+          secure: true,
+        });
+
+        await cloudinary.uploader
+          .destroy(ctx.session.userId.image)
+          .then((data) => console.log(data))
+          .catch((err) => console.log(err));
+      }
+
       const updatedUser = await User.findOneAndUpdate(
         { _id: ctx.session.userId._id },
         input,
