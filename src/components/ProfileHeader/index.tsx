@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
 import { useState } from 'react';
 import EditProfileModal from '../EditProfileModal';
+import { formatText } from '~/utils/formatText';
 
 export const ProfileHeader = () => {
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -88,7 +89,10 @@ export const ProfileHeader = () => {
         bgcolor="rgba(0, 0, 0, 0.65)"
       >
         <Box display="flex" alignItems="center" position="sticky">
-          <IconButton onClick={router.back} sx={{ flexShrink: 0, mx: 1 }}>
+          <IconButton
+            onClick={router.back}
+            sx={{ flexShrink: 0, ml: 1, mr: 2 }}
+          >
             <ArrowBackRoundedIcon />
           </IconButton>
           <Box display="flex" flexDirection="column" flexGrow={1}>
@@ -144,24 +148,48 @@ export const ProfileHeader = () => {
               <Button
                 variant="contained"
                 onClick={() => setEditProfileOpen(true)}
+                size="small"
               >
                 Edit Profile
               </Button>
             ) : data?.followed ? (
-              <Button variant="contained" onClick={handleUnFollowUser}>
+              <Button
+                size="small"
+                variant="contained"
+                onClick={handleUnFollowUser}
+              >
                 UnFollow
               </Button>
             ) : (
-              <Button variant="contained" onClick={handleFollowUser}>
+              <Button
+                size="small"
+                variant="contained"
+                onClick={handleFollowUser}
+              >
                 Follow
               </Button>
             )}
           </Box>
         </Box>
-      </Box>
-      <Box>
-        <Button onClick={handleFollowUser}>Follow</Button>
-        <Button onClick={handleUnFollowUser}>UnFollow</Button>
+        <Box p={2} mt={-8}>
+          <Typography
+            fontSize={20}
+            fontWeight={800}
+            component="h1"
+            whiteSpace="pre-wrap"
+            sx={{ overflowWrap: 'anywhere' }}
+          >
+            {formatText(data?.name)}
+          </Typography>
+          <Typography
+            variant="body1"
+            whiteSpace="pre-wrap"
+            sx={{ overflowWrap: 'anywhere' }}
+            color="rgb(231, 233, 234)"
+          >
+            {formatText(data?.bio)}
+          </Typography>
+        </Box>
       </Box>
       <Box>Followers: {data?.followerCount}</Box>
       <Box>Followed: {data?.followed ? 'true' : 'false'}</Box>

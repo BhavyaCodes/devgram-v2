@@ -15,6 +15,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import Link from '~/components/common/Link';
+import { formatText } from '~/utils/formatText';
 interface CommentBoxProps {
   commentId: string;
   postUserId: string;
@@ -169,8 +170,12 @@ const CommentBox = ({
             </>
           )}
         </Box>
-        <Typography variant="body1" whiteSpace="pre-wrap">
-          {content.replace(/\n+/g, '\n')}
+        <Typography
+          variant="body1"
+          whiteSpace="pre-wrap"
+          sx={{ overflowWrap: 'anywhere' }}
+        >
+          {formatText(content)}
         </Typography>
       </Paper>
     </Box>

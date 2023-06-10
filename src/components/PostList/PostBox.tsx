@@ -31,6 +31,7 @@ import { AddComment } from './AddComment';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import Link from '../common/Link';
 import { useRouter } from 'next/router';
+import { formatText } from '~/utils/formatText';
 
 interface PostBoxProps {
   /**
@@ -460,7 +461,7 @@ export const PostBox = ({
                 sx={{ overflowWrap: 'anywhere' }}
                 whiteSpace="pre-wrap"
               >
-                {content.replace(/\n+/g, '\n')}
+                {formatText(content)}
               </Typography>
               {(imageId || gifUrl) && (
                 <Box

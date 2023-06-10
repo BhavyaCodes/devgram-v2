@@ -29,7 +29,6 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
 
   const editUser = trpc.user.editProfile.useMutation({
     onSuccess: (data) => {
-      console.log('onSucess');
       utils.user.getPublicProfile.setData(
         { profileId: data._id.toString() },
         (oldData) => {
