@@ -7,6 +7,7 @@ import EditProfileModal from '../EditProfileModal';
 import { formatText } from '~/utils/formatText';
 import { formatDate } from '~/utils/formatDate';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { getImageUrl } from '~/utils/getImageUrl';
 
 export const ProfileHeader = () => {
   const [rendered, setRendered] = useState(false);
@@ -139,6 +140,7 @@ export const ProfileHeader = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              bgcolor: '#ccc',
               '& img': {
                 objectFit: 'cover',
                 minWidth: '100%',
@@ -146,7 +148,7 @@ export const ProfileHeader = () => {
               },
             }}
           >
-            <img src={data?.image} alt={`${data?.name} avatar`} />
+            <img src={getImageUrl(data?.image)} alt={`${data?.name} avatar`} />
           </Box>
           <Box p={2}>
             {currentUserQuery.data?._id.toString() === data?._id.toString() ? (

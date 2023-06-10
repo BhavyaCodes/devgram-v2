@@ -20,6 +20,7 @@ import React, {
 import { trpc } from '~/utils/trpc';
 
 import AddAPhotoRoundedIcon from '@mui/icons-material/AddAPhotoRounded';
+import axios from 'axios';
 
 interface EditProfileModalProps {
   open: boolean;
@@ -40,7 +41,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
   const [bio, setBio] = useState('');
   const getUser = trpc.user.getUser.useQuery();
 
-  const editUser = trpc.user.editProfile.useMutation({
+  const editProfile = trpc.user.editProfile.useMutation({
     onSuccess: (data) => {
       utils.user.getPublicProfile.setData(
         { profileId: data._id.toString() },
@@ -66,9 +67,52 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
     }
   }, [getUser.data?.bio]);
 
-  const handleSubmit: FormEventHandler = (e) => {
+  const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-    editUser.mutateAsync({ name, bio }).then(() => {
+
+    let imageId: string | undefined;
+
+    if (selectedAvatar) {
+      const { signature, timestamp } = (await axios.get('/api/upload-image'))
+        .data;
+
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
+
+      const uploadEndpoint =
+        'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload';
+
+      const formData = new FormData();
+
+      formData.append('file', selectedAvatar);
+      formData.append(
+        'api_key',
+        process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
+      );
+      formData.append('signature', signature);
+      formData.append(
+        'folder',
+        process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER as string,
+      );
+      formData.append('timestamp', timestamp.toString());
+      formData.append('transformation', 'c_scale,h_100');
+
+      await axios
+        .post(uploadEndpoint, formData, {
+          onUploadProgress: (e) => {
+            // setImageUploadProgress(e.progress);
+            console.log(e.progress);
+          },
+        })
+        .then((res) => {
+          imageId = res.data.public_id as string;
+        })
+        .catch((err) => {
+          // setImageUploadError('Error uploading image, please try again');
+          console.log(err);
+        });
+    }
+
+    editProfile.mutateAsync({ name, bio, image: imageId }).then(() => {
       handleClose();
       setSelectedAvatar(undefined);
     });

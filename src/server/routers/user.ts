@@ -14,7 +14,7 @@ export const userRouter = router({
     .output(
       z.object({
         _id: z.instanceof(ObjectId),
-        image: z.string().url().optional(),
+        image: z.string().optional(),
         createdAt: z.date(),
         bio: z.string().optional(),
         updatedAt: z.date(),
@@ -34,7 +34,7 @@ export const userRouter = router({
     .output(
       z.object({
         _id: z.instanceof(ObjectId),
-        image: z.string().url().optional(),
+        image: z.string().optional(),
         createdAt: z.date(),
         name: z.string(),
         bio: z.string().optional(),
@@ -199,12 +199,13 @@ export const userRouter = router({
       z.object({
         name: z.string().optional(),
         bio: z.string().optional(),
+        image: z.string().optional(),
       }),
     )
     .output(
       z.object({
         _id: z.instanceof(ObjectId),
-        image: z.string().url().optional(),
+        image: z.string().optional(),
         createdAt: z.date(),
         updatedAt: z.date(),
         name: z.string(),
