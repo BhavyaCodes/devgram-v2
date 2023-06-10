@@ -80,7 +80,35 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">Edit Profile</DialogTitle>
-      <Box component="form" onSubmit={handleSubmit}>
+
+      <Box>
+        <Box height={120} bgcolor="#ccc" />
+
+        <Box
+          border="4px solid black"
+          borderRadius={50}
+          overflow="hidden"
+          position="relative"
+          top={-67}
+          height={134}
+          ml={2}
+          sx={{
+            aspectRatio: '1',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            '& img': {
+              objectFit: 'cover',
+              minWidth: '100%',
+              minHeight: '100%',
+            },
+          }}
+        >
+          <img src={getUser.data?.image} alt={`${getUser.data?.name} avatar`} />
+        </Box>
+      </Box>
+
+      <Box component="form" mt={-6} onSubmit={handleSubmit}>
         <DialogContent>
           <TextField
             fullWidth
