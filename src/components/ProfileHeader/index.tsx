@@ -2,18 +2,21 @@ import { Box, Button, IconButton, Typography } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EditProfileModal from '../EditProfileModal';
 import { formatText } from '~/utils/formatText';
 import { formatDate } from '~/utils/formatDate';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 export const ProfileHeader = () => {
+  const [rendered, setRendered] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const router = useRouter();
 
   const profileId = router.query.id as string;
-
+  useEffect(() => {
+    setRendered(true);
+  }, []);
   const currentUserQuery = trpc.user.getUser.useQuery(undefined, {
     staleTime: 60000,
     retry: false,
@@ -206,7 +209,9 @@ export const ProfileHeader = () => {
                 mr: 0.75,
               }}
             />
-            <Typography>Joined {formatDate(data?.createdAt)}</Typography>
+            {rendered && (
+              <Typography>Joined {formatDate(data?.createdAt)}</Typography>
+            )}
           </Typography>
         </Box>
       </Box>
