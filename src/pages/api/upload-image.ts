@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v2 as cloudinary } from 'cloudinary';
 import { env } from '~/server/env';
+import { CloudinaryFolderName } from '~/types';
 
 cloudinary.config({
   cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -16,7 +17,7 @@ export default async function handler(
   res.setHeader('Access-Control-Allow-Origin', '*');
   const { type } = req.query;
 
-  const folderName =
+  const folderName: CloudinaryFolderName | undefined =
     type === 'avatar'
       ? 'avatar'
       : type === 'post'

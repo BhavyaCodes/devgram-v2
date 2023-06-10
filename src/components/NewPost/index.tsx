@@ -31,6 +31,7 @@ import Gif from '../Gif';
 import { useRouter } from 'next/router';
 import Link from '../common/Link';
 import { getImageUrl } from '~/utils/getImageUrl';
+import { CloudinaryFolderName } from '~/types';
 
 const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
   ssr: false,
@@ -146,11 +147,13 @@ const NewPost: FC = () => {
 
     let imageId: string | undefined;
 
+    const folderName: CloudinaryFolderName = 'post';
+
     if (fileInput) {
       const { signature, timestamp } = (
         await axios.get('/api/upload-image', {
           params: {
-            type: 'post',
+            type: folderName,
           },
         })
       ).data;
@@ -168,10 +171,10 @@ const NewPost: FC = () => {
         process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
       );
       formData.append('signature', signature);
+
       formData.append(
         'folder',
-        // process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER as string,
-        `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/post`,
+        `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folderName}`,
       );
       formData.append('timestamp', timestamp.toString());
       formData.append('transformation', 'c_scale,h_100');
