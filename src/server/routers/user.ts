@@ -16,6 +16,7 @@ export const userRouter = router({
         _id: z.instanceof(ObjectId),
         image: z.string().url().optional(),
         createdAt: z.date(),
+        bio: z.string().optional(),
         updatedAt: z.date(),
         name: z.string(),
       }),
@@ -36,6 +37,7 @@ export const userRouter = router({
         image: z.string().url().optional(),
         createdAt: z.date(),
         name: z.string(),
+        bio: z.string().optional(),
         postCount: z.number(),
         followerCount: z.number(),
         followed: z.boolean().nullish(),
@@ -195,6 +197,7 @@ export const userRouter = router({
     .input(
       z.object({
         name: z.string().optional(),
+        bio: z.string().optional(),
       }),
     )
     .output(
@@ -204,6 +207,7 @@ export const userRouter = router({
         createdAt: z.date(),
         updatedAt: z.date(),
         name: z.string(),
+        bio: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

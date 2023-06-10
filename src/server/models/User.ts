@@ -5,6 +5,7 @@ export interface IUser {
   _id: ObjectId;
   email: string;
   image?: string;
+  bio?: string;
   createdAt: Date;
   updatedAt: Date;
   name: string;
@@ -14,7 +15,8 @@ const userSchema = new Schema<IUser>(
   {
     email: { type: String, required: true },
     image: { type: String },
-    name: { type: String },
+    name: { type: String, required: true },
+    bio: { type: String },
   },
 
   { timestamps: true },

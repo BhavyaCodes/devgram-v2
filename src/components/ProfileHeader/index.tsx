@@ -2,9 +2,11 @@ import { Box, Button, IconButton, Typography } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
-import Link from '../common/Link';
+import { useState } from 'react';
+import EditProfileModal from '../EditProfileModal';
 
-export const ProfileHeader = ({}) => {
+export const ProfileHeader = () => {
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
   const router = useRouter();
 
   const profileId = router.query.id as string;
@@ -64,12 +66,16 @@ export const ProfileHeader = ({}) => {
 
   return (
     <>
+      <EditProfileModal
+        open={editProfileOpen}
+        handleClose={() => setEditProfileOpen(false)}
+      />
       <Box
         width="100%"
         borderTop={0}
         position="sticky"
         top={-0.5}
-        zIndex={100000}
+        zIndex={1100}
         sx={{
           borderLeft: {
             md: '1px solid rgb(56, 68, 77)',
@@ -135,9 +141,12 @@ export const ProfileHeader = ({}) => {
           </Box>
           <Box p={2}>
             {currentUserQuery.data?._id.toString() === data?._id.toString() ? (
-              <Link href="/profile/edit">
-                <Button variant="contained">Edit Profile</Button>
-              </Link>
+              <Button
+                variant="contained"
+                onClick={() => setEditProfileOpen(true)}
+              >
+                Edit Profile
+              </Button>
             ) : data?.followed ? (
               <Button variant="contained" onClick={handleUnFollowUser}>
                 UnFollow
