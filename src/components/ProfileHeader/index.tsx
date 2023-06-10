@@ -65,10 +65,10 @@ export const ProfileHeader = ({}) => {
     <>
       <Box
         width="100%"
-        overflow="hidden"
         borderTop={0}
         position="sticky"
-        top={0}
+        top={-0.5}
+        zIndex={100000}
         sx={{
           borderLeft: {
             md: '1px solid rgb(56, 68, 77)',
