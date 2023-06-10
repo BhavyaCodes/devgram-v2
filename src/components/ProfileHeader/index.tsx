@@ -2,6 +2,7 @@ import { Box, Button, IconButton, Typography } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
+import Link from '../common/Link';
 
 export const ProfileHeader = ({}) => {
   const router = useRouter();
@@ -134,7 +135,9 @@ export const ProfileHeader = ({}) => {
           </Box>
           <Box p={2}>
             {currentUserQuery.data?._id.toString() === data?._id.toString() ? (
-              <Box>My Profile</Box>
+              <Link href="/profile/edit">
+                <Button variant="contained">Edit Profile</Button>
+              </Link>
             ) : data?.followed ? (
               <Button variant="contained" onClick={handleUnFollowUser}>
                 UnFollow

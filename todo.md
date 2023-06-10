@@ -1,7 +1,13 @@
 ## BUGS
 
 - [x] Fix profile query for users with no posts
-- [ ] Can't follow yourself logic
+- [x] Can't follow yourself logic
+
+## Edit Profile
+
+- [ ] Backend
+- [ ] frontend
+- [ ] images
 
 ## TODO
 
