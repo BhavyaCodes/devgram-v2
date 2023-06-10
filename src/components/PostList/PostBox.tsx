@@ -32,6 +32,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import Link from '../common/Link';
 import { useRouter } from 'next/router';
 import { formatText } from '~/utils/formatText';
+import { getImageUrl } from '~/utils/getImageUrl';
 
 interface PostBoxProps {
   /**
@@ -386,7 +387,7 @@ export const PostBox = ({
                 pr: 2,
               }}
             >
-              <img src={image} alt={`${name} avatar`} />
+              <img src={getImageUrl(image)} alt={`${name} avatar`} />
             </Link>
             <Box flexGrow={1}>
               <Box display="flex" justifyContent="space-between">

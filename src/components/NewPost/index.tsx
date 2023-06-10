@@ -30,6 +30,7 @@ import { TextRemaining } from './TextRemaining';
 import Gif from '../Gif';
 import { useRouter } from 'next/router';
 import Link from '../common/Link';
+import { getImageUrl } from '~/utils/getImageUrl';
 
 const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
   ssr: false,
@@ -238,7 +239,10 @@ const NewPost: FC = () => {
               pr: 2,
             }}
           >
-            <img src={user.data.image} alt={`${user.data.name} avatar`} />
+            <img
+              src={getImageUrl(user.data.image)}
+              alt={`${user.data.name} avatar`}
+            />
           </Link>
         )}
         <Box flexGrow={1}>

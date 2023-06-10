@@ -16,6 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import Link from '~/components/common/Link';
 import { formatText } from '~/utils/formatText';
+import { getImageUrl } from '~/utils/getImageUrl';
 interface CommentBoxProps {
   commentId: string;
   postUserId: string;
@@ -97,7 +98,7 @@ const CommentBox = ({
           alignItems: 'center',
         }}
       >
-        <img src={userId.image} alt={`${userId.name} avatar`} />
+        <img src={getImageUrl(userId.image)} alt={`${userId.name} avatar`} />
       </Link>
       <Paper
         elevation={6}

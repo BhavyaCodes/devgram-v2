@@ -21,6 +21,7 @@ import { trpc } from '~/utils/trpc';
 
 import AddAPhotoRoundedIcon from '@mui/icons-material/AddAPhotoRounded';
 import axios from 'axios';
+import { getImageUrl } from '~/utils/getImageUrl';
 
 interface EditProfileModalProps {
   open: boolean;
@@ -190,7 +191,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
             src={
               selectedAvatar
                 ? URL.createObjectURL(selectedAvatar)
-                : getUser.data?.image
+                : getImageUrl(getUser.data?.image)
             }
             alt={`${getUser.data?.name} avatar`}
           />

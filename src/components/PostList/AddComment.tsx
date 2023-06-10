@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { trpc } from '~/utils/trpc';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import { getImageUrl } from '~/utils/getImageUrl';
 
 interface AddCommentProps {
   postId: string;
@@ -147,7 +148,10 @@ export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
           }}
         >
           {!!userData?.image && (
-            <img src={userData.image} alt={`${userData.name} avatar`} />
+            <img
+              src={getImageUrl(userData.image)}
+              alt={`${userData.name} avatar`}
+            />
           )}
         </Box>
         <Paper

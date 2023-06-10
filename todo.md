@@ -5,8 +5,8 @@
 
 ## Edit Profile
 
-- [ ] Backend
-- [ ] frontend
+- [x] Backend
+- [x] frontend
 - [ ] images
 
 ## TODO
