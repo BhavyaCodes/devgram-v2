@@ -9,7 +9,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import axios from 'axios';
+
 import React, {
   ChangeEventHandler,
   FC,
@@ -32,7 +32,7 @@ import Gif from '../Gif';
 import { useRouter } from 'next/router';
 import Link from '../common/Link';
 import { getImageUrl } from '~/utils/getImageUrl';
-import { CloudinaryFolderName } from '~/types';
+import { uploadImage } from '~/utils';
 
 const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
   ssr: false,
@@ -42,7 +42,7 @@ const NewPost: FC = () => {
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
   const utils = trpc.useContext();
-  const inputRef = useRef<null | HTMLInputElement>(null);
+  const fileInputRef = useRef<null | HTMLInputElement>(null);
   const [input, setInput] = useState('');
   const anchorRef = React.useRef<HTMLButtonElement>(null);
   const theme = useTheme();
@@ -61,15 +61,18 @@ const NewPost: FC = () => {
   const handleSelectGifUrl = (url: string) => {
     setGifModalOpen(false);
     setSelectedGifUrl(url);
-    setFileInput(undefined);
+    setFileInput(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const [posting, setPosting] = useState(false);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
-  const [imageUploadError, setImageUploadError] = useState<
-    string | undefined
-  >();
-  const [fileInput, setFileInput] = useState<File | undefined>();
+  // const [imageUploadError, setImageUploadError] = useState<
+  //   string | undefined
+  // >();
+  const [fileInput, setFileInput] = useState<File | null>(null);
 
   const handleEmojiClose = (event: Event | React.SyntheticEvent) => {
     if (
@@ -117,10 +120,6 @@ const NewPost: FC = () => {
           return { pages: newPages, pageParams: oldData.pageParams };
         },
       );
-
-      if (inputRef.current) {
-        inputRef.current.value = '';
-      }
     },
   });
 
@@ -149,60 +148,23 @@ const NewPost: FC = () => {
     let imageId: string | undefined;
 
     if (fileInput) {
-      const folderName: CloudinaryFolderName = 'post';
-      const { signature, timestamp } = (
-        await axios.get('/api/upload-image', {
-          params: {
-            type: folderName,
-          },
-        })
-      ).data;
-
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
-
-      const uploadEndpoint =
-        'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload';
-
-      const formData = new FormData();
-
-      formData.append('file', fileInput);
-      formData.append(
-        'api_key',
-        process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
-      );
-      formData.append('signature', signature);
-
-      formData.append(
-        'folder',
-        `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folderName}`,
-      );
-      formData.append('timestamp', timestamp.toString());
-      formData.append('transformation', 'c_scale,h_100');
-
-      await axios
-        .post(uploadEndpoint, formData, {
-          onUploadProgress: (e) => {
-            setImageUploadProgress(e.progress);
-            console.log(e.progress);
-          },
-        })
-        .then((res) => {
-          imageId = res.data.public_id as string;
-        })
-        .catch((err) => {
-          setImageUploadError('Error uploading image, please try again');
-          console.log(err);
-        });
+      const result = await uploadImage(fileInput, 'post');
+      if (result) {
+        imageId = result;
+      }
     }
     const text = input;
     createPost
       .mutateAsync({ content: text, imageId, gifUrl: selectedGifUrl })
       .then(() => {
         setInput('');
-        setFileInput(undefined);
+        setFileInput(null);
         setImageUploadProgress(undefined);
         setPosting(false);
         setSelectedGifUrl(undefined);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -210,6 +172,7 @@ const NewPost: FC = () => {
         setPosting(false);
       });
   };
+
   return (
     <>
       <Box
@@ -294,7 +257,12 @@ const NewPost: FC = () => {
                   borderRadius={200}
                   alignItems="center"
                   justifyContent="center"
-                  onClick={() => setFileInput(undefined)}
+                  onClick={() => {
+                    setFileInput(null);
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = '';
+                    }
+                  }}
                 >
                   <CloseRoundedIcon />
                 </Box>
@@ -373,6 +341,7 @@ const NewPost: FC = () => {
               <input
                 accept="image/*"
                 type="file"
+                ref={fileInputRef}
                 style={{ display: 'none' }}
                 id="file-input-button"
                 disabled={posting}
