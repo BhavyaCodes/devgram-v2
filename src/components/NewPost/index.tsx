@@ -371,6 +371,7 @@ const NewPost: FC = () => {
                 />
               </IconButton>
               <input
+                accept="image/*"
                 type="file"
                 style={{ display: 'none' }}
                 id="file-input-button"

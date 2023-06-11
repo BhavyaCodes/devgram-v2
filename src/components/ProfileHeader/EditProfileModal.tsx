@@ -284,6 +284,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           style={{ display: 'none' }}
           id="edit-avatar-input"
           disabled={posting}
+          accept="image/png,image/jpeg,image/webp"
         />
         <input
           type="file"
@@ -291,6 +292,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           style={{ display: 'none' }}
           id="edit-banner-input"
           disabled={posting}
+          accept="image/png,image/jpeg,image/webp"
         />
         <DialogContent>
           <TextField
