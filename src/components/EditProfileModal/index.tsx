@@ -20,10 +20,10 @@ import React, {
 import { trpc } from '~/utils/trpc';
 
 import AddAPhotoRoundedIcon from '@mui/icons-material/AddAPhotoRounded';
-import axios from 'axios';
 import { getImageUrl } from '~/utils/getImageUrl';
-import { CloudinaryFolderName, transformations } from '~/types';
 import { uploadImage } from '~/utils';
+import { TRPCClientError } from '@trpc/client';
+import { IUser } from '~/server/models/User';
 
 interface EditProfileModalProps {
   open: boolean;
@@ -76,119 +76,51 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
 
-    // avatar image upload
-    let avatarImageId: string | undefined;
+    let avatarUploadPromise: Promise<string | void> | undefined;
+    let bannerUploadPromise: Promise<string | void> | undefined;
 
-    // if (selectedAvatar) {
-    //   const folderName: CloudinaryFolderName = 'avatar';
+    const promises: Promise<string | void>[] = [];
 
-    //   const { signature, timestamp } = (
-    //     await axios.get('/api/upload-image', {
-    //       params: {
-    //         type: folderName,
-    //       },
-    //     })
-    //   ).data;
-
-    //   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
-
-    //   const uploadEndpoint =
-    //     'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload';
-
-    //   const formData = new FormData();
-
-    //   formData.append('file', selectedAvatar);
-    //   formData.append(
-    //     'api_key',
-    //     process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
-    //   );
-    //   formData.append('signature', signature);
-    //   formData.append(
-    //     'folder',
-    //     `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folderName}`,
-    //   );
-    //   formData.append('timestamp', timestamp.toString());
-    //   formData.append('transformation', transformations[folderName]);
-
-    //   await axios
-    //     .post(uploadEndpoint, formData, {
-    //       onUploadProgress: (e) => {
-    //         // setImageUploadProgress(e.progress);
-    //         console.log(e.progress);
-    //       },
-    //     })
-    //     .then((res) => {
-    //       avatarImageId = res.data.public_id as string;
-    //     })
-    //     .catch((err) => {
-    //       // setImageUploadError('Error uploading image, please try again');
-    //       console.log(err);
-    //     });
-    // }
+    // avatar image upload promise
 
     if (selectedAvatar) {
-      const result = await uploadImage(selectedAvatar, 'avatar');
-      if (result) {
-        avatarImageId = result;
+      avatarUploadPromise = uploadImage(selectedAvatar, 'avatar');
+      promises.push(avatarUploadPromise);
+    }
+
+    // banner image upload promise
+
+    if (selectedBanner) {
+      bannerUploadPromise = uploadImage(selectedBanner, 'banner');
+      promises.push(bannerUploadPromise);
+    }
+
+    const result = await Promise.all(promises).catch((err) => {
+      console.log(err);
+      throw new TRPCClientError('Error uploading image');
+    });
+
+    const mutationObject: Partial<IUser> = {
+      name,
+      bio,
+    };
+
+    if (result.length === 2) {
+      mutationObject.image = result[0] ? result[0] : undefined;
+      mutationObject.banner = result[1] ? result[1] : undefined;
+    } else if (result.length === 1) {
+      if (selectedAvatar) {
+        mutationObject.image = result[0] ? result[0] : undefined;
+      } else {
+        mutationObject.banner = result[0] ? result[0] : undefined;
       }
     }
 
-    // banner image upload
-    let bannerImageId: string | undefined;
-
-    if (selectedBanner) {
-      const folderName: CloudinaryFolderName = 'banner';
-
-      const { signature, timestamp } = (
-        await axios.get('/api/upload-image', {
-          params: {
-            type: folderName,
-          },
-        })
-      ).data;
-
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
-
-      const uploadEndpoint =
-        'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload';
-
-      const formData = new FormData();
-
-      formData.append('file', selectedBanner);
-      formData.append(
-        'api_key',
-        process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
-      );
-      formData.append('signature', signature);
-      formData.append(
-        'folder',
-        `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folderName}`,
-      );
-      formData.append('timestamp', timestamp.toString());
-      formData.append('transformation', transformations[folderName]);
-
-      await axios
-        .post(uploadEndpoint, formData, {
-          onUploadProgress: (e) => {
-            // setImageUploadProgress(e.progress);
-            console.log(e.progress);
-          },
-        })
-        .then((res) => {
-          bannerImageId = res.data.public_id as string;
-        })
-        .catch((err) => {
-          // setImageUploadError('Error uploading image, please try again');
-          console.log(err);
-        });
-    }
-
-    editProfile
-      .mutateAsync({ name, bio, image: avatarImageId, banner: bannerImageId })
-      .then(() => {
-        handleClose();
-        setSelectedAvatar(undefined);
-      });
+    editProfile.mutateAsync(mutationObject).then(() => {
+      handleClose();
+      setSelectedBanner(undefined);
+      setSelectedAvatar(undefined);
+    });
   };
 
   const handleAvatarChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -222,6 +154,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       open={open}
       onClose={() => {
         handleClose();
+        setSelectedBanner(undefined);
         setSelectedAvatar(undefined);
       }}
       aria-labelledby="alert-dialog-title"
@@ -385,6 +318,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
             type="button"
             onClick={() => {
               handleClose();
+              setSelectedBanner(undefined);
               setSelectedAvatar(undefined);
             }}
           >

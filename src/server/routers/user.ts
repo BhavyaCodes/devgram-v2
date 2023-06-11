@@ -239,6 +239,25 @@ export const userRouter = router({
           .catch((err) => console.log(err));
       }
 
+      if (
+        // new banner image
+        input.banner &&
+        ctx.session.userId.banner
+      ) {
+        // delete existing image from cloudinary
+        cloudinary.config({
+          cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+          api_key: env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+          api_secret: env.CLOUDINARY_API_SECRET,
+          secure: true,
+        });
+
+        await cloudinary.uploader
+          .destroy(ctx.session.userId.banner)
+          .then((data) => console.log(data))
+          .catch((err) => console.log(err));
+      }
+
       const updatedUser = await User.findOneAndUpdate(
         { _id: ctx.session.userId._id },
         input,
