@@ -102,14 +102,18 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
     // avatar image upload promise
 
     if (selectedAvatar) {
-      avatarUploadPromise = uploadImage(selectedAvatar, 'avatar');
+      avatarUploadPromise = uploadImage(selectedAvatar, 'avatar').catch((err) =>
+        console.log(err),
+      );
       promises.push(avatarUploadPromise);
     }
 
     // banner image upload promise
 
     if (selectedBanner) {
-      bannerUploadPromise = uploadImage(selectedBanner, 'banner');
+      bannerUploadPromise = uploadImage(selectedBanner, 'banner').catch((err) =>
+        console.log(err),
+      );
       promises.push(bannerUploadPromise);
     }
 

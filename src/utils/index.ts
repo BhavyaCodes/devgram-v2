@@ -5,6 +5,15 @@ export const uploadImage = async (
   file: File,
   folderName: CloudinaryFolderName,
 ): Promise<string | void> => {
+  //Check Mime Type
+  if (window.FileReader && window.Blob) {
+    console.log(file.type);
+
+    if (file.type.split('/')[0] !== 'image') {
+      throw new Error('Wrong Image Format');
+    }
+  }
+
   const { signature, timestamp } = (
     await axios.get('/api/upload-image', {
       params: {
