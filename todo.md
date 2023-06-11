@@ -10,10 +10,10 @@
 - [ ] Disable form submittion twice
 - [x] Backend
 - [x] frontend
-- [ ] images
-- [ ] delete old image when updating new
+- [x] images
+- [x] delete old image when updating new
   - [x] avatar
-  - [ ] banner
+  - [x] banner
 
 ## TODO
 

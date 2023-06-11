@@ -23,6 +23,7 @@ import AddAPhotoRoundedIcon from '@mui/icons-material/AddAPhotoRounded';
 import axios from 'axios';
 import { getImageUrl } from '~/utils/getImageUrl';
 import { CloudinaryFolderName, transformations } from '~/types';
+import { uploadImage } from '~/utils';
 
 interface EditProfileModalProps {
   open: boolean;
@@ -78,51 +79,58 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
     // avatar image upload
     let avatarImageId: string | undefined;
 
+    // if (selectedAvatar) {
+    //   const folderName: CloudinaryFolderName = 'avatar';
+
+    //   const { signature, timestamp } = (
+    //     await axios.get('/api/upload-image', {
+    //       params: {
+    //         type: folderName,
+    //       },
+    //     })
+    //   ).data;
+
+    //   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
+
+    //   const uploadEndpoint =
+    //     'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload';
+
+    //   const formData = new FormData();
+
+    //   formData.append('file', selectedAvatar);
+    //   formData.append(
+    //     'api_key',
+    //     process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
+    //   );
+    //   formData.append('signature', signature);
+    //   formData.append(
+    //     'folder',
+    //     `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folderName}`,
+    //   );
+    //   formData.append('timestamp', timestamp.toString());
+    //   formData.append('transformation', transformations[folderName]);
+
+    //   await axios
+    //     .post(uploadEndpoint, formData, {
+    //       onUploadProgress: (e) => {
+    //         // setImageUploadProgress(e.progress);
+    //         console.log(e.progress);
+    //       },
+    //     })
+    //     .then((res) => {
+    //       avatarImageId = res.data.public_id as string;
+    //     })
+    //     .catch((err) => {
+    //       // setImageUploadError('Error uploading image, please try again');
+    //       console.log(err);
+    //     });
+    // }
+
     if (selectedAvatar) {
-      const folderName: CloudinaryFolderName = 'avatar';
-
-      const { signature, timestamp } = (
-        await axios.get('/api/upload-image', {
-          params: {
-            type: folderName,
-          },
-        })
-      ).data;
-
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
-
-      const uploadEndpoint =
-        'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload';
-
-      const formData = new FormData();
-
-      formData.append('file', selectedAvatar);
-      formData.append(
-        'api_key',
-        process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
-      );
-      formData.append('signature', signature);
-      formData.append(
-        'folder',
-        `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folderName}`,
-      );
-      formData.append('timestamp', timestamp.toString());
-      formData.append('transformation', transformations[folderName]);
-
-      await axios
-        .post(uploadEndpoint, formData, {
-          onUploadProgress: (e) => {
-            // setImageUploadProgress(e.progress);
-            console.log(e.progress);
-          },
-        })
-        .then((res) => {
-          avatarImageId = res.data.public_id as string;
-        })
-        .catch((err) => {
-          // setImageUploadError('Error uploading image, please try again');
-          console.log(err);
-        });
+      const result = await uploadImage(selectedAvatar, 'avatar');
+      if (result) {
+        avatarImageId = result;
+      }
     }
 
     // banner image upload
