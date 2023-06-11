@@ -16,6 +16,7 @@ import React, {
   ChangeEventHandler,
   FormEventHandler,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { trpc } from '~/utils/trpc';
@@ -33,6 +34,8 @@ interface EditProfileModalProps {
 
 const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
   const [posting, setPosting] = useState(false);
+  const avatarFileInputRef = useRef<HTMLInputElement>(null);
+  const bannerFileInputRef = useRef<HTMLInputElement>(null);
   const [selectedAvatar, setSelectedAvatar] = useState<File | undefined>(
     undefined,
   );
@@ -69,6 +72,20 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       });
     },
   });
+
+  const resetAvatarFileInput = () => {
+    setSelectedAvatar(undefined);
+    if (avatarFileInputRef.current) {
+      avatarFileInputRef.current.value = '';
+    }
+  };
+
+  const resetBannerFileInput = () => {
+    setSelectedBanner(undefined);
+    if (bannerFileInputRef.current) {
+      bannerFileInputRef.current.value = '';
+    }
+  };
 
   useEffect(() => {
     if (getUser.data?.name) {
@@ -143,8 +160,8 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       .mutateAsync(mutationObject)
       .then(() => {
         handleClose();
-        setSelectedBanner(undefined);
-        setSelectedAvatar(undefined);
+        resetAvatarFileInput();
+        resetBannerFileInput();
         setPosting(false);
       })
       .catch((err) => {
@@ -184,8 +201,8 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       open={open}
       onClose={() => {
         handleClose();
-        setSelectedBanner(undefined);
-        setSelectedAvatar(undefined);
+        resetAvatarFileInput();
+        resetBannerFileInput();
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
@@ -284,6 +301,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       <Box component="form" mt={-6} onSubmit={handleSubmit}>
         <input
           type="file"
+          ref={avatarFileInputRef}
           onChange={handleAvatarChange}
           style={{ display: 'none' }}
           id="edit-avatar-input"
@@ -291,6 +309,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           accept="image/png,image/jpeg,image/webp"
         />
         <input
+          ref={bannerFileInputRef}
           type="file"
           onChange={handleBannerChange}
           style={{ display: 'none' }}
@@ -350,8 +369,8 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
             type="button"
             onClick={() => {
               handleClose();
-              setSelectedBanner(undefined);
-              setSelectedAvatar(undefined);
+              resetAvatarFileInput();
+              resetBannerFileInput();
             }}
           >
             Cancel
