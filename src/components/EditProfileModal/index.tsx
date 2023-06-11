@@ -33,6 +33,9 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
   const [selectedAvatar, setSelectedAvatar] = useState<File | undefined>(
     undefined,
   );
+  const [selectedBanner, setSelectedBanner] = useState<File | undefined>(
+    undefined,
+  );
   const nameLength = 50;
   const bioLength = 200;
   const utils = trpc.useContext();
@@ -72,7 +75,8 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
 
-    let imageId: string | undefined;
+    // avatar image upload
+    let avatarImageId: string | undefined;
 
     if (selectedAvatar) {
       const folderName: CloudinaryFolderName = 'avatar';
@@ -113,7 +117,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           },
         })
         .then((res) => {
-          imageId = res.data.public_id as string;
+          avatarImageId = res.data.public_id as string;
         })
         .catch((err) => {
           // setImageUploadError('Error uploading image, please try again');
@@ -121,10 +125,62 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
         });
     }
 
-    editProfile.mutateAsync({ name, bio, image: imageId }).then(() => {
-      handleClose();
-      setSelectedAvatar(undefined);
-    });
+    // banner image upload
+    let bannerImageId: string | undefined;
+
+    if (selectedBanner) {
+      const folderName: CloudinaryFolderName = 'banner';
+
+      const { signature, timestamp } = (
+        await axios.get('/api/upload-image', {
+          params: {
+            type: folderName,
+          },
+        })
+      ).data;
+
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
+
+      const uploadEndpoint =
+        'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload';
+
+      const formData = new FormData();
+
+      formData.append('file', selectedBanner);
+      formData.append(
+        'api_key',
+        process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
+      );
+      formData.append('signature', signature);
+      formData.append(
+        'folder',
+        `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folderName}`,
+      );
+      formData.append('timestamp', timestamp.toString());
+      formData.append('transformation', transformations[folderName]);
+
+      await axios
+        .post(uploadEndpoint, formData, {
+          onUploadProgress: (e) => {
+            // setImageUploadProgress(e.progress);
+            console.log(e.progress);
+          },
+        })
+        .then((res) => {
+          bannerImageId = res.data.public_id as string;
+        })
+        .catch((err) => {
+          // setImageUploadError('Error uploading image, please try again');
+          console.log(err);
+        });
+    }
+
+    editProfile
+      .mutateAsync({ name, bio, image: avatarImageId, banner: bannerImageId })
+      .then(() => {
+        handleClose();
+        setSelectedAvatar(undefined);
+      });
   };
 
   const handleAvatarChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -132,6 +188,14 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
 
     if (file) {
       setSelectedAvatar(file);
+    }
+  };
+
+  const handleBannerChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setSelectedBanner(file);
     }
   };
 
@@ -158,7 +222,47 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       <DialogTitle id="alert-dialog-title">Edit Profile</DialogTitle>
 
       <Box>
-        <Box height={120} bgcolor="#ccc" />
+        <Box
+          bgcolor="#ccc"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          position="relative"
+          sx={{
+            aspectRatio: 3,
+            '& .edit-banner-image-preview': {
+              // aspectRatio: 3,
+              height: '100%',
+              width: '100%',
+              objectFit: 'cover',
+            },
+          }}
+        >
+          <Box
+            position="absolute"
+            htmlFor="edit-banner-input"
+            component="label"
+            onClick={(e) => {
+              if (e.target !== e.currentTarget) {
+                e.currentTarget.click();
+              }
+            }}
+          >
+            <IconButton type="button">
+              <AddAPhotoRoundedIcon />
+            </IconButton>
+          </Box>
+
+          <img
+            className="edit-banner-image-preview"
+            src={
+              selectedBanner
+                ? URL.createObjectURL(selectedBanner)
+                : getImageUrl(getUser.data?.banner)
+            }
+            alt={`profile banner`}
+          />
+        </Box>
 
         <Box
           border="4px solid black"
@@ -189,7 +293,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
                 e.currentTarget.click();
               }
             }}
-            sx={{ position: 'absolute', zIndex: 10000, display: 'block' }}
+            sx={{ position: 'absolute', zIndex: 10000 }}
           >
             <IconButton type="button">
               <AddAPhotoRoundedIcon />
@@ -212,6 +316,14 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           onChange={handleAvatarChange}
           style={{ display: 'none' }}
           id="edit-avatar-input"
+          //TODO: update disabled logic
+          disabled={false}
+        />
+        <input
+          type="file"
+          onChange={handleBannerChange}
+          style={{ display: 'none' }}
+          id="edit-banner-input"
           //TODO: update disabled logic
           disabled={false}
         />

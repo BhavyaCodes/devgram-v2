@@ -121,7 +121,17 @@ export const ProfileHeader = () => {
           },
         }}
       >
-        <Box height={120} bgcolor="#ccc" />
+        <Box
+          bgcolor="#ccc"
+          sx={{
+            aspectRatio: 3,
+            '& img': {
+              display: 'block',
+            },
+          }}
+        >
+          <img src={getImageUrl(data?.banner)} alt="profile banner" />
+        </Box>
         <Box
           display="flex"
           justifyContent="space-between"

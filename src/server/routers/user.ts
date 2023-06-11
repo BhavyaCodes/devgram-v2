@@ -18,6 +18,7 @@ export const userRouter = router({
       z.object({
         _id: z.instanceof(ObjectId),
         image: z.string().optional(),
+        banner: z.string().optional(),
         createdAt: z.date(),
         bio: z.string().optional(),
         updatedAt: z.date(),
@@ -203,6 +204,7 @@ export const userRouter = router({
         name: z.string().optional(),
         bio: z.string().optional(),
         image: z.string().optional(),
+        banner: z.string().optional(),
       }),
     )
     .output(
@@ -213,6 +215,7 @@ export const userRouter = router({
         updatedAt: z.date(),
         name: z.string(),
         bio: z.string().optional(),
+        banner: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
