@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v2 as cloudinary } from 'cloudinary';
 import { env } from '~/server/env';
-import { CloudinaryFolderName } from '~/types';
+import { CloudinaryFolderName, transformations } from '~/types';
 
 cloudinary.config({
   cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -35,7 +35,7 @@ export default async function handler(
     {
       folder: `${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folderName}`,
       timestamp,
-      transformation: 'c_scale,h_100',
+      transformation: transformations[folderName],
     },
     env.CLOUDINARY_API_SECRET,
   );

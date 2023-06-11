@@ -135,6 +135,7 @@ export const ProfileHeader = () => {
             top={-67}
             height={134}
             ml={2}
+            bgcolor="black"
             sx={{
               aspectRatio: '1',
               display: 'flex',
