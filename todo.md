@@ -4,6 +4,8 @@
 - [x] Can't follow yourself logic
 - [ ] Don't post after image upload error
 - [x] fix non square image avatars
+- [ ] same image upload error on EditProfileModal
+- [ ] image upload on android showing mp4 options
 
 ## Edit Profile
 

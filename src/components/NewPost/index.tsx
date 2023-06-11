@@ -58,13 +58,17 @@ const NewPost: FC = () => {
 
   const [gifModalOpen, setGifModalOpen] = useState(false);
 
-  const handleSelectGifUrl = (url: string) => {
-    setGifModalOpen(false);
-    setSelectedGifUrl(url);
+  const resetFileInput = () => {
     setFileInput(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleSelectGifUrl = (url: string) => {
+    setGifModalOpen(false);
+    setSelectedGifUrl(url);
+    resetFileInput();
   };
 
   const [posting, setPosting] = useState(false);
@@ -158,13 +162,10 @@ const NewPost: FC = () => {
       .mutateAsync({ content: text, imageId, gifUrl: selectedGifUrl })
       .then(() => {
         setInput('');
-        setFileInput(null);
         setImageUploadProgress(undefined);
         setPosting(false);
         setSelectedGifUrl(undefined);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
+        resetFileInput();
       })
       .catch((err) => {
         console.log(err);
@@ -257,12 +258,7 @@ const NewPost: FC = () => {
                   borderRadius={200}
                   alignItems="center"
                   justifyContent="center"
-                  onClick={() => {
-                    setFileInput(null);
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = '';
-                    }
-                  }}
+                  onClick={resetFileInput}
                 >
                   <CloseRoundedIcon />
                 </Box>
