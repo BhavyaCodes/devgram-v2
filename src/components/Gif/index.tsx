@@ -80,14 +80,16 @@ const Gif: FC<{
           />
         </Box>
 
-        {searchTerm ? (
-          <MySearchGifGrid
-            searchTerm={debouncedSearchTerm}
-            handleSelectGifUrl={handleSelectGifUrl}
-          />
-        ) : (
-          <MyGifGrid handleSelectGifUrl={handleSelectGifUrl} />
-        )}
+        <Box minHeight={500}>
+          {searchTerm ? (
+            <MySearchGifGrid
+              searchTerm={debouncedSearchTerm}
+              handleSelectGifUrl={handleSelectGifUrl}
+            />
+          ) : (
+            <MyGifGrid handleSelectGifUrl={handleSelectGifUrl} />
+          )}
+        </Box>
       </Box>
     </Box>
   );
@@ -161,20 +163,23 @@ const MySearchGifGrid = ({
     setGifUrls([]);
   }, [searchTerm]);
 
-  console.log(totalCount);
-  console.log(gifUrls.length);
-
   return (
     <>
       <Masonry columns={3} spacing={1}>
-        {gifUrls.map((gifObj, index) => (
-          <Tile
-            handleSelectGifUrl={handleSelectGifUrl}
-            gifObj={gifObj}
-            key={gifObj.url + index}
-            bgcolor={getRandomColor()}
-          />
-        ))}
+        {gifUrls.map((gifObj, index) => {
+          if (gifObj.url) {
+            return (
+              <Tile
+                handleSelectGifUrl={handleSelectGifUrl}
+                gifObj={gifObj}
+                key={gifObj.url + index}
+                bgcolor={getRandomColor()}
+              />
+            );
+          } else {
+            return null;
+          }
+        })}
       </Masonry>
       {totalCount > gifUrls.length && (
         <Box ref={ref} py={4} display="flex" justifyContent="center">
@@ -244,15 +249,21 @@ const MyGifGrid = ({
 
   return (
     <>
-      <Masonry columns={3} spacing={2}>
-        {gifUrls.map((gifObj, index) => (
-          <Tile
-            handleSelectGifUrl={handleSelectGifUrl}
-            gifObj={gifObj}
-            key={gifObj.url + index}
-            bgcolor={getRandomColor()}
-          />
-        ))}
+      <Masonry columns={3} spacing={1}>
+        {gifUrls.map((gifObj, index) => {
+          if (gifObj.url) {
+            return (
+              <Tile
+                handleSelectGifUrl={handleSelectGifUrl}
+                gifObj={gifObj}
+                key={gifObj.url + index}
+                bgcolor={getRandomColor()}
+              />
+            );
+          } else {
+            return null;
+          }
+        })}
       </Masonry>
       {totalCount > gifUrls.length && (
         <Box ref={ref} py={4} display="flex" justifyContent="center">
