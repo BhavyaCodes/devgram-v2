@@ -3,7 +3,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
 import { useEffect, useState } from 'react';
-import EditProfileModal from '../EditProfileModal';
+import EditProfileModal from './EditProfileModal';
 import { formatText } from '~/utils/formatText';
 import { formatDate } from '~/utils/formatDate';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -130,7 +130,9 @@ export const ProfileHeader = () => {
             },
           }}
         >
-          <img src={getImageUrl(data?.banner)} alt="profile banner" />
+          {!!data?.banner && (
+            <img src={getImageUrl(data?.banner)} alt="profile banner" />
+          )}
         </Box>
         <Box
           display="flex"

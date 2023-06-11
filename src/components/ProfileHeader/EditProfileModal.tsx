@@ -295,6 +295,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
         <DialogContent>
           <TextField
             fullWidth
+            disabled={posting}
             label="Name"
             value={name || ''}
             onChange={(e) => setName(e.target.value)}
@@ -315,6 +316,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           </Typography>
 
           <TextField
+            disabled={posting}
             fullWidth
             label="Bio"
             value={bio || ''}

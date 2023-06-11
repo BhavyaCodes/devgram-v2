@@ -7,7 +7,7 @@
 
 ## Edit Profile
 
-- [ ] Disable form submittion twice
+- [x] Disable form submittion twice
 - [x] Backend
 - [x] frontend
 - [x] images
