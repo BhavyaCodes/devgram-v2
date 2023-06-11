@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Dialog,
@@ -376,18 +377,13 @@ export const PostBox = ({
               flexShrink={0}
               flexBasis="8%"
               sx={{
-                '& img': {
-                  width: '100%',
-                  maxWidth: '100%',
-                  borderRadius: 200,
-                },
                 [theme.breakpoints.down('md')]: {
                   flexBasis: '20%',
                 },
                 pr: 2,
               }}
             >
-              <img src={getImageUrl(image)} alt={`${name} avatar`} />
+              <Avatar src={getImageUrl(image)} alt={name} />
             </Link>
             <Box flexGrow={1}>
               <Box display="flex" justifyContent="space-between">

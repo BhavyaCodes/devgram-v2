@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   ClickAwayListener,
@@ -237,8 +238,6 @@ const NewPost: FC = () => {
             flexBasis="8%"
             sx={{
               '& img': {
-                width: '100%',
-                borderRadius: 200,
                 opacity: posting ? 0.5 : 1,
               },
               [theme.breakpoints.down('md')]: {
@@ -247,10 +246,7 @@ const NewPost: FC = () => {
               pr: 2,
             }}
           >
-            <img
-              src={getImageUrl(user.data.image)}
-              alt={`${user.data.name} avatar`}
-            />
+            <Avatar src={getImageUrl(user.data.image)} alt={user.data.name} />
           </Link>
         )}
         <Box flexGrow={1}>

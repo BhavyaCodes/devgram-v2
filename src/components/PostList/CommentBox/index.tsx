@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   IconButton,
   ListItemIcon,
@@ -85,11 +86,6 @@ const CommentBox = ({
         flexBasis="6%"
         alignSelf="flex-start"
         sx={{
-          '& img': {
-            width: '100%',
-            maxWidth: '100%',
-            borderRadius: 200,
-          },
           [theme.breakpoints.down('md')]: {
             flexBasis: '20%',
           },
@@ -98,7 +94,7 @@ const CommentBox = ({
           alignItems: 'center',
         }}
       >
-        <img src={getImageUrl(userId.image)} alt={`${userId.name} avatar`} />
+        <Avatar src={getImageUrl(userId.image)} alt={userId.name} />
       </Link>
       <Paper
         elevation={6}

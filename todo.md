@@ -3,7 +3,7 @@
 - [x] Fix profile query for users with no posts
 - [x] Can't follow yourself logic
 - [ ] Don't post after image upload error
-- [ ] fix non square image avatars
+- [x] fix non square image avatars
 
 ## Edit Profile
 

@@ -1,4 +1,11 @@
-import { Box, IconButton, InputBase, Paper, useTheme } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  IconButton,
+  InputBase,
+  Paper,
+  useTheme,
+} from '@mui/material';
 import {
   FormEventHandler,
   KeyboardEvent,
@@ -134,11 +141,6 @@ export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
           flexBasis="6%"
           alignSelf="flex-start"
           sx={{
-            '& img': {
-              width: '100%',
-              maxWidth: '100%',
-              borderRadius: 200,
-            },
             [theme.breakpoints.down('md')]: {
               flexBasis: '20%',
             },
@@ -148,10 +150,7 @@ export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
           }}
         >
           {!!userData?.image && (
-            <img
-              src={getImageUrl(userData.image)}
-              alt={`${userData.name} avatar`}
-            />
+            <Avatar src={getImageUrl(userData.image)} alt={userData.name} />
           )}
         </Box>
         <Paper
