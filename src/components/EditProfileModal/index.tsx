@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -31,6 +32,7 @@ interface EditProfileModalProps {
 }
 
 const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
+  const [posting, setPosting] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState<File | undefined>(
     undefined,
   );
@@ -58,6 +60,13 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           return { ...oldData, ...data };
         },
       );
+
+      utils.user.getUser.setData(undefined, (oldData) => {
+        if (!oldData) {
+          return oldData;
+        }
+        return { ...oldData, ...data };
+      });
     },
   });
 
@@ -74,6 +83,15 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
   }, [getUser.data?.bio]);
 
   const handleSubmit: FormEventHandler = async (e) => {
+    if (posting) {
+      return;
+    }
+
+    if (editProfile.isLoading) {
+      return;
+    }
+
+    setPosting(true);
     e.preventDefault();
 
     let avatarUploadPromise: Promise<string | void> | undefined;
@@ -97,6 +115,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
 
     const result = await Promise.all(promises).catch((err) => {
       console.log(err);
+      setPosting(false);
       throw new TRPCClientError('Error uploading image');
     });
 
@@ -116,11 +135,18 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
       }
     }
 
-    editProfile.mutateAsync(mutationObject).then(() => {
-      handleClose();
-      setSelectedBanner(undefined);
-      setSelectedAvatar(undefined);
-    });
+    editProfile
+      .mutateAsync(mutationObject)
+      .then(() => {
+        handleClose();
+        setSelectedBanner(undefined);
+        setSelectedAvatar(undefined);
+        setPosting(false);
+      })
+      .catch((err) => {
+        setPosting(false);
+        console.log(err);
+      });
   };
 
   const handleAvatarChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -257,16 +283,14 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           onChange={handleAvatarChange}
           style={{ display: 'none' }}
           id="edit-avatar-input"
-          //TODO: update disabled logic
-          disabled={false}
+          disabled={posting}
         />
         <input
           type="file"
           onChange={handleBannerChange}
           style={{ display: 'none' }}
           id="edit-banner-input"
-          //TODO: update disabled logic
-          disabled={false}
+          disabled={posting}
         />
         <DialogContent>
           <TextField
@@ -324,8 +348,8 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
           >
             Cancel
           </Button>
-          <Button color="primary" type="submit">
-            Save
+          <Button color="primary" type="submit" disabled={posting}>
+            {posting ? <CircularProgress size={25} /> : 'Save'}
           </Button>
         </DialogActions>
       </Box>
