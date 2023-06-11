@@ -127,6 +127,7 @@ export const ProfileHeader = () => {
             aspectRatio: 3,
             '& img': {
               display: 'block',
+              maxWidth: '100%',
             },
           }}
         >
