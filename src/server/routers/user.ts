@@ -403,6 +403,86 @@ export const userRouter = router({
       return { following, nextCursor };
     }),
 
+  getFollowers: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        cursor: z
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+            exclude: z.boolean().optional(),
+          })
+          .optional(),
+      }),
+    )
+    .output(
+      z.object({
+        followers: z.array(
+          z.object({
+            _id: z.instanceof(ObjectId),
+            followerId: z.object({
+              _id: z.instanceof(ObjectId),
+              image: z.string().optional(),
+              name: z.string(),
+            }),
+          }),
+        ),
+        nextCursor: z
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+          })
+          .nullish(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const limit = 5;
+      const cursor = input.cursor;
+      const operator = cursor?.exclude ? '$lt' : '$lte';
+
+      const query: FilterQuery<IFollower> = {
+        userId: input.userId,
+        ...(cursor?.createdAt && cursor?._id
+          ? {
+              $or: [
+                {
+                  createdAt: { [operator]: cursor.createdAt },
+                },
+                {
+                  createdAt: cursor.createdAt,
+                  _id: { [operator]: new Types.ObjectId(cursor._id) },
+                },
+              ],
+            }
+          : {}),
+      };
+
+      const followers = await Follower.find(query)
+        .limit(limit + 1)
+        .populate('followerId', {
+          _id: 1,
+          image: 1,
+          name: 1,
+        })
+        .sort({ createdAt: -1, _id: -1 })
+        .lean();
+
+      let nextCursor: typeof cursor = undefined;
+
+      if (followers.length > limit) {
+        const nextItem = followers.pop();
+        if (nextItem) {
+          nextCursor = {
+            _id: nextItem._id.toString(),
+            createdAt: nextItem.createdAt,
+          };
+        }
+      }
+
+      return { followers, nextCursor };
+    }),
+
   unfollowUser: authOnlyProcedure
     .input(z.object({ userId: z.string() }))
     .output(z.boolean())
