@@ -232,6 +232,7 @@ export const ProfileHeader = () => {
         </Box>
       </Box>
       <Box>Followers: {data?.followerCount}</Box>
+      <Box>Following: {data?.followingCount}</Box>
       <Box>Followed: {data?.followed ? 'true' : 'false'}</Box>
       <Box>Follows you: {data?.followsYou ? 'true' : 'false'}</Box>
     </>

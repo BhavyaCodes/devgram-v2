@@ -11,10 +11,6 @@
 import { initTRPC } from '@trpc/server';
 import { transformer } from '~/utils/transformer';
 import { Context } from './context';
-import User from './models/User';
-
-//TODO: REmove this below
-console.log(User);
 
 const t = initTRPC.context<Context>().create({
   /**

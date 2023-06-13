@@ -45,6 +45,7 @@ export const userRouter = router({
         postCount: z.number(),
         banner: z.string().optional(),
         followerCount: z.number(),
+        followingCount: z.number(),
         followed: z.boolean().nullish(),
         followsYou: z.boolean().nullish(),
       }),
@@ -119,14 +120,41 @@ export const userRouter = router({
           },
         },
         {
+          $lookup: {
+            from: 'followers',
+            localField: '_id',
+            pipeline: [
+              {
+                $group: {
+                  _id: 'followerId',
+                  followingCount: {
+                    $sum: 1,
+                  },
+                },
+              },
+            ],
+            foreignField: 'followerId',
+            as: 'following',
+          },
+        },
+        {
+          $unwind: {
+            path: '$following',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
           $addFields: {
             followerCount: {
               $ifNull: ['$followers.followerCount', 0],
             },
+            followingCount: {
+              $ifNull: ['$following.followingCount', 0],
+            },
           },
         },
         {
-          $unset: ['followers', 'email', 'posts'],
+          $unset: ['followers', 'following', 'email', 'posts'],
         },
       ];
       const loggedInUserId = ctx.session?.userId._id;
