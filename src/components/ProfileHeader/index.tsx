@@ -8,8 +8,13 @@ import { formatText } from '~/utils/formatText';
 import { formatDate } from '~/utils/formatDate';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { getImageUrl } from '~/utils/getImageUrl';
+import ModalList, { ModalListOptions } from './ModalList';
 
 export const ProfileHeader = () => {
+  const [modalListOptions, setModalListOptions] = useState<ModalListOptions>({
+    open: false,
+    type: 'getFollowing',
+  });
   const [rendered, setRendered] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const router = useRouter();
@@ -71,8 +76,20 @@ export const ProfileHeader = () => {
       .then(() => refetch());
   };
 
+  const handleShowFollowing = () => {
+    setModalListOptions({
+      open: true,
+      type: 'getFollowing',
+    });
+  };
+
   return (
     <>
+      <ModalList
+        modalListOptions={modalListOptions}
+        handleClose={() => setModalListOptions((s) => ({ ...s, open: false }))}
+        profileId={profileId}
+      />
       <EditProfileModal
         open={editProfileOpen}
         handleClose={() => setEditProfileOpen(false)}
@@ -232,7 +249,7 @@ export const ProfileHeader = () => {
         </Box>
       </Box>
       <Box>Followers: {data?.followerCount}</Box>
-      <Box>Following: {data?.followingCount}</Box>
+      <Box onClick={handleShowFollowing}>Following: {data?.followingCount}</Box>
       <Box>Followed: {data?.followed ? 'true' : 'false'}</Box>
       <Box>Follows you: {data?.followsYou ? 'true' : 'false'}</Box>
     </>

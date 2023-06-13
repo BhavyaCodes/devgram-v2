@@ -326,7 +326,7 @@ export const userRouter = router({
   getFollowing: publicProcedure
     .input(
       z.object({
-        userId: z.string(),
+        followerId: z.string(),
         cursor: z
           .object({
             createdAt: z.date(),
@@ -357,22 +357,21 @@ export const userRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const limit = 5;
+      const limit = 1;
       const cursor = input.cursor;
       const operator = cursor?.exclude ? '$lt' : '$lte';
 
       const query: FilterQuery<IFollower> = {
-        userId: input.userId,
-        limit: limit + 1,
-        ...(cursor?.createdAt && cursor._id
+        followerId: input.followerId,
+        ...(cursor?.createdAt && cursor?._id
           ? {
               $or: [
                 {
-                  createdAt: { [operator]: cursor?.createdAt },
+                  createdAt: { [operator]: cursor.createdAt },
                 },
                 {
-                  cursor,
-                  _id: { [operator]: new Types.ObjectId(input.cursor?._id) },
+                  createdAt: cursor.createdAt,
+                  _id: { [operator]: new Types.ObjectId(cursor._id) },
                 },
               ],
             }
@@ -380,11 +379,13 @@ export const userRouter = router({
       };
 
       const following = await Follower.find(query)
+        .limit(limit + 1)
         .populate('userId', {
           _id: 1,
           image: 1,
           name: 1,
         })
+        .sort({ createdAt: -1, _id: -1 })
         .lean();
 
       let nextCursor: typeof cursor = undefined;
