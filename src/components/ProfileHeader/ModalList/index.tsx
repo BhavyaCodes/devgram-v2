@@ -32,13 +32,26 @@ const ModalList: FC<ModalListProps> = ({
     },
   );
 
-  // console.log(followingQuery.data);
+  const followersQuery = trpc.user.getFollowers.useInfiniteQuery(
+    {
+      userId: profileId,
+    },
+    {
+      getNextPageParam: (lastPage) => {
+        return lastPage.nextCursor;
+      },
+      enabled:
+        modalListOptions.open && modalListOptions.type === 'getFollowers',
+    },
+  );
 
   const followingUsers = followingQuery.data?.pages.flatMap(
     (page) => page.following,
   );
 
-  console.log(followingUsers);
+  const followers = followersQuery.data?.pages.flatMap(
+    (page) => page.followers,
+  );
 
   const onClose = () => {
     handleClose();
@@ -47,14 +60,32 @@ const ModalList: FC<ModalListProps> = ({
 
   return (
     <Dialog open={modalListOptions.open} onClose={onClose}>
+      <h3>Following</h3>
       {followingUsers?.map((user) => (
         <Box key={user._id.toString()}>
           <Typography>{user.userId.name}</Typography>
           <Avatar src={getImageUrl(user.userId.image)} alt={user.userId.name} />
         </Box>
       ))}
+
       {followingQuery.hasNextPage && (
         <Button onClick={() => followingQuery.fetchNextPage()}>
+          Load more
+        </Button>
+      )}
+
+      <h3>Followers</h3>
+      {followers?.map((follower) => (
+        <Box key={follower._id.toString()}>
+          <Typography>{follower.followerId.name}</Typography>
+          <Avatar
+            src={getImageUrl(follower.followerId.image)}
+            alt={follower.followerId.name}
+          />
+        </Box>
+      ))}
+      {followersQuery.hasNextPage && (
+        <Button onClick={() => followersQuery.fetchNextPage()}>
           Load more
         </Button>
       )}

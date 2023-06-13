@@ -19,6 +19,7 @@
 
 ## TODO
 
+- [ ] Handle follower list with no followers ui
 - [ ] image picker validations
 - [x] follow backend
 - [x] follow frontend

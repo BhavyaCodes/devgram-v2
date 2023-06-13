@@ -83,6 +83,13 @@ export const ProfileHeader = () => {
     });
   };
 
+  const handleShowFollowers = () => {
+    setModalListOptions({
+      open: true,
+      type: 'getFollowers',
+    });
+  };
+
   return (
     <>
       <ModalList
@@ -248,7 +255,7 @@ export const ProfileHeader = () => {
           </Typography>
         </Box>
       </Box>
-      <Box>Followers: {data?.followerCount}</Box>
+      <Box onClick={handleShowFollowers}>Followers: {data?.followerCount}</Box>
       <Box onClick={handleShowFollowing}>Following: {data?.followingCount}</Box>
       <Box>Followed: {data?.followed ? 'true' : 'false'}</Box>
       <Box>Follows you: {data?.followsYou ? 'true' : 'false'}</Box>
