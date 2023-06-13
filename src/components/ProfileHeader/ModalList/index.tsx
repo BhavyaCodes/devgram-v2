@@ -40,8 +40,13 @@ const ModalList: FC<ModalListProps> = ({
 
   console.log(followingUsers);
 
+  const onClose = () => {
+    handleClose();
+    followingQuery.remove();
+  };
+
   return (
-    <Dialog open={modalListOptions.open} onClose={handleClose}>
+    <Dialog open={modalListOptions.open} onClose={onClose}>
       {followingUsers?.map((user) => (
         <Box key={user._id.toString()}>
           <Typography>{user.userId.name}</Typography>

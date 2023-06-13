@@ -357,7 +357,7 @@ export const userRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const limit = 1;
+      const limit = 5;
       const cursor = input.cursor;
       const operator = cursor?.exclude ? '$lt' : '$lte';
 
