@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { router } from '../trpc';
+import { publicProcedure, router } from '../trpc';
 
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
@@ -7,8 +7,8 @@ import { authOnlyProcedure, currentSessionProcedure } from '../middleware';
 import Session from '../models/Session';
 import User from '../models/User';
 import isMongoId from 'validator/lib/isMongoId';
-import { PipelineStage, Types } from 'mongoose';
-import Follower from '../models/Follower';
+import { FilterQuery, PipelineStage, Types } from 'mongoose';
+import Follower, { IFollower } from '../models/Follower';
 import { v2 as cloudinary } from 'cloudinary';
 import { env } from '../env';
 
@@ -293,6 +293,85 @@ export const userRouter = router({
         { upsert: true },
       );
       return result.acknowledged;
+    }),
+
+  getFollowing: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        cursor: z
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+            exclude: z.boolean().optional(),
+          })
+          .optional(),
+      }),
+    )
+    .output(
+      z.object({
+        following: z.array(
+          z.object({
+            _id: z.instanceof(ObjectId),
+            userId: z.object({
+              _id: z.instanceof(ObjectId),
+              image: z.string().optional(),
+              name: z.string(),
+            }),
+          }),
+        ),
+        nextCursor: z
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+          })
+          .nullish(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const limit = 5;
+      const cursor = input.cursor;
+      const operator = cursor?.exclude ? '$lt' : '$lte';
+
+      const query: FilterQuery<IFollower> = {
+        userId: input.userId,
+        limit: limit + 1,
+        ...(cursor?.createdAt && cursor._id
+          ? {
+              $or: [
+                {
+                  createdAt: { [operator]: cursor?.createdAt },
+                },
+                {
+                  cursor,
+                  _id: { [operator]: new Types.ObjectId(input.cursor?._id) },
+                },
+              ],
+            }
+          : {}),
+      };
+
+      const following = await Follower.find(query)
+        .populate('userId', {
+          _id: 1,
+          image: 1,
+          name: 1,
+        })
+        .lean();
+
+      let nextCursor: typeof cursor = undefined;
+
+      if (following.length > limit) {
+        const nextItem = following.pop();
+        if (nextItem) {
+          nextCursor = {
+            _id: nextItem._id.toString(),
+            createdAt: nextItem.createdAt,
+          };
+        }
+      }
+
+      return { following, nextCursor };
     }),
 
   unfollowUser: authOnlyProcedure

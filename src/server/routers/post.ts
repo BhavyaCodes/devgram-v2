@@ -48,9 +48,6 @@ interface PostsAggregationResult {
 }
 
 export const postRouter = router({
-  sayHi: publicProcedure.input(z.string()).query(({ input }) => {
-    return input;
-  }),
   create: authOnlyProcedure
     .input(
       z.object({

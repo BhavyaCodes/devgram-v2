@@ -6,6 +6,8 @@ export interface IFollower {
   _id: ObjectId;
   followerId: IUser;
   userId: IUser;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const followerSchema = new Schema<IFollower>(
