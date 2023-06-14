@@ -69,6 +69,12 @@ export const postRouter = router({
             _id: z.instanceof(ObjectId),
             image: z.string().optional(),
             name: z.string(),
+            tags: z
+              .object({
+                verified: z.boolean().nullish(),
+                developer: z.boolean().nullish(),
+              })
+              .optional(),
           }),
           likeCount: z.number(),
           commentCount: z.number(),
@@ -97,6 +103,7 @@ export const postRouter = router({
           _id: ctx.session.userId._id,
           image: ctx.session.userId.image,
           name: ctx.session.userId.name,
+          tags: ctx.session.userId.tags,
         },
         likeCount: 0,
         commentCount: 0,
