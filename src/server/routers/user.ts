@@ -345,6 +345,7 @@ export const userRouter = router({
               _id: z.instanceof(ObjectId),
               image: z.string().optional(),
               name: z.string(),
+              bio: z.string().optional(),
             }),
           }),
         ),
@@ -384,6 +385,7 @@ export const userRouter = router({
           _id: 1,
           image: 1,
           name: 1,
+          bio: 1,
         })
         .sort({ createdAt: -1, _id: -1 })
         .lean();
@@ -425,6 +427,7 @@ export const userRouter = router({
               _id: z.instanceof(ObjectId),
               image: z.string().optional(),
               name: z.string(),
+              bio: z.string().optional(),
             }),
           }),
         ),
@@ -464,6 +467,7 @@ export const userRouter = router({
           _id: 1,
           image: 1,
           name: 1,
+          bio: 1,
         })
         .sort({ createdAt: -1, _id: -1 })
         .lean();

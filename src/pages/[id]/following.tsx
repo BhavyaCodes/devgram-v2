@@ -45,7 +45,7 @@ const Following: NextPage = () => {
               _id={obj.userId._id.toString()}
               name={obj.userId.name}
               image={obj.userId.image}
-              bio="bio"
+              bio={obj.userId.bio}
             />
           ))}
         </>
