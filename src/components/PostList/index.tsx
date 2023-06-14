@@ -133,6 +133,8 @@ const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
             createdAt={post.createdAt}
             lastComment={post.lastComment}
             setDeletePostData={setDeletePostData}
+            developer={post.userId.tags?.developer}
+            verified={post.userId.tags?.verified}
           />
         ))}
       </div>

@@ -2,7 +2,7 @@ import { Avatar, Box, Tooltip, Typography } from '@mui/material';
 import { getImageUrl } from '~/utils/getImageUrl';
 import Link from './common/Link';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
-import CodeRoundedIcon from '@mui/icons-material/CodeRounded';
+import { LogoSvg } from './common/LogoSvg';
 
 interface UsersListItem {
   _id: string;
@@ -49,11 +49,7 @@ const UsersListItem = ({
               />
             </Tooltip>
           )}
-          {developer && (
-            <Tooltip title="Developer">
-              <CodeRoundedIcon sx={{ ml: 1, fontSize: 20 }} color="primary" />
-            </Tooltip>
-          )}
+          {developer && <LogoSvg title="Developer" ml={0.5} />}
         </Box>
         <Typography variant="body1">{bio}</Typography>
       </Box>

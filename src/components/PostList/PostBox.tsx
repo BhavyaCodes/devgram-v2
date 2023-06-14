@@ -12,6 +12,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -34,6 +35,8 @@ import Link from '../common/Link';
 import { useRouter } from 'next/router';
 import { formatText } from '~/utils/formatText';
 import { getImageUrl } from '~/utils/getImageUrl';
+import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
+import { LogoSvg } from '../common/LogoSvg';
 
 interface PostBoxProps {
   /**
@@ -72,6 +75,9 @@ interface PostBoxProps {
       cb: () => void;
     } | null>
   >;
+
+  verified?: boolean | null;
+  developer?: boolean | null;
 }
 
 export interface Comment {
@@ -101,6 +107,8 @@ export const PostBox = ({
   createdAt,
   lastComment,
   setDeletePostData,
+  developer,
+  verified,
 }: PostBoxProps) => {
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
@@ -410,6 +418,15 @@ export const PostBox = ({
                       {timeAgoString}
                     </Typography>
                   )}
+                  {verified && (
+                    <Tooltip title="Verified">
+                      <VerifiedRoundedIcon
+                        sx={{ ml: 1, fontSize: 20 }}
+                        color="primary"
+                      />
+                    </Tooltip>
+                  )}
+                  {developer && <LogoSvg title="Developer" ml={0.5} />}
                 </Box>
                 <IconButton
                   disableFocusRipple

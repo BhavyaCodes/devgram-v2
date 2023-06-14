@@ -8,10 +8,10 @@ import { formatText } from '~/utils/formatText';
 import { formatDate } from '~/utils/formatDate';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
-import CodeRoundedIcon from '@mui/icons-material/CodeRounded';
 import { getImageUrl } from '~/utils/getImageUrl';
 import ModalList, { ModalListOptions } from './ModalList';
 import Link from '../common/Link';
+import { LogoSvg } from '../common/LogoSvg';
 
 export const ProfileHeader = () => {
   const [modalListOptions, setModalListOptions] = useState<ModalListOptions>({
@@ -237,11 +237,7 @@ export const ProfileHeader = () => {
                 />
               </Tooltip>
             )}
-            {data?.tags?.verified && (
-              <Tooltip title="Developer">
-                <CodeRoundedIcon sx={{ ml: 1, fontSize: 20 }} color="primary" />
-              </Tooltip>
-            )}
+            {data?.tags?.developer && <LogoSvg title="Developer" ml={0.5} />}
           </Typography>
           <Typography
             variant="body1"
