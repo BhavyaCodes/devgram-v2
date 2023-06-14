@@ -373,7 +373,7 @@ export const PostBox = ({
         ) : (
           <>
             <Link
-              href={`/profile/${userId}`}
+              href={`/${userId}`}
               flexShrink={0}
               flexBasis="8%"
               sx={{
@@ -390,7 +390,7 @@ export const PostBox = ({
                 <Box display="flex" alignItems="center">
                   <Link
                     sx={{ textDecoration: 'none', color: 'inherit' }}
-                    href={`/profile/${userId}`}
+                    href={`/${userId}`}
                   >
                     <Typography variant="h6">{name}</Typography>
                   </Link>

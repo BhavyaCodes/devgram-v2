@@ -253,6 +253,20 @@ export const ProfileHeader = () => {
               <Typography>Joined {formatDate(data?.createdAt)}</Typography>
             )}
           </Typography>
+          <Box display="flex">
+            <Typography component="span" fontWeight={700} mr={1}>
+              {data?.followingCount}{' '}
+              <Typography component="span" variant="body2">
+                Following
+              </Typography>
+            </Typography>
+            <Typography component="span" fontWeight={700}>
+              {data?.followerCount}{' '}
+              <Typography component="span" variant="body2">
+                Followers
+              </Typography>
+            </Typography>
+          </Box>
         </Box>
       </Box>
       <Box onClick={handleShowFollowers}>Followers: {data?.followerCount}</Box>

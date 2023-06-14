@@ -197,7 +197,7 @@ const NewPost: FC = () => {
         <ProgressBar progress={imageUploadProgress} />
         {!!user.data?.image && (
           <Link
-            href={`/profile/${user.data._id.toString()}`}
+            href={`/${user.data._id.toString()}`}
             flexShrink={0}
             flexBasis="8%"
             sx={{

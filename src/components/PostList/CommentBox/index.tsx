@@ -81,7 +81,7 @@ const CommentBox = ({
       }}
     >
       <Link
-        href={`/profile/${userId._id}`}
+        href={`/${userId._id}`}
         flexShrink={0}
         flexBasis="6%"
         alignSelf="flex-start"
@@ -103,7 +103,7 @@ const CommentBox = ({
         <Box display="flex" justifyContent="space-between">
           <Box display="flex" alignItems="center">
             <Link
-              href={`/profile/${userId._id}`}
+              href={`/${userId._id}`}
               sx={{ textDecoration: 'none', color: 'inherit' }}
             >
               <Typography variant="h6">{userId.name}</Typography>
