@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Typography } from '@mui/material';
+import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
@@ -7,6 +7,8 @@ import EditProfileModal from './EditProfileModal';
 import { formatText } from '~/utils/formatText';
 import { formatDate } from '~/utils/formatDate';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
+import CodeRoundedIcon from '@mui/icons-material/CodeRounded';
 import { getImageUrl } from '~/utils/getImageUrl';
 import ModalList, { ModalListOptions } from './ModalList';
 import Link from '../common/Link';
@@ -223,8 +225,23 @@ export const ProfileHeader = () => {
             component="h1"
             whiteSpace="pre-wrap"
             sx={{ overflowWrap: 'anywhere' }}
+            display="flex"
+            alignItems="center"
           >
             {formatText(data?.name)}
+            {data?.tags?.verified && (
+              <Tooltip title="Verified">
+                <VerifiedRoundedIcon
+                  sx={{ ml: 1, fontSize: 20 }}
+                  color="primary"
+                />
+              </Tooltip>
+            )}
+            {data?.tags?.verified && (
+              <Tooltip title="Developer">
+                <CodeRoundedIcon sx={{ ml: 1, fontSize: 20 }} color="primary" />
+              </Tooltip>
+            )}
           </Typography>
           <Typography
             variant="body1"

@@ -10,6 +10,10 @@ export interface IUser {
   updatedAt: Date;
   name: string;
   banner?: string;
+  tags?: {
+    verified?: true;
+    developer?: true;
+  };
 }
 
 const userSchema = new Schema<IUser>(
@@ -19,6 +23,10 @@ const userSchema = new Schema<IUser>(
     name: { type: String, required: true },
     bio: { type: String },
     banner: { type: String },
+    tags: {
+      verified: { type: Boolean },
+      developer: { type: Boolean },
+    },
   },
 
   { timestamps: true },

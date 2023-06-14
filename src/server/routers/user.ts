@@ -48,6 +48,12 @@ export const userRouter = router({
         followingCount: z.number(),
         followed: z.boolean().nullish(),
         followsYou: z.boolean().nullish(),
+        tags: z
+          .object({
+            verified: z.boolean().nullish(),
+            developer: z.boolean().nullish(),
+          })
+          .optional(),
       }),
     )
     .query(async ({ input, ctx }) => {

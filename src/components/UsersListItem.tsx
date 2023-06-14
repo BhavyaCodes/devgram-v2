@@ -10,8 +10,6 @@ interface UsersListItem {
 }
 
 const UsersListItem = ({ _id, image, bio, name }: UsersListItem) => {
-  console.log(getImageUrl(image));
-
   return (
     <Link
       href={`/${_id}`}
