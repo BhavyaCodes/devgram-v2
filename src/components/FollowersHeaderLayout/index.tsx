@@ -19,7 +19,6 @@ export const FollowersHeaderLayout = ({
   const matches = useMediaQuery(theme.breakpoints.down('md'));
 
   const router = useRouter();
-  console.log(router);
   const profileId = router.query.id as string;
 
   const { data } = trpc.user.getPublicProfile.useQuery(
@@ -44,16 +43,10 @@ export const FollowersHeaderLayout = ({
     <Box
       display="flex"
       position={matches ? 'sticky' : undefined}
-      // position="sticky"
+      borderBottom="1px solid rgb(56, 68, 77)"
       top={-1}
       bgcolor="rgba(0, 0, 0, 0.65)"
       sx={{
-        borderLeft: {
-          md: '1px solid rgb(56, 68, 77)',
-        },
-        borderRight: {
-          md: '1px solid rgb(56, 68, 77)',
-        },
         backdropFilter: 'blur(12px)',
       }}
     >

@@ -251,7 +251,9 @@ export const ProfileHeader = () => {
               }}
             />
             {rendered && (
-              <Typography>Joined {formatDate(data?.createdAt)}</Typography>
+              <Typography component="span">
+                Joined {formatDate(data?.createdAt)}
+              </Typography>
             )}
           </Typography>
           <Box display="flex">
