@@ -120,12 +120,11 @@ export const ProfileHeader = () => {
         bgcolor="rgba(0, 0, 0, 0.65)"
       >
         <Box display="flex" alignItems="center" position="sticky">
-          <IconButton
-            onClick={router.back}
-            sx={{ flexShrink: 0, ml: 1, mr: 2 }}
-          >
-            <ArrowBackRoundedIcon />
-          </IconButton>
+          <Link href="/">
+            <IconButton sx={{ flexShrink: 0, ml: 1, mr: 2 }}>
+              <ArrowBackRoundedIcon />
+            </IconButton>
+          </Link>
           <Box display="flex" flexDirection="column" flexGrow={1}>
             <Typography fontWeight={700} fontSize={20}>
               {data?.name || ''}

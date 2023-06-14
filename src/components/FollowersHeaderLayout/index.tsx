@@ -1,6 +1,7 @@
 import {
   Box,
   IconButton,
+  Link,
   Typography,
   useMediaQuery,
   useTheme,
@@ -86,12 +87,14 @@ export const FollowersHeaderLayout = ({
         bgcolor="rgba(0, 0, 0, 0.65)"
       >
         <Box display="flex" alignItems="center" position="sticky">
-          <IconButton
-            onClick={router.back}
-            sx={{ flexShrink: 0, ml: 1, mr: 2 }}
-          >
-            <ArrowBackRoundedIcon />
-          </IconButton>
+          <Link href={`/${profileId}`}>
+            <IconButton
+              onClick={router.back}
+              sx={{ flexShrink: 0, ml: 1, mr: 2 }}
+            >
+              <ArrowBackRoundedIcon />
+            </IconButton>
+          </Link>
           <Box display="flex" flexDirection="column" flexGrow={1}>
             <Typography fontWeight={700} fontSize={20}>
               {data?.name || ''}
