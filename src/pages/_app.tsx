@@ -73,7 +73,8 @@ const MyApp = (({
             fontSize: 15,
           },
           body2: {
-            opacity: 0.4,
+            // opacity: 0.4,
+            color: 'rgb(103, 104, 104)',
           },
         },
         // components: {

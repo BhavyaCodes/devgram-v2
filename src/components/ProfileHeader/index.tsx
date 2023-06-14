@@ -9,6 +9,7 @@ import { formatDate } from '~/utils/formatDate';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { getImageUrl } from '~/utils/getImageUrl';
 import ModalList, { ModalListOptions } from './ModalList';
+import Link from '../common/Link';
 
 export const ProfileHeader = () => {
   const [modalListOptions, setModalListOptions] = useState<ModalListOptions>({
@@ -254,18 +255,40 @@ export const ProfileHeader = () => {
             )}
           </Typography>
           <Box display="flex">
-            <Typography component="span" fontWeight={700} mr={1}>
-              {data?.followingCount}{' '}
-              <Typography component="span" variant="body2">
-                Following
+            <Link
+              href={`/${profileId}/following`}
+              color="inherit"
+              sx={{
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              <Typography component="span" fontWeight={700} mr={1}>
+                {data?.followingCount}{' '}
+                <Typography component="span" variant="body2">
+                  Following
+                </Typography>
               </Typography>
-            </Typography>
-            <Typography component="span" fontWeight={700}>
-              {data?.followerCount}{' '}
-              <Typography component="span" variant="body2">
-                Followers
+            </Link>
+            <Link
+              href={`/${profileId}/followers`}
+              color="inherit"
+              sx={{
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              <Typography component="span" fontWeight={700}>
+                {data?.followerCount}{' '}
+                <Typography component="span" variant="body2">
+                  Followers
+                </Typography>
               </Typography>
-            </Typography>
+            </Link>
           </Box>
         </Box>
       </Box>
