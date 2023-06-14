@@ -1,11 +1,11 @@
 import { NextPage } from 'next';
-import { FollowersHeaderLayout } from '~/components/followersHeaderLayout';
+import { FollowersHeaderLayout } from '~/components/FollowersHeaderLayout';
 
 const Followers: NextPage = () => {
   return (
-    <div>
-      <FollowersHeaderLayout />
-    </div>
+    <>
+      <FollowersHeaderLayout selected="followers" />
+    </>
   );
 };
 
