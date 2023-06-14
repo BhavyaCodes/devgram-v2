@@ -647,6 +647,8 @@ export const PostBox = ({
                 createdAt={comment.createdAt}
                 postUserId={userId}
                 setDeleteCommentData={setDeleteCommentData}
+                developer={comment.userId.tags?.developer}
+                verified={comment.userId.tags?.verified}
               />
             ))}
 

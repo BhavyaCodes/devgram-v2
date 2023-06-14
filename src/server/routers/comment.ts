@@ -44,6 +44,12 @@ export const commentRouter = router({
             _id: z.instanceof(ObjectId),
             image: z.string().optional(),
             name: z.string(),
+            tags: z
+              .object({
+                verified: z.boolean().nullish(),
+                developer: z.boolean().nullish(),
+              })
+              .optional(),
           }),
         }),
       }),
@@ -80,6 +86,7 @@ export const commentRouter = router({
             _id: user._id,
             image: user.image,
             name: user.name,
+            tags: user.tags,
           },
         },
       };
@@ -113,6 +120,12 @@ export const commentRouter = router({
               _id: z.instanceof(ObjectId),
               image: z.string().optional(),
               name: z.string(),
+              tags: z
+                .object({
+                  verified: z.boolean().nullish(),
+                  developer: z.boolean().nullish(),
+                })
+                .optional(),
             }),
           }),
         ),
@@ -150,7 +163,7 @@ export const commentRouter = router({
           : { postId: input.postId };
 
       const comments = await Comment.find(query)
-        .populate('userId', { _id: 1, image: 1, name: 1 })
+        .populate('userId', { _id: 1, image: 1, name: 1, tags: 1 })
         .sort({ createdAt: -1 })
         .limit(Math.min(limit, 50) + 1)
         .lean();

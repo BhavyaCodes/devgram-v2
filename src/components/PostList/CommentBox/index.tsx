@@ -5,6 +5,7 @@ import {
   ListItemIcon,
   ListItemText,
   Paper,
+  Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -18,6 +19,9 @@ import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import Link from '~/components/common/Link';
 import { formatText } from '~/utils/formatText';
 import { getImageUrl } from '~/utils/getImageUrl';
+import { LogoSvg } from '~/components/common/LogoSvg';
+import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
+
 interface CommentBoxProps {
   commentId: string;
   postUserId: string;
@@ -35,6 +39,8 @@ interface CommentBoxProps {
       commentContent: string;
     } | null>
   >;
+  verified?: boolean | null;
+  developer?: boolean | null;
 }
 
 const CommentBox = ({
@@ -44,6 +50,8 @@ const CommentBox = ({
   createdAt,
   postUserId,
   setDeleteCommentData,
+  developer,
+  verified,
 }: CommentBoxProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
@@ -72,11 +80,7 @@ const CommentBox = ({
       // elevation={6}
       sx={{
         flexBasis: '100%',
-        // px: 1,
-        // py: 1,
         mb: 1,
-        // border: '1px solid rgb(56, 68, 77)',
-        // borderRadius: 3,
         display: 'flex',
       }}
     >
@@ -125,6 +129,15 @@ const CommentBox = ({
                 {timeAgoString}
               </Typography>
             )}
+            {verified && (
+              <Tooltip title="Verified">
+                <VerifiedRoundedIcon
+                  sx={{ ml: 1, fontSize: 20 }}
+                  color="primary"
+                />
+              </Tooltip>
+            )}
+            {developer && <LogoSvg title="Developer" ml={0.5} />}
           </Box>
           {isDeletable && (
             <>

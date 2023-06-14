@@ -153,6 +153,12 @@ export const postRouter = router({
                   _id: z.instanceof(ObjectId),
                   image: z.string().optional(),
                   name: z.string(),
+                  tags: z
+                    .object({
+                      verified: z.boolean().nullish(),
+                      developer: z.boolean().nullish(),
+                    })
+                    .optional(),
                 }),
               })
               .nullish(),
@@ -317,6 +323,7 @@ export const postRouter = router({
                         _id: 1,
                         name: 1,
                         image: 1,
+                        tags: 1,
                       },
                     },
                   ],
