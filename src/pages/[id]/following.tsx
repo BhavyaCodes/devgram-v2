@@ -46,6 +46,8 @@ const Following: NextPage = () => {
               name={obj.userId.name}
               image={obj.userId.image}
               bio={obj.userId.bio}
+              developer={obj.userId.tags?.developer}
+              verified={obj.userId.tags?.verified}
             />
           ))}
         </>

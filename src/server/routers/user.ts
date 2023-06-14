@@ -352,6 +352,12 @@ export const userRouter = router({
               image: z.string().optional(),
               name: z.string(),
               bio: z.string().optional(),
+              tags: z
+                .object({
+                  verified: z.boolean().nullish(),
+                  developer: z.boolean().nullish(),
+                })
+                .optional(),
             }),
           }),
         ),
@@ -392,6 +398,7 @@ export const userRouter = router({
           image: 1,
           name: 1,
           bio: 1,
+          tags: 1,
         })
         .sort({ createdAt: -1, _id: -1 })
         .lean();
@@ -434,6 +441,12 @@ export const userRouter = router({
               image: z.string().optional(),
               name: z.string(),
               bio: z.string().optional(),
+              tags: z
+                .object({
+                  verified: z.boolean().nullish(),
+                  developer: z.boolean().nullish(),
+                })
+                .optional(),
             }),
           }),
         ),
@@ -474,6 +487,7 @@ export const userRouter = router({
           image: 1,
           name: 1,
           bio: 1,
+          tags: 1,
         })
         .sort({ createdAt: -1, _id: -1 })
         .lean();

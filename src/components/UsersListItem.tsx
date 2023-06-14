@@ -1,15 +1,26 @@
-import { Avatar, Box, Typography } from '@mui/material';
+import { Avatar, Box, Tooltip, Typography } from '@mui/material';
 import { getImageUrl } from '~/utils/getImageUrl';
 import Link from './common/Link';
+import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
+import CodeRoundedIcon from '@mui/icons-material/CodeRounded';
 
 interface UsersListItem {
   _id: string;
   image?: string;
   bio?: string;
   name: string;
+  verified?: boolean | null;
+  developer?: boolean | null;
 }
 
-const UsersListItem = ({ _id, image, bio, name }: UsersListItem) => {
+const UsersListItem = ({
+  _id,
+  image,
+  bio,
+  name,
+  developer,
+  verified,
+}: UsersListItem) => {
   return (
     <Link
       href={`/${_id}`}
@@ -28,7 +39,22 @@ const UsersListItem = ({ _id, image, bio, name }: UsersListItem) => {
         <Avatar src={getImageUrl(image)} alt={name} />
       </Box>
       <Box flexGrow={1}>
-        <Typography fontWeight={700}>{name}</Typography>
+        <Box display="flex" alignItems="center">
+          <Typography fontWeight={700}>{name}</Typography>{' '}
+          {verified && (
+            <Tooltip title="Verified">
+              <VerifiedRoundedIcon
+                sx={{ ml: 1, fontSize: 20 }}
+                color="primary"
+              />
+            </Tooltip>
+          )}
+          {developer && (
+            <Tooltip title="Developer">
+              <CodeRoundedIcon sx={{ ml: 1, fontSize: 20 }} color="primary" />
+            </Tooltip>
+          )}
+        </Box>
         <Typography variant="body1">{bio}</Typography>
       </Box>
     </Link>
