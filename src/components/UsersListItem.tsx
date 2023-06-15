@@ -3,6 +3,8 @@ import { getImageUrl } from '~/utils/getImageUrl';
 import Link from './common/Link';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import { LogoSvg } from './common/LogoSvg';
+import { trpc } from '~/utils/trpc';
+import { useRouter } from 'next/router';
 
 interface UsersListItem {
   _id: string;
@@ -25,6 +27,68 @@ const UsersListItem = ({
   followed,
   hideFollowButton,
 }: UsersListItem) => {
+  const context = trpc.useContext();
+  const profileId = useRouter().query.id as string;
+
+  const followerUserMutation = trpc.user.followUser.useMutation({
+    onSuccess(data, variables) {
+      context.user.getFollowers.setInfiniteData(
+        { userId: profileId },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+
+          const newPages = oldData.pages.map((page) => {
+            const newFollowers = page.followers.map((follower) => {
+              if (follower.followerId._id.toString() === variables.userId) {
+                return {
+                  // ...follower,
+                  ...follower,
+                  followerId: { ...follower.followerId, followed: true },
+                };
+              }
+              return follower;
+            });
+            return { followers: newFollowers, nextCursor: page.nextCursor };
+          });
+
+          return { pageParams: oldData.pageParams, pages: newPages };
+        },
+      );
+
+      context.user.getFollowing.setInfiniteData(
+        { followerId: profileId },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+
+          const newPages = oldData.pages.map((page) => {
+            const newFollowers = page.following.map((following) => {
+              if (following.userId._id.toString() === variables.userId) {
+                return {
+                  ...following,
+                  userId: { ...following.userId, followed: true },
+                };
+              }
+              return following;
+            });
+            return { following: newFollowers, nextCursor: page.nextCursor };
+          });
+
+          return { pageParams: oldData.pageParams, pages: newPages };
+        },
+      );
+    },
+  });
+
   return (
     <Link
       href={`/${_id}`}
@@ -96,7 +160,10 @@ const UsersListItem = ({
                   variant="contained"
                   color="inherit"
                   type="button"
-                  onClick={(e) => e.preventDefault()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    followerUserMutation.mutate({ userId: _id });
+                  }}
                 >
                   Follow
                 </Button>
