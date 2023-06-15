@@ -1,7 +1,6 @@
 import {
   Box,
   IconButton,
-  Link,
   Typography,
   useMediaQuery,
   useTheme,
@@ -10,6 +9,7 @@ import { useRouter } from 'next/router';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { trpc } from '~/utils/trpc';
 import { Option } from './Option';
+import Link from '../common/Link';
 
 export const FollowersHeaderLayout = ({
   selected,

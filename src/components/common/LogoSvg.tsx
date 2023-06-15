@@ -3,21 +3,10 @@ import { Box, BoxProps, Tooltip } from '@mui/material';
 export const LogoSvg = ({
   width = 20,
   title,
-  sx,
   ...otherProps
 }: { width?: number; title: string } & BoxProps) => {
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      {...otherProps}
-      sx={{
-        '& svg': {
-          mt: 0.5,
-        },
-        ...sx,
-      }}
-    >
+    <Box display="flex" alignItems="center" {...otherProps}>
       <Tooltip title={title}>
         <svg
           width={width.toString()}

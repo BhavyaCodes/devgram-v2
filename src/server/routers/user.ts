@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { publicProcedure, router } from '../trpc';
+import { router } from '../trpc';
 
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
@@ -329,7 +329,7 @@ export const userRouter = router({
       return result.acknowledged;
     }),
 
-  getFollowing: publicProcedure
+  getFollowing: currentSessionProcedure
     .input(
       z.object({
         followerId: z.string(),
@@ -358,6 +358,7 @@ export const userRouter = router({
                   developer: z.boolean().nullish(),
                 })
                 .optional(),
+              followed: z.boolean().nullish(),
             }),
           }),
         ),
@@ -369,7 +370,8 @@ export const userRouter = router({
           .nullish(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      const user = ctx.session?.userId;
       const limit = 5;
       const cursor = input.cursor;
       const operator = cursor?.exclude ? '$lt' : '$lte';
@@ -418,7 +420,7 @@ export const userRouter = router({
       return { following, nextCursor };
     }),
 
-  getFollowers: publicProcedure
+  getFollowers: currentSessionProcedure
     .input(
       z.object({
         userId: z.string(),
@@ -447,6 +449,7 @@ export const userRouter = router({
                   developer: z.boolean().nullish(),
                 })
                 .optional(),
+              followed: z.boolean().nullish(),
             }),
           }),
         ),
@@ -458,39 +461,86 @@ export const userRouter = router({
           .nullish(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const limit = 5;
       const cursor = input.cursor;
       const operator = cursor?.exclude ? '$lt' : '$lte';
 
-      const query: FilterQuery<IFollower> = {
-        userId: input.userId,
-        ...(cursor?.createdAt && cursor?._id
-          ? {
-              $or: [
+      const user = ctx.session?.userId;
+
+      const pipeline: PipelineStage[] = [
+        {
+          $match: {
+            userId: new Types.ObjectId(input.userId),
+            ...(cursor?.createdAt && cursor?._id
+              ? {
+                  $or: [
+                    {
+                      createdAt: { [operator]: cursor.createdAt },
+                    },
+                    {
+                      createdAt: cursor.createdAt,
+                      _id: { [operator]: new Types.ObjectId(cursor._id) },
+                    },
+                  ],
+                }
+              : {}),
+          },
+        },
+        {
+          $sort: { createdAt: -1, _id: -1 },
+        },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'followerId',
+            foreignField: '_id',
+            as: 'followerId',
+          },
+        },
+        {
+          $unwind: {
+            path: '$followerId',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ];
+
+      if (user) {
+        pipeline.push(
+          {
+            $lookup: {
+              from: 'followers',
+              localField: 'followerId._id',
+              pipeline: [
                 {
-                  createdAt: { [operator]: cursor.createdAt },
-                },
-                {
-                  createdAt: cursor.createdAt,
-                  _id: { [operator]: new Types.ObjectId(cursor._id) },
+                  $match: {
+                    followerId: user._id,
+                  },
                 },
               ],
-            }
-          : {}),
-      };
+              foreignField: 'userId',
+              as: 'followerId.followed',
+            },
+          },
+          {
+            $unwind: {
+              path: '$followerId.followed',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              'followerId.followed': {
+                $toBool: '$followerId.followed',
+              },
+            },
+          },
+        );
+      }
 
-      const followers = await Follower.find(query)
-        .limit(limit + 1)
-        .populate('followerId', {
-          _id: 1,
-          image: 1,
-          name: 1,
-          bio: 1,
-          tags: 1,
-        })
-        .sort({ createdAt: -1, _id: -1 })
-        .lean();
+      const followers = await Follower.aggregate(pipeline);
 
       let nextCursor: typeof cursor = undefined;
 

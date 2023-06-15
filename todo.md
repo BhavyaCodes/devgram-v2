@@ -41,6 +41,6 @@
 
 ### LP
 
-- [ ] Add Verified icon
+- [x] Add Verified icon
 - [ ] Fix Emoji bug
 - [ ] fixed height modal for gif picker
