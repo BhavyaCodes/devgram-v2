@@ -48,6 +48,7 @@ const Followers: NextPage = () => {
               bio={obj.followerId.bio}
               developer={obj.followerId.tags?.developer}
               verified={obj.followerId.tags?.verified}
+              followed={obj.followerId.followed}
             />
           ))}
         </>
