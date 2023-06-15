@@ -57,7 +57,12 @@ const UsersListItem = ({
           <Typography variant="body1">{bio}</Typography>
         </Box>
 
-        <Box>
+        <Box
+          width={100}
+          display="flex"
+          alignItems="flex-start"
+          justifyContent="flex-end"
+        >
           {followed ? (
             <Button
               variant="outlined"
