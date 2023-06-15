@@ -46,7 +46,6 @@ const UsersListItem = ({
             const newFollowers = page.followers.map((follower) => {
               if (follower.followerId._id.toString() === variables.userId) {
                 return {
-                  // ...follower,
                   ...follower,
                   followerId: { ...follower.followerId, followed: true },
                 };
@@ -76,6 +75,64 @@ const UsersListItem = ({
                 return {
                   ...following,
                   userId: { ...following.userId, followed: true },
+                };
+              }
+              return following;
+            });
+            return { following: newFollowers, nextCursor: page.nextCursor };
+          });
+
+          return { pageParams: oldData.pageParams, pages: newPages };
+        },
+      );
+    },
+  });
+
+  const unFollowUserMutation = trpc.user.unfollowUser.useMutation({
+    onSuccess(data, variables) {
+      context.user.getFollowers.setInfiniteData(
+        { userId: profileId },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+
+          const newPages = oldData.pages.map((page) => {
+            const newFollowers = page.followers.map((follower) => {
+              if (follower.followerId._id.toString() === variables.userId) {
+                return {
+                  ...follower,
+                  followerId: { ...follower.followerId, followed: false },
+                };
+              }
+              return follower;
+            });
+            return { followers: newFollowers, nextCursor: page.nextCursor };
+          });
+
+          return { pageParams: oldData.pageParams, pages: newPages };
+        },
+      );
+
+      context.user.getFollowing.setInfiniteData(
+        { followerId: profileId },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+
+          const newPages = oldData.pages.map((page) => {
+            const newFollowers = page.following.map((following) => {
+              if (following.userId._id.toString() === variables.userId) {
+                return {
+                  ...following,
+                  userId: { ...following.userId, followed: false },
                 };
               }
               return following;
@@ -138,6 +195,7 @@ const UsersListItem = ({
                   type="button"
                   onClick={(e) => {
                     e.preventDefault();
+                    unFollowUserMutation.mutate({ userId: _id });
                   }}
                   sx={{
                     display: 'inline-block',
@@ -148,7 +206,7 @@ const UsersListItem = ({
                       content: "'Following'",
                     },
                     '&:hover': {
-                      color: 'red',
+                      color: (theme) => theme.palette.error.light,
                       '&::after': {
                         content: '"UnFollow"',
                       },
