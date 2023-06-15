@@ -376,34 +376,79 @@ export const userRouter = router({
       const cursor = input.cursor;
       const operator = cursor?.exclude ? '$lt' : '$lte';
 
-      const query: FilterQuery<IFollower> = {
-        followerId: input.followerId,
-        ...(cursor?.createdAt && cursor?._id
-          ? {
-              $or: [
+      const pipeline: PipelineStage[] = [
+        {
+          $match: {
+            followerId: new Types.ObjectId(input.followerId),
+            ...(cursor?.createdAt && cursor?._id
+              ? {
+                  $or: [
+                    {
+                      createdAt: { [operator]: cursor.createdAt },
+                    },
+                    {
+                      createdAt: cursor.createdAt,
+                      _id: { [operator]: new Types.ObjectId(cursor._id) },
+                    },
+                  ],
+                }
+              : {}),
+          },
+        },
+        {
+          $sort: { createdAt: -1, _id: -1 },
+        },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userId',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userId',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ];
+
+      if (user) {
+        pipeline.push(
+          {
+            $lookup: {
+              from: 'followers',
+              localField: 'userId._id',
+              pipeline: [
                 {
-                  createdAt: { [operator]: cursor.createdAt },
-                },
-                {
-                  createdAt: cursor.createdAt,
-                  _id: { [operator]: new Types.ObjectId(cursor._id) },
+                  $match: {
+                    followerId: user._id,
+                  },
                 },
               ],
-            }
-          : {}),
-      };
+              foreignField: 'userId',
+              as: 'userId.followed',
+            },
+          },
+          {
+            $unwind: {
+              path: '$userId.followed',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              'userId.followed': {
+                $toBool: '$userId.followed',
+              },
+            },
+          },
+        );
+      }
 
-      const following = await Follower.find(query)
-        .limit(limit + 1)
-        .populate('userId', {
-          _id: 1,
-          image: 1,
-          name: 1,
-          bio: 1,
-          tags: 1,
-        })
-        .sort({ createdAt: -1, _id: -1 })
-        .lean();
+      const following = await Follower.aggregate(pipeline);
 
       let nextCursor: typeof cursor = undefined;
 
