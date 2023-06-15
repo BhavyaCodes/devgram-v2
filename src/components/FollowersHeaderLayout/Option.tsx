@@ -27,6 +27,7 @@ export const Option: FC<OptionProps> = ({ selected, children, href }) => {
     >
       <Typography
         fontWeight={selected ? 700 : 400}
+        fontSize={14}
         variant={selected ? 'body1' : 'body2'}
       >
         {children}

@@ -88,10 +88,7 @@ export const FollowersHeaderLayout = ({
       >
         <Box display="flex" alignItems="center" position="sticky">
           <Link href={`/${profileId}`}>
-            <IconButton
-              onClick={router.back}
-              sx={{ flexShrink: 0, ml: 1, mr: 2 }}
-            >
+            <IconButton sx={{ flexShrink: 0, ml: 1, mr: 2 }}>
               <ArrowBackRoundedIcon />
             </IconButton>
           </Link>

@@ -12,6 +12,7 @@ interface UsersListItem {
   verified?: boolean | null;
   developer?: boolean | null;
   followed?: boolean | null;
+  hideFollowButton?: boolean;
 }
 
 const UsersListItem = ({
@@ -22,6 +23,7 @@ const UsersListItem = ({
   developer,
   verified,
   followed,
+  hideFollowButton,
 }: UsersListItem) => {
   return (
     <Link
@@ -63,39 +65,43 @@ const UsersListItem = ({
           alignItems="flex-start"
           justifyContent="flex-end"
         >
-          {followed ? (
-            <Button
-              variant="outlined"
-              color="inherit"
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-              sx={{
-                display: 'inline-block',
-                width: 100,
-                '&::after': {
-                  display: 'flex',
-                  justifyContent: 'center',
-                  content: "'Following'",
-                },
-                '&:hover': {
-                  color: 'red',
-                  '&::after': {
-                    content: '"UnFollow"',
-                  },
-                },
-              }}
-            ></Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="inherit"
-              type="button"
-              onClick={(e) => e.preventDefault()}
-            >
-              Follow
-            </Button>
+          {!hideFollowButton && (
+            <>
+              {followed ? (
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                  }}
+                  sx={{
+                    display: 'inline-block',
+                    width: 100,
+                    '&::after': {
+                      display: 'flex',
+                      justifyContent: 'center',
+                      content: "'Following'",
+                    },
+                    '&:hover': {
+                      color: 'red',
+                      '&::after': {
+                        content: '"UnFollow"',
+                      },
+                    },
+                  }}
+                ></Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="inherit"
+                  type="button"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  Follow
+                </Button>
+              )}
+            </>
           )}
         </Box>
       </Box>

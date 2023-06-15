@@ -8,6 +8,7 @@ import { trpc } from '~/utils/trpc';
 const Followers: NextPage = () => {
   const router = useRouter();
   const userId = router.query.id as string;
+  const getUserQuery = trpc.user.getUser.useQuery(undefined);
 
   const followersQuery = trpc.user.getFollowers.useInfiniteQuery(
     {
@@ -48,6 +49,7 @@ const Followers: NextPage = () => {
               bio={obj.followerId.bio}
               developer={obj.followerId.tags?.developer}
               verified={obj.followerId.tags?.verified}
+              hideFollowButton={getUserQuery.data?._id === obj.followerId._id}
               followed={obj.followerId.followed}
             />
           ))}
