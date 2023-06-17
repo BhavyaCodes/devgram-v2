@@ -398,7 +398,7 @@ export const userRouter = router({
         {
           $sort: { createdAt: -1, _id: -1 },
         },
-        { $limit: limit },
+        { $limit: limit + 1 },
         {
           $lookup: {
             from: 'users',
@@ -535,7 +535,7 @@ export const userRouter = router({
         {
           $sort: { createdAt: -1, _id: -1 },
         },
-        { $limit: limit },
+        { $limit: limit + 1 },
         {
           $lookup: {
             from: 'users',

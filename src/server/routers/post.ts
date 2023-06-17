@@ -415,33 +415,158 @@ export const postRouter = router({
 
       return { posts, nextCursor };
     }),
-  viewLikes: publicProcedure
-    .input(z.string())
-    .output(
-      z.array(
-        z.object({
-          _id: z.instanceof(ObjectId),
-          postId: z.instanceof(ObjectId),
-          createdAt: z.date(),
-          updatedAt: z.date(),
-          userId: z.object({
-            _id: z.instanceof(ObjectId),
-            image: z.string().optional(),
-            name: z.string(),
-          }),
-        }),
-      ),
+  viewLikes: currentSessionProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+        cursor: z
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+            exclude: z.boolean().optional(),
+          })
+          .optional(),
+      }),
     )
-    .query(async ({ input }) => {
-      const likeDocs = await Like.find({ postId: input })
-        .populate('userId', {
-          _id: 1,
-          image: 1,
-          name: 1,
-        })
-        .lean();
+    .output(
+      z.object({
+        likes: z.array(
+          z.object({
+            _id: z.instanceof(ObjectId),
+            postId: z.instanceof(ObjectId),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+            userId: z.object({
+              _id: z.instanceof(ObjectId),
+              image: z.string().optional(),
+              name: z.string(),
+              bio: z.string().optional(),
+              tags: z
+                .object({
+                  verified: z.boolean().nullish(),
+                  developer: z.boolean().nullish(),
+                })
+                .optional(),
+              followed: z.boolean().nullish(),
+            }),
+          }),
+        ),
+        nextCursor: z
+          .object({ createdAt: z.date(), _id: z.string() })
+          .nullish(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const limit = 5;
+      const cursor = input.cursor;
+      const operator = cursor?.exclude ? '$lt' : '$lte';
 
-      return likeDocs;
+      const user = ctx.session?.userId;
+
+      const pipeline: PipelineStage[] = [
+        {
+          $match: {
+            postId: new Types.ObjectId(input.postId),
+            ...(cursor?.createdAt && cursor?._id
+              ? {
+                  $or: [
+                    {
+                      createdAt: { [operator]: cursor.createdAt },
+                    },
+                    {
+                      createdAt: cursor.createdAt,
+                      _id: { [operator]: new Types.ObjectId(cursor._id) },
+                    },
+                  ],
+                }
+              : {}),
+          },
+        },
+        {
+          $sort: { createdAt: -1, _id: -1 },
+        },
+        { $limit: limit + 1 },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            pipeline: [
+              {
+                $unset: [
+                  'email',
+                  'bio',
+                  'banner',
+                  'createdAt',
+                  'updatedAt',
+                  '__v',
+                ],
+              },
+            ],
+            foreignField: '_id',
+            as: 'userId',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userId',
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+      ];
+
+      if (user) {
+        pipeline.push(
+          {
+            $lookup: {
+              from: 'followers',
+              localField: 'userId._id',
+              pipeline: [
+                {
+                  $match: {
+                    followerId: user._id,
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                  },
+                },
+              ],
+              foreignField: 'userId',
+              as: 'userId.followed',
+            },
+          },
+          {
+            $unwind: {
+              path: '$userId.followed',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              'userId.followed': {
+                $toBool: '$userId.followed',
+              },
+            },
+          },
+        );
+      }
+
+      const likes = await Like.aggregate(pipeline);
+
+      let nextCursor: typeof cursor = undefined;
+
+      if (likes.length > limit) {
+        const nextItem = likes.pop();
+        if (nextItem) {
+          nextCursor = {
+            _id: nextItem._id.toString(),
+            createdAt: nextItem.createdAt,
+          };
+        }
+      }
+
+      return { likes, nextCursor };
     }),
   likePost: authOnlyProcedure
     .input(z.string())
