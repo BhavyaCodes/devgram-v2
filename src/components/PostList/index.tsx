@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { trpc } from '~/utils/trpc';
 import { PostBox } from './PostBox';
 import {
@@ -9,8 +9,13 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@mui/material';
+import { ViewLikesModal } from './ViewLikesModal';
 
 const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
+  const [selectedViewLikesPostId, setSelectedViewLikesPostId] = useState<
+    null | string
+  >(null);
+
   const {
     // status,
     error,
@@ -29,8 +34,6 @@ const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
       },
     },
   );
-
-  // const utils = trpc.useContext();
 
   const deletePostMutation = trpc.post.deletePost.useMutation({
     onSuccess(data, variables, context) {
@@ -63,6 +66,10 @@ const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
     },
   });
 
+  const handleSelectViewLikesPostId = useCallback((postId: string) => {
+    setSelectedViewLikesPostId(postId);
+  }, []);
+
   const [deletePostData, setDeletePostData] = useState<null | {
     postId: string;
     postContent: string;
@@ -81,6 +88,10 @@ const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
 
   return (
     <>
+      <ViewLikesModal
+        postId={selectedViewLikesPostId}
+        onClose={() => setSelectedViewLikesPostId(null)}
+      />
       <div>
         {!!deletePostData && (
           <Dialog
@@ -135,6 +146,7 @@ const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
             setDeletePostData={setDeletePostData}
             developer={post.userId.tags?.developer}
             verified={post.userId.tags?.verified}
+            handleSelectViewLikesPostId={handleSelectViewLikesPostId}
           />
         ))}
       </div>

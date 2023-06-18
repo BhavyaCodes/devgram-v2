@@ -78,6 +78,7 @@ interface PostBoxProps {
 
   verified?: boolean | null;
   developer?: boolean | null;
+  handleSelectViewLikesPostId: (postId: string) => void;
 }
 
 export interface Comment {
@@ -109,6 +110,7 @@ export const PostBox = ({
   setDeletePostData,
   developer,
   verified,
+  handleSelectViewLikesPostId,
 }: PostBoxProps) => {
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
@@ -503,7 +505,7 @@ export const PostBox = ({
                 justifyContent="space-between"
               >
                 <ActionButton
-                  onClick={() => console.log('asfsasdaf')}
+                  onClick={() => handleSelectViewLikesPostId(_id)}
                   hoverBgColor="rgba(255, 23, 68, 0.1)"
                   Icon={
                     hasLiked ? FavoriteRoundedIcon : FavoriteBorderRoundedIcon
