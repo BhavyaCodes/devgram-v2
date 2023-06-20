@@ -11,7 +11,10 @@ import {
 } from '@mui/material';
 import { ViewLikesModal } from './ViewLikesModal';
 
-const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
+const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
+  profileId,
+  followingOnly,
+}) => {
   const [selectedViewLikesPostId, setSelectedViewLikesPostId] = useState<
     null | string
   >(null);
@@ -27,6 +30,7 @@ const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
   } = trpc.post.getAll.useInfiniteQuery(
     {
       ...(profileId ? { profileId } : {}),
+      followingOnly,
     },
     {
       getNextPageParam: (lastPage) => {
@@ -122,6 +126,7 @@ const PostsList: FC<{ profileId?: string }> = ({ profileId }) => {
             developer={post.userId.tags?.developer}
             verified={post.userId.tags?.verified}
             handleSelectViewLikesPostId={handleSelectViewLikesPostId}
+            followingOnly={followingOnly}
           />
         ))}
       </div>

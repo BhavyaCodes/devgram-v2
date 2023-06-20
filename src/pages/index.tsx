@@ -7,8 +7,12 @@ import { Box, Button, Typography } from '@mui/material';
 import PostsList from '~/components/PostList';
 import { Option } from '~/components/common/Option';
 import GoogleIcon from '@mui/icons-material/Google';
+import { useState } from 'react';
 
 const IndexPage: NextPageWithLayout = () => {
+  const [selectedFeed, setSelectedFeed] = useState<'forYou' | 'following'>(
+    'forYou',
+  );
   const queryClient = useQueryClient();
 
   const getUser = trpc.user.getUser.useQuery(undefined, {
@@ -76,11 +80,17 @@ const IndexPage: NextPageWithLayout = () => {
               backdropFilter: 'blur(12px)',
             }}
           >
-            <Option onClick={() => console.log('hi')} selected={true}>
-              Followers
+            <Option
+              onClick={() => setSelectedFeed('forYou')}
+              selected={selectedFeed === 'forYou'}
+            >
+              For you
             </Option>
 
-            <Option onClick={() => console.log('hi')} selected={false}>
+            <Option
+              onClick={() => setSelectedFeed('following')}
+              selected={selectedFeed === 'following'}
+            >
               Following
             </Option>
           </Box>
@@ -89,7 +99,7 @@ const IndexPage: NextPageWithLayout = () => {
 
       {getUser.data && <NewPost />}
 
-      <PostsList />
+      <PostsList followingOnly={selectedFeed === 'following'} />
       {getUser.data ? (
         <Button
           data-cy="logout-button"

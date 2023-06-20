@@ -103,6 +103,8 @@ const NewPost: FC = () => {
     onSuccess(data) {
       utils.post.getAll.setInfiniteData(
         {
+          //TODO: update following only
+          followingOnly: false,
           profileId,
         },
         (oldData) => {
