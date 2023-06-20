@@ -195,8 +195,8 @@ const UsersListItem = ({
         context.post.viewLikes.setInfiniteData({ postId }, (oldData) => {
           if (!oldData) {
             return {
-              pages: [],
-              pageParams: [],
+              pages: [{ likes: [], nextCursor: null }],
+              pageParams: [null],
             };
           }
 
