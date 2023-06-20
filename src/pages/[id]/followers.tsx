@@ -51,6 +51,9 @@ const Followers: NextPage = () => {
               verified={obj.followerId.tags?.verified}
               hideFollowButton={getUserQuery.data?._id === obj.followerId._id}
               followed={obj.followerId.followed}
+              type="follow"
+              profileId={userId}
+              postId={undefined}
             />
           ))}
         </>

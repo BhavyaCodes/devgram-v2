@@ -4,9 +4,8 @@ import Link from './common/Link';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import { LogoSvg } from './common/LogoSvg';
 import { trpc } from '~/utils/trpc';
-import { useRouter } from 'next/router';
 
-interface UsersListItem {
+interface _UsersListItem {
   _id: string;
   image?: string;
   bio?: string;
@@ -17,6 +16,20 @@ interface UsersListItem {
   hideFollowButton?: boolean;
 }
 
+interface _UsersListItemForLikeList extends _UsersListItem {
+  type: 'like';
+  postId: string;
+  profileId: undefined;
+}
+
+interface _UsersListItemForFollowList extends _UsersListItem {
+  type: 'follow';
+  profileId: string;
+  postId: undefined;
+}
+
+type UsersListItem = _UsersListItemForLikeList | _UsersListItemForFollowList;
+
 const UsersListItem = ({
   _id,
   image,
@@ -26,73 +39,160 @@ const UsersListItem = ({
   verified,
   followed,
   hideFollowButton,
+  ...otherProps
 }: UsersListItem) => {
   const context = trpc.useContext();
-  const profileId = useRouter().query.id as string;
 
   const followerUserMutation = trpc.user.followUser.useMutation({
     onSuccess(data, variables) {
-      context.user.getFollowers.setInfiniteData(
-        { userId: profileId },
-        (oldData) => {
+      const profileId = otherProps.profileId;
+      const postId = otherProps.postId;
+
+      if (profileId) {
+        context.user.getFollowers.setInfiniteData(
+          { userId: profileId },
+          (oldData) => {
+            if (!oldData) {
+              return {
+                pages: [{ followers: [], nextCursor: null }],
+                pageParams: [null],
+              };
+            }
+
+            const newPages = oldData.pages.map((page) => {
+              const newFollowers = page.followers.map((follower) => {
+                if (follower.followerId._id.toString() === variables.userId) {
+                  return {
+                    ...follower,
+                    followerId: { ...follower.followerId, followed: true },
+                  };
+                }
+                return follower;
+              });
+              return { followers: newFollowers, nextCursor: page.nextCursor };
+            });
+
+            return { pageParams: oldData.pageParams, pages: newPages };
+          },
+        );
+
+        context.user.getFollowing.setInfiniteData(
+          { followerId: profileId },
+          (oldData) => {
+            if (!oldData) {
+              return {
+                pages: [{ following: [], nextCursor: null }],
+                pageParams: [null],
+              };
+            }
+
+            const newPages = oldData.pages.map((page) => {
+              const newFollowers = page.following.map((following) => {
+                if (following.userId._id.toString() === variables.userId) {
+                  return {
+                    ...following,
+                    userId: { ...following.userId, followed: true },
+                  };
+                }
+                return following;
+              });
+              return { following: newFollowers, nextCursor: page.nextCursor };
+            });
+
+            return { pageParams: oldData.pageParams, pages: newPages };
+          },
+        );
+      }
+      if (postId) {
+        context.post.viewLikes.setInfiniteData({ postId }, (oldData) => {
           if (!oldData) {
             return {
-              pages: [],
-              pageParams: [],
+              pages: [{ likes: [], nextCursor: null }],
+              pageParams: [null],
             };
           }
 
           const newPages = oldData.pages.map((page) => {
-            const newFollowers = page.followers.map((follower) => {
-              if (follower.followerId._id.toString() === variables.userId) {
+            const newLikes = page.likes.map((like) => {
+              if (like.userId._id.toString() === variables.userId) {
                 return {
-                  ...follower,
-                  followerId: { ...follower.followerId, followed: true },
+                  ...like,
+                  userId: { ...like.userId, followed: true },
                 };
               }
-              return follower;
+              return like;
             });
-            return { followers: newFollowers, nextCursor: page.nextCursor };
+            return { likes: newLikes, nextCursor: page.nextCursor };
           });
 
           return { pageParams: oldData.pageParams, pages: newPages };
-        },
-      );
-
-      context.user.getFollowing.setInfiniteData(
-        { followerId: profileId },
-        (oldData) => {
-          if (!oldData) {
-            return {
-              pages: [],
-              pageParams: [],
-            };
-          }
-
-          const newPages = oldData.pages.map((page) => {
-            const newFollowers = page.following.map((following) => {
-              if (following.userId._id.toString() === variables.userId) {
-                return {
-                  ...following,
-                  userId: { ...following.userId, followed: true },
-                };
-              }
-              return following;
-            });
-            return { following: newFollowers, nextCursor: page.nextCursor };
-          });
-
-          return { pageParams: oldData.pageParams, pages: newPages };
-        },
-      );
+        });
+      }
     },
   });
 
   const unFollowUserMutation = trpc.user.unfollowUser.useMutation({
     onSuccess(data, variables) {
-      context.user.getFollowers.setInfiniteData(
-        { userId: profileId },
-        (oldData) => {
+      const profileId = otherProps.profileId;
+      const postId = otherProps.postId;
+      if (profileId) {
+        context.user.getFollowers.setInfiniteData(
+          { userId: profileId },
+          (oldData) => {
+            if (!oldData) {
+              return {
+                pages: [{ followers: [], nextCursor: null }],
+                pageParams: [null],
+              };
+            }
+
+            const newPages = oldData.pages.map((page) => {
+              const newFollowers = page.followers.map((follower) => {
+                if (follower.followerId._id.toString() === variables.userId) {
+                  return {
+                    ...follower,
+                    followerId: { ...follower.followerId, followed: false },
+                  };
+                }
+                return follower;
+              });
+              return { followers: newFollowers, nextCursor: page.nextCursor };
+            });
+
+            return { pageParams: oldData.pageParams, pages: newPages };
+          },
+        );
+
+        context.user.getFollowing.setInfiniteData(
+          { followerId: profileId },
+          (oldData) => {
+            if (!oldData) {
+              return {
+                pages: [{ following: [], nextCursor: null }],
+                pageParams: [null],
+              };
+            }
+
+            const newPages = oldData.pages.map((page) => {
+              const newFollowers = page.following.map((following) => {
+                if (following.userId._id.toString() === variables.userId) {
+                  return {
+                    ...following,
+                    userId: { ...following.userId, followed: false },
+                  };
+                }
+                return following;
+              });
+              return { following: newFollowers, nextCursor: page.nextCursor };
+            });
+
+            return { pageParams: oldData.pageParams, pages: newPages };
+          },
+        );
+      }
+
+      if (postId) {
+        context.post.viewLikes.setInfiniteData({ postId }, (oldData) => {
           if (!oldData) {
             return {
               pages: [],
@@ -101,48 +201,21 @@ const UsersListItem = ({
           }
 
           const newPages = oldData.pages.map((page) => {
-            const newFollowers = page.followers.map((follower) => {
-              if (follower.followerId._id.toString() === variables.userId) {
+            const newLikes = page.likes.map((like) => {
+              if (like.userId._id.toString() === variables.userId) {
                 return {
-                  ...follower,
-                  followerId: { ...follower.followerId, followed: false },
+                  ...like,
+                  userId: { ...like.userId, followed: false },
                 };
               }
-              return follower;
+              return like;
             });
-            return { followers: newFollowers, nextCursor: page.nextCursor };
+            return { likes: newLikes, nextCursor: page.nextCursor };
           });
 
           return { pageParams: oldData.pageParams, pages: newPages };
-        },
-      );
-
-      context.user.getFollowing.setInfiniteData(
-        { followerId: profileId },
-        (oldData) => {
-          if (!oldData) {
-            return {
-              pages: [],
-              pageParams: [],
-            };
-          }
-
-          const newPages = oldData.pages.map((page) => {
-            const newFollowers = page.following.map((following) => {
-              if (following.userId._id.toString() === variables.userId) {
-                return {
-                  ...following,
-                  userId: { ...following.userId, followed: false },
-                };
-              }
-              return following;
-            });
-            return { following: newFollowers, nextCursor: page.nextCursor };
-          });
-
-          return { pageParams: oldData.pageParams, pages: newPages };
-        },
-      );
+        });
+      }
     },
   });
 

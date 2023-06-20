@@ -11,6 +11,10 @@ export const ViewLikesModal: FC<ViewLikesModalProps> = ({
   postId,
   onClose,
 }) => {
+  const getUserQuery = trpc.user.getUser.useQuery(undefined, {
+    staleTime: 2000,
+  });
+
   const viewLikesQuery = trpc.post.viewLikes.useInfiniteQuery(
     {
       postId: postId || '',
@@ -23,26 +27,30 @@ export const ViewLikesModal: FC<ViewLikesModalProps> = ({
     },
   );
 
-  console.log(viewLikesQuery.data);
-  console.log(postId);
-
   const likes = viewLikesQuery.data?.pages.flatMap((page) => page.likes);
 
   return (
     <Dialog onClose={onClose} open={!!postId} fullWidth maxWidth="sm">
       ViewLikesModal
-      {likes?.map(({ userId }) => (
-        <UsersListItem
-          key={userId._id.toString()}
-          _id={userId._id.toString()}
-          name={userId.name}
-          bio={userId.bio}
-          developer={userId.tags?.developer}
-          verified={userId.tags?.verified}
-          followed={userId.followed}
-          image={userId.image}
-        />
-      ))}
+      {postId &&
+        likes?.map(({ userId }) => (
+          <UsersListItem
+            key={userId._id.toString()}
+            _id={userId._id.toString()}
+            name={userId.name}
+            bio={userId.bio}
+            developer={userId.tags?.developer}
+            verified={userId.tags?.verified}
+            followed={userId.followed}
+            image={userId.image}
+            type="like"
+            postId={postId}
+            profileId={undefined}
+            hideFollowButton={
+              userId._id.toString() === getUserQuery.data?._id.toString()
+            }
+          />
+        ))}
     </Dialog>
   );
 };
