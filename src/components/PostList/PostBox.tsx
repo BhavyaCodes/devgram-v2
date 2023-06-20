@@ -149,8 +149,8 @@ export const PostBox = ({
       //variable -> postId
       utils.post.getAll.setInfiniteData(
         {
-          followingOnly,
-          profileId,
+          ...(profileId ? { profileId } : {}),
+          ...(followingOnly ? { followingOnly } : {}),
         },
         (oldData) => {
           if (!oldData) {
@@ -186,8 +186,8 @@ export const PostBox = ({
       //variable -> postId
       utils.post.getAll.setInfiniteData(
         {
-          followingOnly,
-          profileId,
+          ...(profileId ? { profileId } : {}),
+          ...(followingOnly ? { followingOnly } : {}),
         },
         (oldData) => {
           if (!oldData) {
