@@ -4,7 +4,7 @@ export const LogoSvg = ({
   width = 20,
   title,
   ...otherProps
-}: { width?: number; title: string } & BoxProps) => {
+}: { width?: number; title?: string } & BoxProps) => {
   return (
     <Box display="flex" alignItems="center" {...otherProps}>
       <Tooltip title={title}>
