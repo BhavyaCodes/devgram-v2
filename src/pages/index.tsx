@@ -3,16 +3,29 @@ import { NextPageWithLayout } from './_app';
 import { useQueryClient } from '@tanstack/react-query';
 import NewPost from '~/components/NewPost';
 import getGoogleOAuthURL from '~/utils/getGoogleUrl';
-import { Box, Button, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Typography,
+  useScrollTrigger,
+} from '@mui/material';
 import PostsList from '~/components/PostList';
 import { Option } from '~/components/common/Option';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useState } from 'react';
+import { getImageUrl } from '~/utils/getImageUrl';
+import { LogoSvg } from '~/components/common/LogoSvg';
 
 const IndexPage: NextPageWithLayout = () => {
   const [selectedFeed, setSelectedFeed] = useState<'forYou' | 'following'>(
     'forYou',
   );
+
+  const trigger = useScrollTrigger({
+    threshold: 30,
+  });
+
   const queryClient = useQueryClient();
 
   const getUser = trpc.user.getUser.useQuery(undefined, {
@@ -34,6 +47,7 @@ const IndexPage: NextPageWithLayout = () => {
   return (
     <>
       <Box
+        component="header"
         position="sticky"
         top={0}
         bgcolor="inherit"
@@ -47,11 +61,47 @@ const IndexPage: NextPageWithLayout = () => {
             xs: 'none',
             sm: '1px solid rgb(56, 68, 77)',
           },
+          transition: (theme) => theme.transitions.create('top'),
+          top: trigger ? -60 : 0,
         }}
         borderBottom={getUser.data ? undefined : '1px solid rgb(56, 68, 77)'}
         zIndex={1100}
       >
-        <Box display="flex" justifyContent="space-between" mx={2} py={2}>
+        <Box
+          justifyContent="center"
+          mx={2}
+          py={2}
+          sx={{
+            display: {
+              xs: 'flex',
+              sm: 'none',
+            },
+          }}
+          alignItems="center"
+        >
+          {getUser.data && (
+            <Avatar
+              sx={{
+                position: 'absolute',
+                left: 16,
+              }}
+              src={getImageUrl(getUser.data.image)}
+              alt={getUser.data.name}
+            />
+          )}
+          <LogoSvg sx={{ position: 'relative', top: 5 }} width={30} />
+        </Box>
+        <Box
+          justifyContent="space-between"
+          mx={2}
+          py={2}
+          sx={{
+            display: {
+              xs: 'none',
+              sm: 'flex',
+            },
+          }}
+        >
           <Typography
             component="h2"
             fontSize={20}
