@@ -211,12 +211,7 @@ export const postRouter = router({
 
         const pipeline: PipelineStage[] = [
           { $match: query },
-          {
-            $sort: { createdAt: -1, _id: -1 },
-          },
-          {
-            $limit: limit + 1,
-          },
+
           {
             $lookup: {
               from: 'followers',
@@ -235,8 +230,28 @@ export const postRouter = router({
           {
             $unwind: {
               path: '$following',
-              preserveNullAndEmptyArrays: false,
+              preserveNullAndEmptyArrays: true,
             },
+          },
+          {
+            $match: {
+              $or: [
+                {
+                  userId: ctx.session.userId._id,
+                },
+                {
+                  following: {
+                    $exists: true,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $sort: { createdAt: -1, _id: -1 },
+          },
+          {
+            $limit: limit + 1,
           },
           {
             $lookup: {

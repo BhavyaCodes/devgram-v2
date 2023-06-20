@@ -38,7 +38,7 @@ const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
   ssr: false,
 });
 
-const NewPost: FC = () => {
+const NewPost: FC<{ followingOnly?: boolean }> = ({ followingOnly }) => {
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
   const utils = trpc.useContext();
@@ -103,9 +103,8 @@ const NewPost: FC = () => {
     onSuccess(data) {
       utils.post.getAll.setInfiniteData(
         {
-          //TODO: update following only
-          followingOnly: false,
-          profileId,
+          ...(profileId ? { profileId } : {}),
+          ...(followingOnly ? { followingOnly } : {}),
         },
         (oldData) => {
           if (!oldData) {

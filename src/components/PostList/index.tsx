@@ -30,7 +30,7 @@ const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
   } = trpc.post.getAll.useInfiniteQuery(
     {
       ...(profileId ? { profileId } : {}),
-      followingOnly,
+      ...(followingOnly ? { followingOnly } : {}),
     },
     {
       getNextPageParam: (lastPage) => {

@@ -97,7 +97,7 @@ const IndexPage: NextPageWithLayout = () => {
         )}
       </Box>
 
-      {getUser.data && <NewPost />}
+      {getUser.data && <NewPost followingOnly={selectedFeed === 'following'} />}
 
       <PostsList followingOnly={selectedFeed === 'following'} />
       {getUser.data ? (
