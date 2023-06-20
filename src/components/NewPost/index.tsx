@@ -179,7 +179,6 @@ const NewPost: FC = () => {
       <Box
         p={2}
         pb={0.5}
-        borderTop="1px solid rgb(56, 68, 77)"
         borderBottom="1px solid rgb(56, 68, 77)"
         sx={{
           borderLeft: {

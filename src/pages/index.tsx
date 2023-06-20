@@ -3,8 +3,10 @@ import { NextPageWithLayout } from './_app';
 import { useQueryClient } from '@tanstack/react-query';
 import NewPost from '~/components/NewPost';
 import getGoogleOAuthURL from '~/utils/getGoogleUrl';
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import PostsList from '~/components/PostList';
+import { Option } from '~/components/common/Option';
+import GoogleIcon from '@mui/icons-material/Google';
 
 const IndexPage: NextPageWithLayout = () => {
   const queryClient = useQueryClient();
@@ -13,7 +15,6 @@ const IndexPage: NextPageWithLayout = () => {
     staleTime: 60000,
     retry: false,
     onError: ({ data }) => {
-      // console.log('@@@@@@@@@@@@@@@@@@@@@@\n', data);
       if (data?.code === 'UNAUTHORIZED') {
         console.log('not logged in');
       }
@@ -26,51 +27,69 @@ const IndexPage: NextPageWithLayout = () => {
     },
   });
 
-  // console.log(getUser.data);
-
-  // const myString = trpc.post.sayHi.useQuery('dfgrtrhrth');
-  // console.log(myString.data);
-  // const postsQuery = trpc.post.list.useInfiniteQuery(
-  //   {
-  //     limit: 5,
-  //   },
-  //   {
-  //     getPreviousPageParam(lastPage) {
-  //       return lastPage.nextCursor;
-  //     },
-  //   },
-  // );
-
-  // const addPost = trpc.post.add.useMutation({
-  //   async onSuccess() {
-  //     // refetches posts after a post is added
-  //     await utils.post.list.invalidate();
-  //   },
-  // });
-
-  // prefetch all posts for instant navigation
-  // useEffect(() => {
-  //   const allPosts = postsQuery.data?.pages.flatMap((page) => page.items) ?? [];
-  //   for (const { id } of allPosts) {
-  //     void utils.post.byId.prefetch({ id });
-  //   }
-  // }, [postsQuery.data, utils]);
-
   return (
     <>
-      {/* <Typography variant="h2" component="h1">
-        Devgram
-      </Typography> */}
-      {getUser.data ? (
-        <h3 data-test="welcome-text">Welcome {getUser.data.name}</h3>
-      ) : (
-        <a href={getGoogleOAuthURL()}>Login With Google</a>
-      )}
-      {getUser.data ? <NewPost /> : <p>Login to post</p>}
-      {/* {postsQuery.status === 'loading' && '(loading)'} */}
-      {/* <PostsList /> */}
-      <PostsList />
+      <Box
+        position="sticky"
+        top={0}
+        bgcolor="inherit"
+        sx={{
+          backdropFilter: 'blur(12px)',
+          borderLeft: {
+            xs: 'none',
+            sm: '1px solid rgb(56, 68, 77)',
+          },
+          borderRight: {
+            xs: 'none',
+            sm: '1px solid rgb(56, 68, 77)',
+          },
+        }}
+        borderBottom={getUser.data ? undefined : '1px solid rgb(56, 68, 77)'}
+        zIndex={1100}
+      >
+        <Box display="flex" justifyContent="space-between" mx={2} py={2}>
+          <Typography
+            component="h2"
+            fontSize={20}
+            fontWeight={700}
+            data-test="welcome-text"
+          >
+            Home
+          </Typography>
+          {!getUser.data && getUser.isFetched && (
+            <Button
+              href={getGoogleOAuthURL()}
+              color="inherit"
+              variant="outlined"
+              startIcon={<GoogleIcon />}
+            >
+              Login
+            </Button>
+          )}
+        </Box>
+        {!!getUser.data && (
+          <Box
+            display="flex"
+            borderBottom="1px solid rgb(56, 68, 77)"
+            top={-1}
+            sx={{
+              backdropFilter: 'blur(12px)',
+            }}
+          >
+            <Option onClick={() => console.log('hi')} selected={true}>
+              Followers
+            </Option>
 
+            <Option onClick={() => console.log('hi')} selected={false}>
+              Following
+            </Option>
+          </Box>
+        )}
+      </Box>
+
+      {getUser.data && <NewPost />}
+
+      <PostsList />
       {getUser.data ? (
         <Button
           data-cy="logout-button"
@@ -82,7 +101,6 @@ const IndexPage: NextPageWithLayout = () => {
           Logout
         </Button>
       ) : null}
-      {/* <Button onClick={() => utils.user.getUser.refetch()}>refetch user</Button> */}
     </>
   );
 };
