@@ -152,8 +152,8 @@ export const PostBox = ({
         (oldData) => {
           if (!oldData) {
             return {
-              pages: [],
-              pageParams: [],
+              pages: [{ posts: [], nextCursor: null }],
+              pageParams: [null],
             };
           }
 
@@ -188,8 +188,8 @@ export const PostBox = ({
         (oldData) => {
           if (!oldData) {
             return {
-              pages: [],
-              pageParams: [],
+              pages: [{ posts: [], nextCursor: null }],
+              pageParams: [null],
             };
           }
 
@@ -245,8 +245,8 @@ export const PostBox = ({
       utils.post.getAll.setInfiniteData({}, (oldData) => {
         if (!oldData) {
           return {
-            pages: [],
-            pageParams: [],
+            pages: [{ posts: [], nextCursor: null }],
+            pageParams: [null],
           };
         }
         const newPages = oldData.pages.map((page) => {
@@ -271,8 +271,8 @@ export const PostBox = ({
         (oldData) => {
           if (!oldData) {
             return {
-              pages: [],
-              pageParams: [],
+              pages: [{ comments: [], nextCursor: undefined }],
+              pageParams: [null],
             };
           }
           const newPages = oldData.pages.map((page) => {

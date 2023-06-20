@@ -42,8 +42,8 @@ export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
         utils.post.getAll.setInfiniteData({}, (oldData) => {
           if (!oldData) {
             return {
-              pages: [],
-              pageParams: [],
+              pages: [{ posts: [], nextCursor: null }],
+              pageParams: [null],
             };
           }
           const newPages = oldData.pages.map((page) => {

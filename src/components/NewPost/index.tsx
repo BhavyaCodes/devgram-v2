@@ -108,7 +108,7 @@ const NewPost: FC = () => {
         (oldData) => {
           if (!oldData) {
             return {
-              pages: [],
+              pages: [{ posts: [], nextCursor: null }],
               pageParams: [],
             };
           }
