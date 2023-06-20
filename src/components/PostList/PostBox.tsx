@@ -79,6 +79,7 @@ interface PostBoxProps {
   verified?: boolean | null;
   developer?: boolean | null;
   handleSelectViewLikesPostId: (postId: string) => void;
+  followingOnly?: boolean;
 }
 
 export interface Comment {
@@ -111,6 +112,7 @@ export const PostBox = ({
   developer,
   verified,
   handleSelectViewLikesPostId,
+  followingOnly,
 }: PostBoxProps) => {
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
@@ -147,7 +149,8 @@ export const PostBox = ({
       //variable -> postId
       utils.post.getAll.setInfiniteData(
         {
-          profileId,
+          ...(profileId ? { profileId } : {}),
+          ...(followingOnly ? { followingOnly } : {}),
         },
         (oldData) => {
           if (!oldData) {
@@ -183,7 +186,8 @@ export const PostBox = ({
       //variable -> postId
       utils.post.getAll.setInfiniteData(
         {
-          profileId,
+          ...(profileId ? { profileId } : {}),
+          ...(followingOnly ? { followingOnly } : {}),
         },
         (oldData) => {
           if (!oldData) {
