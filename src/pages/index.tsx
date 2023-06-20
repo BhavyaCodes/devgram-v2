@@ -62,7 +62,10 @@ const IndexPage: NextPageWithLayout = () => {
             sm: '1px solid rgb(56, 68, 77)',
           },
           transition: (theme) => theme.transitions.create('top'),
-          top: trigger ? -60 : 0,
+          top: {
+            xs: trigger ? -60 : 0,
+            sm: 0,
+          },
         }}
         borderBottom={getUser.data ? undefined : '1px solid rgb(56, 68, 77)'}
         zIndex={1100}
