@@ -3,25 +3,37 @@ import { NextPage } from 'next';
 import React from 'react';
 
 const Test: NextPage = () => {
-  const trigger = useScrollTrigger();
+  const trigger = useScrollTrigger({
+    threshold: 30,
+  });
 
   return (
     <>
-      <Box position="sticky" top={0} zIndex={1100}>
-        <Box
-          position="relative"
-          bgcolor="yellowgreen"
-          sx={{
-            height: trigger ? 0 : 50,
-            transition: (theme) => theme.transitions.create('height'),
-          }}
-        >
-          TOP
-        </Box>
-        <Box height={50} bgcolor="orange" position="relative">
-          Bottom
-        </Box>
+      <Box
+        position="sticky"
+        top={0}
+        sx={{
+          height: 50,
+          background: 'linear-gradient(orange, lime)',
+          transition: (theme) => theme.transitions.create('top'),
+          top: trigger ? -50 : 0,
+        }}
+      >
+        sdfsdf
       </Box>
+      <Box
+        height={50}
+        zIndex={10000}
+        position="sticky"
+        sx={{
+          background: 'linear-gradient(#e66465, #9198e5)',
+          top: trigger ? 0 : 50,
+          transition: (theme) => theme.transitions.create('top'),
+        }}
+      >
+        Bottom
+      </Box>
+
       <Box bgcolor="rgba(200,0,0,0.2)" height={10000}>
         Test Test Test Test Test Test Test Test Test Test Test Lorem ipsum dolor
         sit amet, consectetur adipisicing elit. Dolor vitae vel neque voluptas
