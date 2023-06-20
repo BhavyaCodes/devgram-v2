@@ -393,13 +393,301 @@ export const postRouter = router({
 
       const posts: PostsAggregationResult[] = await Post.aggregate(pipeLine);
 
-      // console.log(query2);
+      let nextCursor: typeof cursor = undefined;
+      if (posts.length > limit) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const nextItem = posts.pop()!;
+        if (nextItem) {
+          nextCursor = {
+            _id: nextItem._id.toString(),
+            createdAt: nextItem.createdAt,
+          };
+        }
+      }
 
-      // const posts = await Post.find(query)
-      //   .sort({ createdAt: -1, _id: -1 })
-      //   .limit(limit + 1)
-      //   .populate('userId', { _id: 1, image: 1, name: 1 })
-      //   .lean();
+      return { posts, nextCursor };
+    }),
+  getAllFollowing: authOnlyProcedure
+    .input(
+      z.object({
+        profileId: z.string().optional(),
+        cursor: z
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+            exclude: z.boolean().optional(),
+          })
+          .optional(),
+      }),
+    )
+    .output(
+      z.object({
+        posts: z.array(
+          z.object({
+            content: z.string(),
+            _id: z.instanceof(ObjectId),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+            imageId: z.string().optional(),
+            gifUrl: z.string().optional(),
+            userId: z.object({
+              _id: z.instanceof(ObjectId),
+              image: z.string().optional(),
+              name: z.string(),
+              tags: z
+                .object({
+                  verified: z.boolean().nullish(),
+                  developer: z.boolean().nullish(),
+                })
+                .optional(),
+            }),
+            likeCount: z.number(),
+            commentCount: z.number(),
+            hasLiked: z.boolean().nullish(),
+            lastComment: z
+              .object({
+                _id: z.instanceof(ObjectId),
+                postId: z.instanceof(ObjectId),
+                content: z.string(),
+                createdAt: z.date(),
+                updatedAt: z.date(),
+                userId: z.object({
+                  _id: z.instanceof(ObjectId),
+                  image: z.string().optional(),
+                  name: z.string(),
+                  tags: z
+                    .object({
+                      verified: z.boolean().nullish(),
+                      developer: z.boolean().nullish(),
+                    })
+                    .optional(),
+                }),
+              })
+              .nullish(),
+          }),
+        ),
+        nextCursor: z
+          .object({
+            createdAt: z.date(),
+            _id: z.string(),
+          })
+          .nullish(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session?.userId;
+      const limit = 5;
+      const cursor = input.cursor;
+      const createdAt = input.cursor?.createdAt;
+      const _id = input?.cursor?._id;
+      const operator = input.cursor?.exclude ? '$lt' : '$lte';
+
+      const query: FilterQuery<IPost> =
+        createdAt && _id
+          ? {
+              $or: [
+                {
+                  createdAt: { [operator]: createdAt },
+                },
+                { createdAt, _id: { [operator]: new Types.ObjectId(_id) } },
+              ],
+            }
+          : {};
+
+      const pipeline: PipelineStage[] = [
+        { $match: query },
+        {
+          $sort: { createdAt: -1, _id: -1 },
+        },
+        {
+          $limit: limit + 1,
+        },
+        {
+          $lookup: {
+            from: 'followers',
+            localField: 'userId',
+            pipeline: [
+              {
+                $match: {
+                  followerId: ctx.session.userId._id,
+                },
+              },
+            ],
+            foreignField: 'userId',
+            as: 'following',
+          },
+        },
+        {
+          $unwind: {
+            path: '$following',
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $lookup: {
+            from: 'likes',
+            pipeline: [
+              {
+                $group: {
+                  _id: '$postId',
+                  likes: {
+                    $sum: 1,
+                  },
+                },
+              },
+            ],
+            localField: '_id',
+            foreignField: 'postId',
+            as: 'likeData',
+          },
+        },
+        {
+          $lookup: {
+            from: 'comments',
+            pipeline: [
+              {
+                $group: {
+                  _id: '$postId',
+                  comments: {
+                    $sum: 1,
+                  },
+                },
+              },
+            ],
+            localField: '_id',
+            foreignField: 'postId',
+            as: 'commentData',
+          },
+        },
+        {
+          $unwind: {
+            path: '$likeData',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $unwind: {
+            path: '$commentData',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            likeCount: {
+              $ifNull: ['$likeData.likes', 0],
+            },
+            commentCount: {
+              $ifNull: ['$commentData.comments', 0],
+            },
+          },
+        },
+        {
+          $unset: ['likeData', 'commentData', 'following'],
+        },
+        {
+          $lookup: {
+            from: 'users',
+            pipeline: [
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  image: 1,
+                  tags: 1,
+                },
+              },
+            ],
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userId',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userId',
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $lookup: {
+            from: 'comments',
+            localField: '_id',
+            pipeline: [
+              {
+                $sort: {
+                  createdAt: -1,
+                },
+              },
+              {
+                $limit: 1,
+              },
+              {
+                $lookup: {
+                  from: 'users',
+                  localField: 'userId',
+                  pipeline: [
+                    {
+                      $project: {
+                        _id: 1,
+                        name: 1,
+                        image: 1,
+                        tags: 1,
+                      },
+                    },
+                  ],
+                  foreignField: '_id',
+                  as: 'userId',
+                },
+              },
+            ],
+            foreignField: 'postId',
+            as: 'lastComment',
+          },
+        },
+        {
+          $unwind: {
+            path: '$lastComment',
+
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $unwind: {
+            path: '$lastComment.userId',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: 'likes',
+            pipeline: [
+              {
+                $match: {
+                  userId: userId._id,
+                },
+              },
+            ],
+            localField: '_id',
+            foreignField: 'postId',
+            as: 'hasLiked',
+          },
+        },
+        {
+          $addFields: {
+            hasLiked: {
+              $cond: {
+                if: {
+                  $anyElementTrue: ['$hasLiked'],
+                },
+                then: true,
+                else: undefined,
+              },
+            },
+          },
+        },
+      ];
+
+      const posts: PostsAggregationResult[] = await Post.aggregate(pipeline);
 
       let nextCursor: typeof cursor = undefined;
       if (posts.length > limit) {
