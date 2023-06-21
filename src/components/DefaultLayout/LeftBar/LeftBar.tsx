@@ -16,8 +16,10 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 export const LeftBar = () => {
-  const { data, isLoading } = trpc.user.getUser.useQuery(undefined, {
+  const { data, isFetched } = trpc.user.getUser.useQuery(undefined, {
     staleTime: 60000,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 
   const router = useRouter();
@@ -32,7 +34,7 @@ export const LeftBar = () => {
             </IconButton>
           </Link>
 
-          {!isLoading && (
+          {isFetched && (
             <Box
               display="flex"
               flexDirection="column"
