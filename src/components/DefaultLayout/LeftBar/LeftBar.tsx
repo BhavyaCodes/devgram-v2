@@ -93,7 +93,7 @@ export const LeftBar = () => {
           position="fixed"
           bottom={0} //alignSelf="flex-end"
         >
-          <Box p={2}>
+          <Box p={2} ml={-2}>
             <ProfileButton />
           </Box>
         </Box>
