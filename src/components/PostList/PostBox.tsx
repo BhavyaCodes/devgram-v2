@@ -496,10 +496,11 @@ export const PostBox = ({
                 >
                   {imageId ? (
                     <img
+                      loading="lazy"
                       src={`${process.env.NEXT_PUBLIC_CLOUDINARY_DELIVERY_URL}/${imageId}`}
                     />
                   ) : (
-                    !!gifUrl && <img src={gifUrl} />
+                    !!gifUrl && <img src={gifUrl} loading="lazy" />
                   )}
                 </Box>
               )}
