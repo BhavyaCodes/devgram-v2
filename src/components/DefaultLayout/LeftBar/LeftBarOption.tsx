@@ -34,6 +34,12 @@ export const LeftBarOption: FC<{
         fontWeight={isActive ? 700 : 400}
         component="h4"
         ml={2}
+        sx={{
+          display: {
+            xs: 'none',
+            md: 'block',
+          },
+        }}
       >
         {text}
       </Typography>

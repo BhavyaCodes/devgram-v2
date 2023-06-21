@@ -53,11 +53,28 @@ export const ProfileButton = () => {
         }}
       >
         <Avatar src={getImageUrl(data?.image)} alt={data?.name} />
-        <Typography fontSize={15} fontWeight={700} mx={2}>
+        <Typography
+          fontSize={15}
+          fontWeight={700}
+          mx={2}
+          sx={{
+            display: {
+              xs: 'none',
+              lg: 'inline',
+            },
+          }}
+        >
           {data?.name}
         </Typography>
 
-        <MoreHorizIcon />
+        <MoreHorizIcon
+          sx={{
+            display: {
+              xs: 'none',
+              lg: 'inline',
+            },
+          }}
+        />
       </Box>
       <Menu
         id="profile-menu"

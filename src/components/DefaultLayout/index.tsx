@@ -34,13 +34,32 @@ DefaultLayoutProps) => {
 
       <Container maxWidth="lg" component="main" disableGutters>
         <Box display="flex" alignItems="stretch" justifyContent="center">
-          <Box flexGrow={1} display="flex" flexDirection="column">
+          <Box
+            flexGrow={1}
+            flexShrink={0}
+            flexDirection="column"
+            sx={{
+              display: {
+                xs: 'none',
+                sm: 'flex',
+              },
+            }}
+          >
             <LeftBar />
           </Box>
-          <Box flexBasis="600px" maxWidth="100%" flexShrink={0}>
+          <Box flexBasis="600px" maxWidth="100%" flexShrink={1}>
             {children}
           </Box>
-          <Box flexGrow={1}>
+          <Box
+            flexGrow={1}
+            flexShrink={100}
+            sx={{
+              display: {
+                xs: 'none',
+                sm: 'flex',
+              },
+            }}
+          >
             <LeftBar />
           </Box>
         </Box>
