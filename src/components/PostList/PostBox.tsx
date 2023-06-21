@@ -364,10 +364,10 @@ export const PostBox = ({
         borderBottom="1px solid rgb(56, 68, 77)"
         sx={{
           borderLeft: {
-            md: '1px solid rgb(56, 68, 77)',
+            sm: '1px solid rgb(56, 68, 77)',
           },
           borderRight: {
-            md: '1px solid rgb(56, 68, 77)',
+            sm: '1px solid rgb(56, 68, 77)',
           },
           borderTopColor: 'rgba(0,0,0,0)',
         }}
