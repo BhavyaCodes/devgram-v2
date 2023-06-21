@@ -16,6 +16,17 @@ import { useState } from 'react';
 import { getImageUrl } from '~/utils/getImageUrl';
 import { LogoSvg } from '~/components/common/LogoSvg';
 
+const LoginButton = () => (
+  <Button
+    href={getGoogleOAuthURL()}
+    color="inherit"
+    variant="outlined"
+    startIcon={<GoogleIcon />}
+  >
+    Login
+  </Button>
+);
+
 const IndexPage: NextPageWithLayout = () => {
   const [selectedFeed, setSelectedFeed] = useState<'forYou' | 'following'>(
     'forYou',
@@ -72,7 +83,7 @@ const IndexPage: NextPageWithLayout = () => {
         zIndex={1100}
       >
         <Box
-          justifyContent="center"
+          justifyContent={getUser.data ? 'center' : 'space-between'}
           mx={2}
           py={2}
           sx={{
@@ -93,7 +104,8 @@ const IndexPage: NextPageWithLayout = () => {
               alt={getUser.data.name}
             />
           )}
-          <LogoSvg sx={{ position: 'relative', top: 5 }} width={30} />
+          <LogoSvg width={30} />
+          {!getUser.data && getUser.isFetched && <LoginButton />}
         </Box>
         <Box
           justifyContent="space-between"
@@ -114,16 +126,7 @@ const IndexPage: NextPageWithLayout = () => {
           >
             Home
           </Typography>
-          {!getUser.data && getUser.isFetched && (
-            <Button
-              href={getGoogleOAuthURL()}
-              color="inherit"
-              variant="outlined"
-              startIcon={<GoogleIcon />}
-            >
-              Login
-            </Button>
-          )}
+          {!getUser.data && getUser.isFetched && <LoginButton />}
         </Box>
         {!!getUser.data && (
           <Box
