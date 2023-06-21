@@ -7,9 +7,11 @@ export const LeftBarOption: FC<{
   href: string;
   text: string;
   isActive?: boolean;
-}> = ({ children, href, text, isActive }) => {
+  target?: '_blank';
+}> = ({ children, href, text, isActive, target }) => {
   return (
     <Link
+      target={target}
       href={href}
       color="inherit"
       sx={{

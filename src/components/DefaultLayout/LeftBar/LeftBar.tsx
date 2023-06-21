@@ -13,6 +13,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import PersonIcon from '@mui/icons-material/Person';
 import InfoIcon from '@mui/icons-material/Info';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 export const LeftBar = () => {
   const { data, isLoading } = trpc.user.getUser.useQuery(undefined, {
@@ -73,6 +74,13 @@ export const LeftBar = () => {
                 ) : (
                   <InfoOutlinedIcon sx={{ fontSize: 26 }} />
                 )}
+              </LeftBarOption>
+              <LeftBarOption
+                href="https://github.com/BhavyaCodes/devgram-v2"
+                target="_blank"
+                text="GitHub"
+              >
+                <GitHubIcon sx={{ fontSize: 26 }} />
               </LeftBarOption>
             </Box>
           )}
