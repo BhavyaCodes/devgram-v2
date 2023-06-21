@@ -53,6 +53,7 @@ DefaultLayoutProps) => {
           <Box
             flexGrow={1}
             flexShrink={100}
+            flexDirection="column"
             sx={{
               display: {
                 xs: 'none',

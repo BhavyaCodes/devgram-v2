@@ -6,6 +6,7 @@ import {
   Avatar,
   Box,
   Button,
+  Drawer,
   Typography,
   useScrollTrigger,
 } from '@mui/material';
@@ -28,6 +29,7 @@ const LoginButton = () => (
 );
 
 const IndexPage: NextPageWithLayout = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedFeed, setSelectedFeed] = useState<'forYou' | 'following'>(
     'forYou',
   );
@@ -58,6 +60,9 @@ const IndexPage: NextPageWithLayout = () => {
 
   return (
     <>
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        hi
+      </Drawer>
       <Box
         component="header"
         position="sticky"
@@ -96,6 +101,9 @@ const IndexPage: NextPageWithLayout = () => {
         >
           {getUser.data && (
             <Avatar
+              onClick={() => {
+                setDrawerOpen(true);
+              }}
               sx={{
                 position: 'absolute',
                 left: 16,
