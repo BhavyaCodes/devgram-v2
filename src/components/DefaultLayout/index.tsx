@@ -1,31 +1,24 @@
-import {
-  AppBar,
-  Box,
-  Container,
-  Toolbar,
-  styled,
-  useTheme,
-} from '@mui/material';
+import { Box, Container, useTheme } from '@mui/material';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { ReactNode, useEffect } from 'react';
-import logoBlack from '~/assets/logo-black.svg';
-import logoTextBlack from '~/assets/logo-text-dark.svg';
-import { DarkModeSwitch } from 'react-toggle-dark-mode';
-import Link from '../common/Link';
+import { LeftBar } from './LeftBar/LeftBar';
 
 const DynamicScrollToTop = dynamic(() => import('./ScrollToTop'), {
   ssr: false,
 });
 
-type DefaultLayoutProps = { children: ReactNode; toggleTheme: () => void };
+type DefaultLayoutProps = {
+  children: ReactNode;
+  // toggleTheme: () => void
+};
 
-const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
+// const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 export const DefaultLayout = ({
   children,
-  toggleTheme,
-}: DefaultLayoutProps) => {
+}: // toggleTheme,
+DefaultLayoutProps) => {
   const theme = useTheme();
 
   useEffect(() => {
@@ -37,43 +30,19 @@ export const DefaultLayout = ({
         <title>devGram</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {/* <AppBar enableColorOnDark>
-        <Toolbar
-          sx={{
-            p: 2,
-            '& #nav-logo': { width: 30 },
-            '& #nav-logo-text': { width: 100, ml: 1 },
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Link href="/">
-            <Box display="flex" alignItems="center">
-              <img src={logoBlack.src} alt="devGram logo" id="nav-logo" />
-              <img src={logoTextBlack.src} alt="devGram" id="nav-logo-text" />
-            </Box>
-          </Link>
-          <Box display="flex" alignItems="center">
-            <DarkModeSwitch
-              // style={{ marginBottom: '2rem' }}
-              checked={theme.palette.mode === 'dark'}
-              onChange={toggleTheme}
-              size={30}
-              moonColor="#000"
-            />
-          </Box>
-        </Toolbar>
-      </AppBar> */}
       <Box height={0} id="back-to-top-anchor" />
 
       <Container maxWidth="lg" component="main" disableGutters>
         <Box display="flex" alignItems="stretch" justifyContent="center">
-          <Box flexGrow={1}>{/* asfsdfsdfsfsdf */}</Box>
+          <Box flexGrow={1} display="flex" flexDirection="column">
+            <LeftBar />
+          </Box>
           <Box flexBasis="600px" maxWidth="100%" flexShrink={0}>
             {children}
           </Box>
-          <Box flexGrow={1}>{/* sdfsdf */}</Box>
+          <Box flexGrow={1}>
+            <LeftBar />
+          </Box>
         </Box>
       </Container>
 

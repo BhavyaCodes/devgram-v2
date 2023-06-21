@@ -1,6 +1,5 @@
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
-import { useQueryClient } from '@tanstack/react-query';
 import NewPost from '~/components/NewPost';
 import getGoogleOAuthURL from '~/utils/getGoogleUrl';
 import {
@@ -22,11 +21,11 @@ const IndexPage: NextPageWithLayout = () => {
     'forYou',
   );
 
+  const context = trpc.useContext();
+
   const trigger = useScrollTrigger({
     threshold: 30,
   });
-
-  const queryClient = useQueryClient();
 
   const getUser = trpc.user.getUser.useQuery(undefined, {
     staleTime: 60000,
@@ -40,7 +39,9 @@ const IndexPage: NextPageWithLayout = () => {
 
   const logoutMutation = trpc.user.logout.useMutation({
     onSuccess: () => {
-      queryClient.setQueryData([['user', 'getUser'], { type: 'query' }], null);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      context.user.getUser.setData(undefined, () => null);
     },
   });
 

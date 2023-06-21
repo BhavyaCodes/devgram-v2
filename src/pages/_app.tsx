@@ -31,18 +31,18 @@ const MyApp = (({
   emotionCache = clientSideEmotionCache,
 }: AppPropsWithLayout) => {
   const modeCookieValue = pageProps.colorTheme;
-  const [mode, setMode] = useState<'dark' | 'light'>(
+  const [mode] = useState<'dark' | 'light'>(
     modeCookieValue === 'dark' ? 'dark' : 'light',
   );
 
-  const handleToggleTheme = () => {
-    setMode((mode) => {
-      const result = mode === 'dark' ? 'light' : 'dark';
-      const serializedCookie = serialize('theme', result);
-      window.document.cookie = serializedCookie;
-      return result;
-    });
-  };
+  // const handleToggleTheme = () => {
+  //   setMode((mode) => {
+  //     const result = mode === 'dark' ? 'light' : 'dark';
+  //     const serializedCookie = serialize('theme', result);
+  //     window.document.cookie = serializedCookie;
+  //     return result;
+  //   });
+  // };
 
   const theme = useMemo(
     () =>
@@ -98,7 +98,7 @@ const MyApp = (({
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <DefaultLayout toggleTheme={handleToggleTheme}>
+          <DefaultLayout>
             <ReactQueryDevtools initialIsOpen={false} />
             {page}
             <ReactQueryDevtools />
