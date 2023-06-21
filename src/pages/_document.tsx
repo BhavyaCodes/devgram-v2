@@ -19,7 +19,13 @@ interface MyDocumentProps extends DocumentProps {
 
 export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
   return (
-    <Html lang="en" className={roboto.className}>
+    <Html
+      lang="en"
+      className={roboto.className}
+      style={{
+        scrollbarGutter: 'stable both-edges',
+      }}
+    >
       <Head>
         {/* PWA primary color */}
         {/* <meta name="theme-color" content={theme.palette.primary.main} /> */}

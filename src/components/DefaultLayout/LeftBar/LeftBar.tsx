@@ -3,14 +3,16 @@ import { LogoSvgWhite } from '../../common/LogoSvgWhite';
 import Link from '../../common/Link';
 import { LeftBarOption } from './LeftBarOption';
 import { useRouter } from 'next/router';
+import { trpc } from '~/utils/trpc';
+import { ProfileButton } from './ProfileButton';
 
 //icons
 import HomeIcon from '@mui/icons-material/Home';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import PersonIcon from '@mui/icons-material/Person';
-import { trpc } from '~/utils/trpc';
-import { ProfileButton } from './ProfileButton';
+import InfoIcon from '@mui/icons-material/Info';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 export const LeftBar = () => {
   const { data, isLoading } = trpc.user.getUser.useQuery(undefined, {
@@ -47,6 +49,7 @@ export const LeftBar = () => {
                   <HomeOutlinedIcon sx={{ fontSize: 26 }} />
                 )}
               </LeftBarOption>
+
               {data && (
                 <LeftBarOption
                   href={`/${data._id.toString()}`}
@@ -60,6 +63,17 @@ export const LeftBar = () => {
                   )}
                 </LeftBarOption>
               )}
+              <LeftBarOption
+                href="/about"
+                text="About"
+                isActive={router.pathname === '/about'}
+              >
+                {router.pathname === '/about' ? (
+                  <InfoIcon sx={{ fontSize: 26 }} />
+                ) : (
+                  <InfoOutlinedIcon sx={{ fontSize: 26 }} />
+                )}
+              </LeftBarOption>
             </Box>
           )}
         </Box>
