@@ -10,6 +10,7 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import createEmotionCache from '../utils/createEmotionCache';
 import { parse, serialize } from 'cookie';
 import { roboto } from '~/utils/theme';
+import '../global.css';
 
 export type NextPageWithLayout<
   TProps = Record<string, unknown>,
