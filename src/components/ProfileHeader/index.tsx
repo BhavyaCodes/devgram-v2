@@ -1,4 +1,11 @@
-import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
@@ -188,7 +195,11 @@ export const ProfileHeader = () => {
               },
             }}
           >
-            <img src={getImageUrl(data?.image)} alt={`${data?.name} avatar`} />
+            <Avatar
+              src={getImageUrl(data?.image)}
+              alt={data?.name}
+              sx={{ height: '100%', width: '100%' }}
+            />
           </Box>
           <Box p={2}>
             {currentUserQuery.data?._id.toString() === data?._id.toString() ? (
