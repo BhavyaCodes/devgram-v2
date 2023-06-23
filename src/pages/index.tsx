@@ -37,7 +37,7 @@ const IndexPage: NextPageWithLayout = () => {
   const context = trpc.useContext();
 
   const trigger = useScrollTrigger({
-    threshold: 30,
+    threshold: 20,
   });
 
   const getUser = trpc.user.getUser.useQuery(undefined, {
@@ -68,7 +68,7 @@ const IndexPage: NextPageWithLayout = () => {
         component="header"
         position="sticky"
         top={0}
-        bgcolor="inherit"
+        bgcolor="rgba(18, 18, 18, 0.5)"
         sx={{
           backdropFilter: 'blur(12px)',
           borderLeft: {
@@ -98,6 +98,7 @@ const IndexPage: NextPageWithLayout = () => {
               sm: 'none',
             },
           }}
+          bgcolor="rgba(18, 18, 18, 0.5)"
           alignItems="center"
         >
           {getUser.data && (
