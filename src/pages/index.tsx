@@ -6,7 +6,6 @@ import {
   Avatar,
   Box,
   Button,
-  Drawer,
   Typography,
   useScrollTrigger,
 } from '@mui/material';
@@ -16,6 +15,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import { useState } from 'react';
 import { getImageUrl } from '~/utils/getImageUrl';
 import { LogoSvg } from '~/components/common/LogoSvg';
+import { MobileSideDrawer } from '~/components/MobileSideDrawer';
 
 const LoginButton = () => (
   <Button
@@ -60,9 +60,10 @@ const IndexPage: NextPageWithLayout = () => {
 
   return (
     <>
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        hi
-      </Drawer>
+      <MobileSideDrawer
+        drawerOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      />
       <Box
         component="header"
         position="sticky"

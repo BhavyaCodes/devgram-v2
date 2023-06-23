@@ -16,15 +16,10 @@ import { formatDate } from '~/utils/formatDate';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import { getImageUrl } from '~/utils/getImageUrl';
-import ModalList, { ModalListOptions } from './ModalList';
 import Link from '../common/Link';
 import { LogoSvg } from '../common/LogoSvg';
 
 export const ProfileHeader = () => {
-  const [modalListOptions, setModalListOptions] = useState<ModalListOptions>({
-    open: false,
-    type: 'getFollowing',
-  });
   const [rendered, setRendered] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const router = useRouter();
@@ -86,27 +81,8 @@ export const ProfileHeader = () => {
       .then(() => refetch());
   };
 
-  const handleShowFollowing = () => {
-    setModalListOptions({
-      open: true,
-      type: 'getFollowing',
-    });
-  };
-
-  const handleShowFollowers = () => {
-    setModalListOptions({
-      open: true,
-      type: 'getFollowers',
-    });
-  };
-
   return (
     <>
-      <ModalList
-        modalListOptions={modalListOptions}
-        handleClose={() => setModalListOptions((s) => ({ ...s, open: false }))}
-        profileId={profileId}
-      />
       <EditProfileModal
         open={editProfileOpen}
         handleClose={() => setEditProfileOpen(false)}
@@ -317,8 +293,8 @@ export const ProfileHeader = () => {
           </Box>
         </Box>
       </Box>
-      <Box onClick={handleShowFollowers}>Followers: {data?.followerCount}</Box>
-      <Box onClick={handleShowFollowing}>Following: {data?.followingCount}</Box>
+      {/* <Box onClick={handleShowFollowers}>Followers: {data?.followerCount}</Box>
+      <Box onClick={handleShowFollowing}>Following: {data?.followingCount}</Box> */}
       <Box>Followed: {data?.followed ? 'true' : 'false'}</Box>
       <Box>Follows you: {data?.followsYou ? 'true' : 'false'}</Box>
     </>
