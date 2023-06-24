@@ -660,6 +660,179 @@ export const postRouter = router({
 
       return { posts, nextCursor };
     }),
+  getPostById: currentSessionProcedure
+    .input(z.object({ postId: z.string() }))
+    .output(
+      z.object({
+        post: z.object({
+          content: z.string(),
+          _id: z.instanceof(ObjectId),
+          createdAt: z.date(),
+          updatedAt: z.date(),
+          imageId: z.string().optional(),
+          gifUrl: z.string().optional(),
+          userId: z.object({
+            _id: z.instanceof(ObjectId),
+            image: z.string().optional(),
+            name: z.string(),
+            tags: z
+              .object({
+                verified: z.boolean().nullish(),
+                developer: z.boolean().nullish(),
+              })
+              .optional(),
+          }),
+          likeCount: z.number(),
+          commentCount: z.number(),
+          hasLiked: z.boolean().nullish(),
+        }),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const postId = input.postId;
+      if (postId) {
+        if (!isMongoId(postId)) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'invalid profile id',
+          });
+        }
+      }
+      const userId = ctx.session?.userId;
+
+      const pipeLine: PipelineStage[] = [
+        {
+          $match: { _id: new Types.ObjectId(postId) },
+        },
+        {
+          $limit: 1,
+        },
+        {
+          $lookup: {
+            from: 'likes',
+            pipeline: [
+              {
+                $group: {
+                  _id: '$postId',
+                  likes: {
+                    $sum: 1,
+                  },
+                },
+              },
+            ],
+            localField: '_id',
+            foreignField: 'postId',
+            as: 'likeData',
+          },
+        },
+        {
+          $lookup: {
+            from: 'comments',
+            pipeline: [
+              {
+                $group: {
+                  _id: '$postId',
+                  comments: {
+                    $sum: 1,
+                  },
+                },
+              },
+            ],
+            localField: '_id',
+            foreignField: 'postId',
+            as: 'commentData',
+          },
+        },
+        {
+          $unwind: {
+            path: '$likeData',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $unwind: {
+            path: '$commentData',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            likeCount: {
+              $ifNull: ['$likeData.likes', 0],
+            },
+            commentCount: {
+              $ifNull: ['$commentData.comments', 0],
+            },
+          },
+        },
+        {
+          $unset: ['likeData', 'commentData'],
+        },
+        {
+          $lookup: {
+            from: 'users',
+            pipeline: [
+              {
+                $project: {
+                  _id: 1,
+                  name: 1,
+                  image: 1,
+                  tags: 1,
+                },
+              },
+            ],
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userId',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userId',
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+      ];
+
+      if (userId) {
+        pipeLine.push(
+          {
+            $lookup: {
+              from: 'likes',
+              pipeline: [
+                {
+                  $match: {
+                    userId: userId._id,
+                  },
+                },
+              ],
+              localField: '_id',
+              foreignField: 'postId',
+              as: 'hasLiked',
+            },
+          },
+          {
+            $addFields: {
+              hasLiked: {
+                $cond: {
+                  if: {
+                    $anyElementTrue: ['$hasLiked'],
+                  },
+                  then: true,
+                  else: undefined,
+                },
+              },
+            },
+          },
+        );
+      }
+
+      const post = (await Post.aggregate(pipeLine))[0];
+
+      return {
+        post,
+      };
+    }),
   viewLikes: currentSessionProcedure
     .input(
       z.object({

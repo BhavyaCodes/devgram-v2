@@ -98,7 +98,7 @@ const IndexPage: NextPageWithLayout = () => {
               sm: 'none',
             },
           }}
-          bgcolor="rgba(18, 18, 18, 0.5)"
+          // bgcolor="rgba(18, 18, 18, 0.5)"
           alignItems="center"
         >
           {getUser.data && (
@@ -139,14 +139,7 @@ const IndexPage: NextPageWithLayout = () => {
           {!getUser.data && getUser.isFetched && <LoginButton />}
         </Box>
         {!!getUser.data && (
-          <Box
-            display="flex"
-            borderBottom="1px solid rgb(56, 68, 77)"
-            top={-1}
-            sx={{
-              backdropFilter: 'blur(12px)',
-            }}
-          >
+          <Box display="flex" borderBottom="1px solid rgb(56, 68, 77)" top={-1}>
             <Option
               onClick={() => setSelectedFeed('forYou')}
               selected={selectedFeed === 'forYou'}

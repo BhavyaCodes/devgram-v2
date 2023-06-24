@@ -1,7 +1,7 @@
-import { Box, Container, useTheme } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { LeftBar } from './LeftBar/LeftBar';
 
 const DynamicScrollToTop = dynamic(() => import('./ScrollToTop'), {
@@ -19,11 +19,6 @@ export const DefaultLayout = ({
   children,
 }: // toggleTheme,
 DefaultLayoutProps) => {
-  const theme = useTheme();
-
-  useEffect(() => {
-    console.log(theme.palette.mode);
-  });
   return (
     <>
       <Head>

@@ -19,6 +19,7 @@
 
 ## TODO
 
+- [ ] add single post page
 - [ ] Handle follower list with no followers ui
 - [ ] image picker validations
 - [x] follow backend
@@ -30,7 +31,7 @@
 - [x] Add close modal button on gifpicker
 - [x] Delete Comment and likes when deleting post
 - [x] Show comments only when clicking view comments
-- [ ] show who liked the post
+- [x] show who liked the post
 - [x] show profile page
 - [ ] Error Handling
 - [x] add image upload
