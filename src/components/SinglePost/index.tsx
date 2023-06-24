@@ -68,17 +68,8 @@ interface PostBoxProps {
   gifUrl?: string;
   createdAt: Date;
 
-  setDeletePostData: Dispatch<
-    SetStateAction<{
-      postId: string;
-      postContent: string;
-      cb: () => void;
-    } | null>
-  >;
-
   verified?: boolean | null;
   developer?: boolean | null;
-  handleSelectViewLikesPostId: (postId: string) => void;
   followingOnly?: boolean;
 }
 
@@ -94,10 +85,10 @@ export const SinglePost = ({
   imageId,
   gifUrl,
   createdAt,
-  setDeletePostData,
+  // setDeletePostData,
   developer,
   verified,
-  handleSelectViewLikesPostId,
+  // handleSelectViewLikesPostId,
   followingOnly,
 }: PostBoxProps) => {
   const router = useRouter();
@@ -118,6 +109,10 @@ export const SinglePost = ({
   );
 
   const [postDeleted, setPostDeleted] = useState(false);
+  const [deletePostData, setDeletePostData] = useState<null | {
+    postId: string;
+    postContent: string;
+  }>(null);
 
   const [deleteCommentData, setDeleteCommentData] = useState<null | {
     commentId: string;
@@ -271,10 +266,49 @@ export const SinglePost = ({
     },
   });
 
+  const deletePostMutation = trpc.post.deletePost.useMutation({
+    onSuccess: () => setPostDeleted(true),
+  });
+
   const paginatedComments = data?.pages.flatMap((page) => page.comments);
 
   return (
     <>
+      {!!deletePostData && (
+        <Dialog
+          open={!!deletePostData}
+          onClose={() => setDeletePostData(null)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Are you sure you want to delete this post?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {deletePostData?.postContent}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="info"
+              onClick={() => {
+                setDeletePostData(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="error"
+              onClick={() => {
+                deletePostMutation.mutate(deletePostData.postId);
+              }}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
       {!!deleteCommentData && (
         <Dialog
           open={!!deleteCommentData}
@@ -415,10 +449,6 @@ export const SinglePost = ({
                         setDeletePostData({
                           postId: _id,
                           postContent: content,
-                          cb: () => {
-                            setPostDeleted(true);
-                            setDeletePostData(null);
-                          },
                         });
                       }}
                     >
