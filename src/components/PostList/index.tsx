@@ -8,8 +8,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
+  Snackbar,
 } from '@mui/material';
 import { ViewLikesModal } from './ViewLikesModal';
+import CloseIcon from '@mui/icons-material/Close';
 
 const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
   profileId,
@@ -18,6 +21,23 @@ const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
   const [selectedViewLikesPostId, setSelectedViewLikesPostId] = useState<
     null | string
   >(null);
+
+  const [linkCopiedSnackbarOpen, setLinkCopiedSnackbarOpen] = useState(false);
+
+  const handleSnackbarOpen = () => {
+    setLinkCopiedSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: string,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setLinkCopiedSnackbarOpen(false);
+  };
 
   const {
     // status,
@@ -67,6 +87,23 @@ const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
 
   return (
     <>
+      <Snackbar
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+        open={linkCopiedSnackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        message="Link Copied"
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleSnackbarClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
       <ViewLikesModal
         postId={selectedViewLikesPostId}
         onClose={() => setSelectedViewLikesPostId(null)}
@@ -127,6 +164,7 @@ const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
             verified={post.userId.tags?.verified}
             handleSelectViewLikesPostId={handleSelectViewLikesPostId}
             followingOnly={followingOnly}
+            handleSnackbarOpen={handleSnackbarOpen}
           />
         ))}
       </div>

@@ -27,6 +27,8 @@ import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import InsertLinkRoundedIcon from '@mui/icons-material/InsertLinkRounded';
+
 import CommentBox from './CommentBox';
 import { ObjectId } from 'mongodb';
 import { AddComment } from './AddComment';
@@ -80,6 +82,8 @@ interface PostBoxProps {
   developer?: boolean | null;
   handleSelectViewLikesPostId: (postId: string) => void;
   followingOnly?: boolean;
+
+  handleSnackbarOpen: () => void;
 }
 
 export interface Comment {
@@ -113,6 +117,7 @@ export const PostBox = ({
   verified,
   handleSelectViewLikesPostId,
   followingOnly,
+  handleSnackbarOpen,
 }: PostBoxProps) => {
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
@@ -294,6 +299,12 @@ export const PostBox = ({
     },
   });
 
+  const handleShareClick = () => {
+    const linkUrl = window.location.origin + '/post/' + _id;
+    window.navigator.clipboard.writeText(linkUrl);
+    handleSnackbarOpen();
+  };
+
   useEffect(() => {
     if (lastComment?._id) {
       utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
@@ -474,6 +485,17 @@ export const PostBox = ({
                       <ListItemText>Delete</ListItemText>
                     </MenuItem>
                   ) : null}
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      handleShareClick();
+                    }}
+                  >
+                    <ListItemIcon>
+                      <InsertLinkRoundedIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Share</ListItemText>
+                  </MenuItem>
                 </Menu>
               </Box>
               <Typography
@@ -530,7 +552,7 @@ export const PostBox = ({
                   toolTip="Comment"
                 />
                 <ActionButton
-                  onClick={() => console.log('asfsasdaf')}
+                  onClick={handleShareClick}
                   hoverBgColor="rgba(118, 255, 3, 0.1)"
                   Icon={ReplyRoundedIcon}
                   color="rgba(118, 255, 3, 1)"
