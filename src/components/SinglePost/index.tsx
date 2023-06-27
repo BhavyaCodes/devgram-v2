@@ -12,6 +12,8 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Snackbar,
+  SnackbarCloseReason,
   Tooltip,
   Typography,
   useTheme,
@@ -28,6 +30,9 @@ import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import CloseIcon from '@mui/icons-material/Close';
+import InsertLinkRoundedIcon from '@mui/icons-material/InsertLinkRounded';
+
 // import CommentBox from './CommentBox';
 import CommentBox from '../PostList/CommentBox';
 // import { AddComment } from './AddComment';
@@ -107,6 +112,29 @@ export const SinglePost = ({
   const [timeAgoString, setTimeAgoString] = useState<string | undefined>(
     undefined,
   );
+
+  const [linkCopiedSnackbarOpen, setLinkCopiedSnackbarOpen] = useState(false);
+
+  const handleSnackbarOpen = () => {
+    setLinkCopiedSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setLinkCopiedSnackbarOpen(false);
+  };
+
+  const handleShareClick = () => {
+    const linkUrl = window.location.origin + '/post/' + _id;
+    window.navigator.clipboard.writeText(linkUrl);
+    handleSnackbarOpen();
+  };
 
   const [postDeleted, setPostDeleted] = useState(false);
   const [deletePostData, setDeletePostData] = useState<null | {
@@ -274,6 +302,23 @@ export const SinglePost = ({
 
   return (
     <>
+      <Snackbar
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+        open={linkCopiedSnackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        message="Link Copied"
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleSnackbarClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
       {!!deletePostData && (
         <Dialog
           open={!!deletePostData}
@@ -458,6 +503,17 @@ export const SinglePost = ({
                       <ListItemText>Delete</ListItemText>
                     </MenuItem>
                   ) : null}
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      handleShareClick();
+                    }}
+                  >
+                    <ListItemIcon>
+                      <InsertLinkRoundedIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Share</ListItemText>
+                  </MenuItem>
                 </Menu>
               </Box>
               <Typography
@@ -514,7 +570,7 @@ export const SinglePost = ({
                   toolTip="Comment"
                 />
                 <ActionButton
-                  onClick={() => console.log('asfsasdaf')}
+                  onClick={handleShareClick}
                   hoverBgColor="rgba(118, 255, 3, 0.1)"
                   Icon={ReplyRoundedIcon}
                   color="rgba(118, 255, 3, 1)"

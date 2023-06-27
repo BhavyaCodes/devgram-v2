@@ -10,6 +10,7 @@ import {
   DialogTitle,
   IconButton,
   Snackbar,
+  SnackbarCloseReason,
 } from '@mui/material';
 import { ViewLikesModal } from './ViewLikesModal';
 import CloseIcon from '@mui/icons-material/Close';
@@ -30,7 +31,7 @@ const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
 
   const handleSnackbarClose = (
     event: React.SyntheticEvent | Event,
-    reason?: string,
+    reason?: SnackbarCloseReason,
   ) => {
     if (reason === 'clickaway') {
       return;
