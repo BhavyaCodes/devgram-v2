@@ -37,13 +37,14 @@ import InsertLinkRoundedIcon from '@mui/icons-material/InsertLinkRounded';
 import CommentBox from '../PostList/CommentBox';
 // import { AddComment } from './AddComment';
 import { AddComment } from '../PostList/AddComment';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from '../common/Link';
 import { useRouter } from 'next/router';
 import { formatText } from '~/utils/formatText';
 import { getImageUrl } from '~/utils/getImageUrl';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import { LogoSvg } from '../common/LogoSvg';
+import { ViewLikesModal } from '../PostList/ViewLikesModal';
 
 interface PostBoxProps {
   /**
@@ -100,6 +101,7 @@ export const SinglePost = ({
   const profileId = router.query.id as string | undefined;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
+  const [viewLikesOpen, setViewLikesOpen] = useState(false);
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -318,6 +320,10 @@ export const SinglePost = ({
             <CloseIcon fontSize="small" />
           </IconButton>
         }
+      />
+      <ViewLikesModal
+        postId={(viewLikesOpen && _id) || null}
+        onClose={() => setViewLikesOpen(false)}
       />
       {!!deletePostData && (
         <Dialog
@@ -550,7 +556,7 @@ export const SinglePost = ({
                 justifyContent="space-between"
               >
                 <ActionButton
-                  onClick={() => handleSelectViewLikesPostId(_id)}
+                  onClick={() => setViewLikesOpen(true)}
                   hoverBgColor="rgba(255, 23, 68, 0.1)"
                   Icon={
                     hasLiked ? FavoriteRoundedIcon : FavoriteBorderRoundedIcon
