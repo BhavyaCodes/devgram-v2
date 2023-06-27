@@ -39,7 +39,6 @@ import CommentBox from '../PostList/CommentBox';
 import { AddComment } from '../PostList/AddComment';
 import { useEffect, useRef, useState } from 'react';
 import Link from '../common/Link';
-import { useRouter } from 'next/router';
 import { formatText } from '~/utils/formatText';
 import { getImageUrl } from '~/utils/getImageUrl';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
@@ -76,7 +75,6 @@ interface PostBoxProps {
 
   verified?: boolean | null;
   developer?: boolean | null;
-  followingOnly?: boolean;
 }
 
 export const SinglePost = ({
@@ -94,11 +92,8 @@ export const SinglePost = ({
   // setDeletePostData,
   developer,
   verified,
-  // handleSelectViewLikesPostId,
-  followingOnly,
-}: PostBoxProps) => {
-  const router = useRouter();
-  const profileId = router.query.id as string | undefined;
+}: // handleSelectViewLikesPostId,
+PostBoxProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
   const [viewLikesOpen, setViewLikesOpen] = useState(false);
@@ -154,77 +149,37 @@ export const SinglePost = ({
   }, [createdAt]);
 
   const likeMutation = trpc.post.likePost.useMutation({
-    onSuccess(data, variables, context) {
-      //variable -> postId
-      utils.post.getAll.setInfiniteData(
-        {
-          ...(profileId ? { profileId } : {}),
-          ...(followingOnly ? { followingOnly } : {}),
-        },
-        (oldData) => {
-          if (!oldData) {
-            return {
-              pages: [{ posts: [], nextCursor: null }],
-              pageParams: [null],
-            };
-          }
-
-          const newPages = oldData.pages.map((page) => {
-            const newPosts = page.posts.map((post) => {
-              if (post._id.toString() === variables) {
-                return {
-                  ...post,
-                  hasLiked: true,
-                  likeCount: post.likeCount + 1,
-                };
-              }
-              return post;
-            });
-            return { posts: newPosts, nextCursor: page.nextCursor };
-          });
-          return {
-            pageParams: oldData.pageParams,
-            pages: newPages,
-          };
-        },
-      );
+    onSuccess() {
+      utils.post.getPostById.setData({ postId: _id }, (oldData) => {
+        if (!oldData?.post) {
+          return oldData;
+        }
+        const copy = {
+          post: {
+            ...oldData.post,
+            hasLiked: true,
+            likeCount: oldData.post.likeCount + 1,
+          },
+        };
+        return copy;
+      });
     },
   });
   const unlikeMutation = trpc.post.unlikePost.useMutation({
-    onSuccess(data, variables, context) {
-      //variable -> postId
-      utils.post.getAll.setInfiniteData(
-        {
-          ...(profileId ? { profileId } : {}),
-          ...(followingOnly ? { followingOnly } : {}),
-        },
-        (oldData) => {
-          if (!oldData) {
-            return {
-              pages: [{ posts: [], nextCursor: null }],
-              pageParams: [null],
-            };
-          }
-
-          const newPages = oldData.pages.map((page) => {
-            const newPosts = page.posts.map((post) => {
-              if (post._id.toString() === variables) {
-                return {
-                  ...post,
-                  hasLiked: undefined,
-                  likeCount: post.likeCount - 1,
-                };
-              }
-              return post;
-            });
-            return { posts: newPosts, nextCursor: page.nextCursor };
-          });
-          return {
-            pageParams: oldData.pageParams,
-            pages: newPages,
-          };
-        },
-      );
+    onSuccess() {
+      utils.post.getPostById.setData({ postId: _id }, (oldData) => {
+        if (!oldData?.post) {
+          return oldData;
+        }
+        const copy = {
+          post: {
+            ...oldData.post,
+            hasLiked: null,
+            likeCount: oldData.post.likeCount - 1,
+          },
+        };
+        return copy;
+      });
     },
   });
 
@@ -247,7 +202,7 @@ export const SinglePost = ({
       },
     );
   const deleteCommentMutation = trpc.post.comment.deleteComment.useMutation({
-    onSuccess(data, variables, context) {
+    onSuccess(data, variables) {
       utils.post.getAll.setInfiniteData({}, (oldData) => {
         if (!oldData) {
           return {
