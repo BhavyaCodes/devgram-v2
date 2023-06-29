@@ -121,6 +121,7 @@ export const ProfileHeader = () => {
         </Box>
       </Box>
       <Box
+        borderBottom="1px solid rgb(56, 68, 77)"
         sx={{
           borderLeft: {
             md: '1px solid rgb(56, 68, 77)',
@@ -205,7 +206,7 @@ export const ProfileHeader = () => {
             )}
           </Box>
         </Box>
-        <Box p={2} mt={-8}>
+        <Box p={2} pb={1} mt={-8}>
           <Typography
             fontSize={20}
             fontWeight={800}
@@ -291,12 +292,16 @@ export const ProfileHeader = () => {
               </Typography>
             </Link>
           </Box>
+          <Typography mt={0.5} fontSize={13} variant="body2">
+            {data?.followsYou ? 'Follows you' : ''}
+          </Typography>
         </Box>
       </Box>
       {/* <Box onClick={handleShowFollowers}>Followers: {data?.followerCount}</Box>
       <Box onClick={handleShowFollowing}>Following: {data?.followingCount}</Box> */}
-      <Box>Followed: {data?.followed ? 'true' : 'false'}</Box>
-      <Box>Follows you: {data?.followsYou ? 'true' : 'false'}</Box>
+
+      {/* <Box>Followed: {data?.followed ? 'true' : 'false'}</Box>
+      <Box>Follows you: {data?.followsYou ? 'true' : 'false'}</Box> */}
     </>
   );
 };
