@@ -43,6 +43,7 @@
 ### LP
 
 - [x] Add Verified icon
+- [ ] Add more share options (whatsapp/fb etc)
 - [ ] Fix Emoji bug
 - [ ] fixed height modal for gif picker
 - [ ] Optimize Gif
