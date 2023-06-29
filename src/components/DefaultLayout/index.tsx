@@ -2,7 +2,8 @@ import { Box, Container } from '@mui/material';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { ReactNode } from 'react';
-import { LeftBar } from './LeftBar/LeftBar';
+import { LeftBar } from './LeftBar';
+import { RightBar } from './RightBar';
 
 const DynamicScrollToTop = dynamic(() => import('./ScrollToTop'), {
   ssr: false,
@@ -56,7 +57,7 @@ DefaultLayoutProps) => {
               },
             }}
           >
-            <LeftBar />
+            <RightBar />
           </Box>
         </Box>
       </Container>

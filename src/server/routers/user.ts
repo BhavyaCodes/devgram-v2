@@ -472,6 +472,12 @@ export const userRouter = router({
             _id: z.instanceof(ObjectId),
             image: z.string().optional(),
             name: z.string(),
+            tags: z
+              .object({
+                verified: z.boolean().nullish(),
+                developer: z.boolean().nullish(),
+              })
+              .optional(),
           }),
         ),
       }),
@@ -479,7 +485,10 @@ export const userRouter = router({
     .query(async ({ ctx }) => {
       const user = ctx.session?.userId;
       if (!user) {
-        const recommendedUsers = await User.find({})
+        const recommendedUsers = await User.find(
+          {},
+          { _id: 1, name: 1, image: 1, tags: 1 },
+        )
           .limit(5)
           .sort({ updatedAt: -1 })
           .lean();
@@ -522,6 +531,7 @@ export const userRouter = router({
             _id: 1,
             image: 1,
             name: 1,
+            tags: 1,
           },
         },
       ];
