@@ -19,6 +19,7 @@
 
 ## TODO
 
+- [ ] add recommended users to follow section on right
 - [ ] add single post page
 - [ ] Handle follower list with no followers ui
 - [ ] image picker validations

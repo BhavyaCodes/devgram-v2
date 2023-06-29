@@ -7,8 +7,8 @@ import { authOnlyProcedure, currentSessionProcedure } from '../middleware';
 import Session from '../models/Session';
 import User from '../models/User';
 import isMongoId from 'validator/lib/isMongoId';
-import { FilterQuery, PipelineStage, Types } from 'mongoose';
-import Follower, { IFollower } from '../models/Follower';
+import { PipelineStage, Types } from 'mongoose';
+import Follower from '../models/Follower';
 import { v2 as cloudinary } from 'cloudinary';
 import { env } from '../env';
 
@@ -463,6 +463,74 @@ export const userRouter = router({
       }
 
       return { following, nextCursor };
+    }),
+  getRecommendedUsersToFollow: currentSessionProcedure
+    .output(
+      z.object({
+        recommendedUsers: z.array(
+          z.object({
+            _id: z.instanceof(ObjectId),
+            image: z.string().optional(),
+            name: z.string(),
+          }),
+        ),
+      }),
+    )
+    .query(async ({ ctx }) => {
+      const user = ctx.session?.userId;
+      if (!user) {
+        const recommendedUsers = await User.find({})
+          .limit(5)
+          .sort({ updatedAt: -1 })
+          .lean();
+
+        return { recommendedUsers };
+      }
+
+      const pipeline: PipelineStage[] = [
+        {
+          $match: {
+            _id: {
+              $ne: user._id,
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'followers',
+            localField: '_id',
+            pipeline: [
+              {
+                $match: {
+                  followerId: user._id,
+                },
+              },
+            ],
+            foreignField: 'userId',
+            as: 'followers',
+          },
+        },
+        {
+          $match: {
+            followers: {
+              $eq: [],
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            image: 1,
+            name: 1,
+          },
+        },
+      ];
+
+      const recommendedUsers = await User.aggregate(pipeline);
+
+      return {
+        recommendedUsers,
+      };
     }),
 
   getFollowers: currentSessionProcedure
