@@ -8,7 +8,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import createEmotionCache from '../utils/createEmotionCache';
-import { parse, serialize } from 'cookie';
+import { parse } from 'cookie';
 import { roboto } from '~/utils/theme';
 import '../global.css';
 

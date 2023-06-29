@@ -34,8 +34,6 @@ const IndexPage: NextPageWithLayout = () => {
     'forYou',
   );
 
-  const context = trpc.useContext();
-
   const trigger = useScrollTrigger({
     threshold: 20,
   });
@@ -47,14 +45,6 @@ const IndexPage: NextPageWithLayout = () => {
       if (data?.code === 'UNAUTHORIZED') {
         console.log('not logged in');
       }
-    },
-  });
-
-  const logoutMutation = trpc.user.logout.useMutation({
-    onSuccess: () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      context.user.getUser.setData(undefined, () => null);
     },
   });
 
@@ -160,17 +150,6 @@ const IndexPage: NextPageWithLayout = () => {
       {getUser.data && <NewPost followingOnly={selectedFeed === 'following'} />}
 
       <PostsList followingOnly={selectedFeed === 'following'} />
-      {getUser.data ? (
-        <Button
-          data-cy="logout-button"
-          type="button"
-          variant="contained"
-          color="error"
-          onClick={() => logoutMutation.mutate()}
-        >
-          Logout
-        </Button>
-      ) : null}
     </>
   );
 };

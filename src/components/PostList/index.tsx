@@ -1,8 +1,10 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { trpc } from '~/utils/trpc';
 import { PostBox } from './PostBox';
 import {
+  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -14,11 +16,17 @@ import {
 } from '@mui/material';
 import { ViewLikesModal } from './ViewLikesModal';
 import CloseIcon from '@mui/icons-material/Close';
+import { useInView } from 'react-intersection-observer';
 
 const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
   profileId,
   followingOnly,
 }) => {
+  const { ref, inView } = useInView({
+    threshold: 0,
+    rootMargin: '300px',
+  });
+
   const [selectedViewLikesPostId, setSelectedViewLikesPostId] = useState<
     null | string
   >(null);
@@ -75,6 +83,12 @@ const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
     postContent: string;
     cb: () => void;
   }>(null);
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, isFetchingNextPage, hasNextPage, fetchNextPage]);
 
   if (isLoading) {
     return <div>Loading....</div>;
@@ -169,11 +183,11 @@ const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
           />
         ))}
       </div>
+      <Box display="flex" py={4} justifyContent="center">
+        {isFetchingNextPage && <CircularProgress />}
+      </Box>
 
-      {hasNextPage && !isFetchingNextPage && (
-        <button onClick={() => fetchNextPage()}>Fetch More</button>
-      )}
-      {isFetchingNextPage && <p>Loading more posts......</p>}
+      {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
     </>
   );
 };
