@@ -187,7 +187,7 @@ const EditProfileModal = ({ open, handleClose }: EditProfileModalProps) => {
   };
 
   if (getUser.isLoading) {
-    return <div>Loading</div>;
+    return null;
   }
 
   if (!getUser.data) {
