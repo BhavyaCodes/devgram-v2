@@ -65,7 +65,7 @@ const ListItem = ({ _id, image, name, developer, verified }: ListItemProps) => {
         </Box>
 
         <Box
-          width={100}
+          maxWidth={100}
           display="flex"
           alignItems="flex-start"
           justifyContent="flex-end"
@@ -82,6 +82,7 @@ const ListItem = ({ _id, image, name, developer, verified }: ListItemProps) => {
               sx={{
                 display: 'inline-block',
                 width: 100,
+                ml: 0.5,
                 '&::after': {
                   display: 'flex',
                   justifyContent: 'center',
@@ -98,6 +99,10 @@ const ListItem = ({ _id, image, name, developer, verified }: ListItemProps) => {
           ) : (
             <Button
               variant="contained"
+              sx={{
+                ml: 0.5,
+                width: 300,
+              }}
               color="inherit"
               type="button"
               onClick={(e) => {

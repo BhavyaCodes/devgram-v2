@@ -31,8 +31,8 @@ DefaultLayoutProps) => {
       <Container maxWidth="lg" component="main" disableGutters>
         <Box display="flex" alignItems="stretch" justifyContent="center">
           <Box
-            flexGrow={1}
-            flexShrink={0}
+            flexGrow={1.2}
+            flexShrink={1}
             flexDirection="column"
             sx={{
               display: {
@@ -48,7 +48,7 @@ DefaultLayoutProps) => {
           </Box>
           <Box
             flexGrow={1}
-            flexShrink={100}
+            flexShrink={0}
             flexDirection="column"
             sx={{
               display: {
