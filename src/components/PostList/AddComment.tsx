@@ -132,27 +132,27 @@ export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
       <Box
         sx={{
           flexBasis: '100%',
-          mb: 1,
+          my: 1,
           display: 'flex',
         }}
       >
-        <Box
-          flexShrink={0}
-          flexBasis="6%"
-          alignSelf="flex-start"
-          sx={{
-            [theme.breakpoints.down('md')]: {
-              flexBasis: '20%',
-            },
-            pr: 1.5,
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          {!!userData?.image && (
+        {!!userData?.image && (
+          <Box
+            flexShrink={0}
+            flexBasis="6%"
+            alignSelf="flex-start"
+            sx={{
+              [theme.breakpoints.down('md')]: {
+                flexBasis: '20%',
+              },
+              pr: 1.5,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             <Avatar src={getImageUrl(userData.image)} alt={userData.name} />
-          )}
-        </Box>
+          </Box>
+        )}
         <Paper
           elevation={6}
           sx={{

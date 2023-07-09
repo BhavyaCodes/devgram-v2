@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { ReactNode } from 'react';
 import { LeftBar } from './LeftBar';
 import { RightBar } from './RightBar';
+import { LoginModal } from '../LoginModal';
 
 const DynamicScrollToTop = dynamic(() => import('./ScrollToTop'), {
   ssr: false,
@@ -62,6 +63,7 @@ DefaultLayoutProps) => {
             <RightBar />
           </Box>
         </Box>
+        {/* <LoginModal /> */}
       </Container>
 
       <DynamicScrollToTop />
