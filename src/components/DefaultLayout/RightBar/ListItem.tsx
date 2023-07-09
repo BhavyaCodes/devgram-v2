@@ -7,6 +7,7 @@ import { trpc } from '~/utils/trpc';
 import Link from '~/components/common/Link';
 import { LogoSvg } from '~/components/common/LogoSvg';
 import { useState } from 'react';
+import { useLoginModalStateContext } from '~/context/loginModalStateContext';
 
 interface ListItemProps {
   _id: string;
@@ -18,10 +19,16 @@ interface ListItemProps {
 
 const ListItem = ({ _id, image, name, developer, verified }: ListItemProps) => {
   const [followed, setFollowed] = useState(false);
+  const { setMessage } = useLoginModalStateContext();
 
   const followerUserMutation = trpc.user.followUser.useMutation({
     onSuccess() {
       setFollowed(true);
+    },
+    onError(error) {
+      if (error.data?.code === 'UNAUTHORIZED') {
+        setMessage(`You must login to follow ${name || 'this user'}`);
+      }
     },
   });
 
