@@ -39,6 +39,10 @@ import { formatText } from '~/utils/formatText';
 import { getImageUrl } from '~/utils/getImageUrl';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import { LogoSvg } from '../common/LogoSvg';
+import {
+  loginModalMessage,
+  useLoginModalStateContext,
+} from '~/context/loginModalStateContext';
 
 interface PostBoxProps {
   /**
@@ -119,6 +123,7 @@ export const PostBox = ({
   followingOnly,
   handleSnackbarOpen,
 }: PostBoxProps) => {
+  const { setMessage } = useLoginModalStateContext();
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -185,6 +190,11 @@ export const PostBox = ({
         },
       );
     },
+    onError(error) {
+      if (error.data?.code === 'UNAUTHORIZED') {
+        setMessage(loginModalMessage.LIKE);
+      }
+    },
   });
   const unlikeMutation = trpc.post.unlikePost.useMutation({
     onSuccess(data, variables, context) {
@@ -234,21 +244,15 @@ export const PostBox = ({
     },
   });
 
-  const {
-    error,
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = trpc.post.comment.getCommentsByPostIdPaginated.useInfiniteQuery(
-    { postId: _id, limit: 5 },
-    {
-      getNextPageParam: (lastPage) => lastPage?.nextCursor,
-      // refetchOnWindowFocus: false,
-      enabled: viewMoreComments,
-    },
-  );
+  const { data, hasNextPage, fetchNextPage } =
+    trpc.post.comment.getCommentsByPostIdPaginated.useInfiniteQuery(
+      { postId: _id, limit: 5 },
+      {
+        getNextPageParam: (lastPage) => lastPage?.nextCursor,
+        // refetchOnWindowFocus: false,
+        enabled: viewMoreComments,
+      },
+    );
   const deleteCommentMutation = trpc.post.comment.deleteComment.useMutation({
     onSuccess(data, variables, context) {
       utils.post.getAll.setInfiniteData({}, (oldData) => {

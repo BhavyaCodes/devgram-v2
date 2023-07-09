@@ -1,32 +1,15 @@
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 import NewPost from '~/components/NewPost';
-import getGoogleOAuthURL from '~/utils/getGoogleUrl';
-import {
-  Avatar,
-  Box,
-  Button,
-  Typography,
-  useScrollTrigger,
-} from '@mui/material';
+import { Avatar, Box, Typography, useScrollTrigger } from '@mui/material';
 import PostsList from '~/components/PostList';
 import { Option } from '~/components/common/Option';
-import GoogleIcon from '@mui/icons-material/Google';
+
 import { useState } from 'react';
 import { getImageUrl } from '~/utils/getImageUrl';
 import { LogoSvg } from '~/components/common/LogoSvg';
 import { MobileSideDrawer } from '~/components/MobileSideDrawer';
-
-const LoginButton = () => (
-  <Button
-    href={getGoogleOAuthURL()}
-    color="inherit"
-    variant="outlined"
-    startIcon={<GoogleIcon />}
-  >
-    Login
-  </Button>
-);
+import { LoginButton } from '~/components/LoginButton';
 
 const IndexPage: NextPageWithLayout = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);

@@ -16,6 +16,10 @@ import {
 import { trpc } from '~/utils/trpc';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { getImageUrl } from '~/utils/getImageUrl';
+import {
+  loginModalMessage,
+  useLoginModalStateContext,
+} from '~/context/loginModalStateContext';
 
 interface AddCommentProps {
   postId: string;
@@ -23,6 +27,7 @@ interface AddCommentProps {
 
 export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
   function AddComment({ postId }, commentInputRef) {
+    const { setMessage } = useLoginModalStateContext();
     const internalRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(
@@ -106,6 +111,11 @@ export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
           }
         }
       },
+      onError(error) {
+        if (error.data?.code === 'UNAUTHORIZED') {
+          setMessage(loginModalMessage.COMMENT);
+        }
+      },
     });
     const userData = userQuery.data;
 
@@ -132,27 +142,27 @@ export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
       <Box
         sx={{
           flexBasis: '100%',
-          mb: 1,
+          my: 1,
           display: 'flex',
         }}
       >
-        <Box
-          flexShrink={0}
-          flexBasis="6%"
-          alignSelf="flex-start"
-          sx={{
-            [theme.breakpoints.down('md')]: {
-              flexBasis: '20%',
-            },
-            pr: 1.5,
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          {!!userData?.image && (
+        {!!userData?.image && (
+          <Box
+            flexShrink={0}
+            flexBasis="6%"
+            alignSelf="flex-start"
+            sx={{
+              [theme.breakpoints.down('md')]: {
+                flexBasis: '20%',
+              },
+              pr: 1.5,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             <Avatar src={getImageUrl(userData.image)} alt={userData.name} />
-          )}
-        </Box>
+          </Box>
+        )}
         <Paper
           elevation={6}
           sx={{
