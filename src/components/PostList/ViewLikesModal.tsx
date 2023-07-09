@@ -1,4 +1,4 @@
-import { Dialog } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { FC } from 'react';
 import { trpc } from '~/utils/trpc';
 import UsersListItem from '../UsersListItem';
@@ -31,7 +31,10 @@ export const ViewLikesModal: FC<ViewLikesModalProps> = ({
 
   return (
     <Dialog onClose={onClose} open={!!postId} fullWidth maxWidth="sm">
-      ViewLikesModal
+      <DialogTitle>Users who liked this post</DialogTitle>
+      {likes?.length === 0 && (
+        <DialogContent>No one likes this post 🥲</DialogContent>
+      )}
       {postId &&
         likes?.map(({ userId }) => (
           <UsersListItem
