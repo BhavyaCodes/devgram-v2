@@ -192,7 +192,7 @@ export const PostBox = ({
     },
     onError(error) {
       if (error.data?.code === 'UNAUTHORIZED') {
-        setMessage(loginModalMessage.Like);
+        setMessage(loginModalMessage.LIKE);
       }
     },
   });
@@ -244,21 +244,15 @@ export const PostBox = ({
     },
   });
 
-  const {
-    error,
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = trpc.post.comment.getCommentsByPostIdPaginated.useInfiniteQuery(
-    { postId: _id, limit: 5 },
-    {
-      getNextPageParam: (lastPage) => lastPage?.nextCursor,
-      // refetchOnWindowFocus: false,
-      enabled: viewMoreComments,
-    },
-  );
+  const { data, hasNextPage, fetchNextPage } =
+    trpc.post.comment.getCommentsByPostIdPaginated.useInfiniteQuery(
+      { postId: _id, limit: 5 },
+      {
+        getNextPageParam: (lastPage) => lastPage?.nextCursor,
+        // refetchOnWindowFocus: false,
+        enabled: viewMoreComments,
+      },
+    );
   const deleteCommentMutation = trpc.post.comment.deleteComment.useMutation({
     onSuccess(data, variables, context) {
       utils.post.getAll.setInfiniteData({}, (oldData) => {

@@ -32,7 +32,7 @@ export const useLoginModalStateContext = () => {
 
 export enum loginModalMessage {
   COMMENT = 'You must login to comment on this post',
-  Like = 'You must login to like this post',
+  LIKE = 'You must login to like this post',
 }
 
 export const LoginModalStateContextProvider: FC<{ children: ReactNode }> = ({

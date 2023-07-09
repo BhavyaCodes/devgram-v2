@@ -16,6 +16,10 @@ import {
 import { trpc } from '~/utils/trpc';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { getImageUrl } from '~/utils/getImageUrl';
+import {
+  loginModalMessage,
+  useLoginModalStateContext,
+} from '~/context/loginModalStateContext';
 
 interface AddCommentProps {
   postId: string;
@@ -23,6 +27,7 @@ interface AddCommentProps {
 
 export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
   function AddComment({ postId }, commentInputRef) {
+    const { setMessage } = useLoginModalStateContext();
     const internalRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(
@@ -104,6 +109,11 @@ export const AddComment = forwardRef<HTMLInputElement, AddCommentProps>(
           if (internalRef.current) {
             internalRef.current.value = '';
           }
+        }
+      },
+      onError(error) {
+        if (error.data?.code === 'UNAUTHORIZED') {
+          setMessage(loginModalMessage.COMMENT);
         }
       },
     });
