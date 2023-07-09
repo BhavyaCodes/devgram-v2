@@ -123,7 +123,7 @@ export const PostBox = ({
   followingOnly,
   handleSnackbarOpen,
 }: PostBoxProps) => {
-  const { setOpen, setMessage } = useLoginModalStateContext();
+  const { setMessage } = useLoginModalStateContext();
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -192,7 +192,6 @@ export const PostBox = ({
     },
     onError(error) {
       if (error.data?.code === 'UNAUTHORIZED') {
-        setOpen(true);
         setMessage(loginModalMessage.Like);
       }
     },

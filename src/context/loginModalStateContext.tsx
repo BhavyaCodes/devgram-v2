@@ -10,8 +10,6 @@ import {
 
 type LoginModalStateContextType =
   | {
-      open: boolean;
-      setOpen: Dispatch<SetStateAction<boolean>>;
       message: loginModalMessage | null;
       setMessage: Dispatch<SetStateAction<loginModalMessage | null>>;
     }
@@ -40,12 +38,9 @@ export enum loginModalMessage {
 export const LoginModalStateContextProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [open, setOpen] = useState(false);
   const [message, setMessage] = useState<null | loginModalMessage>(null);
   return (
-    <LoginModalStateContext.Provider
-      value={{ open, setOpen, message, setMessage }}
-    >
+    <LoginModalStateContext.Provider value={{ message, setMessage }}>
       {children}
     </LoginModalStateContext.Provider>
   );

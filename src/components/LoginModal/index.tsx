@@ -10,13 +10,13 @@ import { useLoginModalStateContext } from '~/context/loginModalStateContext';
 import { LoginButton } from '../LoginButton';
 
 export const LoginModal = () => {
-  const { open, setOpen, message } = useLoginModalStateContext();
+  const { message, setMessage } = useLoginModalStateContext();
 
   const handleClose = () => {
-    setOpen(false);
+    setMessage(null);
   };
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+    <Dialog open={!!message} onClose={handleClose} maxWidth="xs" fullWidth>
       <DialogTitle>Login/Signup</DialogTitle>
       <DialogContent>
         <DialogContentText>{message}</DialogContentText>
