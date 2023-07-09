@@ -527,6 +527,12 @@ export const userRouter = router({
           },
         },
         {
+          $sort: {
+            updatedAt: -1,
+          },
+        },
+        { $limit: 5 },
+        {
           $project: {
             _id: 1,
             image: 1,
