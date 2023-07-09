@@ -1,10 +1,13 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { trpc } from '~/utils/trpc';
 import ListItem from './ListItem';
 
 export const RightBar = () => {
+  const theme = useTheme();
+  const enabled = useMediaQuery(theme.breakpoints.up('md'));
   const { data } = trpc.user.getRecommendedUsersToFollow.useQuery(undefined, {
     staleTime: 2000,
+    enabled,
   });
 
   return (

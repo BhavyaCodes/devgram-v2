@@ -20,13 +20,13 @@ const ListItem = ({ _id, image, name, developer, verified }: ListItemProps) => {
   const [followed, setFollowed] = useState(false);
 
   const followerUserMutation = trpc.user.followUser.useMutation({
-    onSuccess(data, variables) {
+    onSuccess() {
       setFollowed(true);
     },
   });
 
   const unFollowUserMutation = trpc.user.unfollowUser.useMutation({
-    onSuccess(data, variables) {
+    onSuccess() {
       setFollowed(false);
     },
   });

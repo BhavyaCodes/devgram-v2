@@ -1,10 +1,4 @@
-import {
-  Avatar,
-  Box,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from '@mui/material';
+import { Avatar, Box, ListItemIcon, ListItemText } from '@mui/material';
 import { getImageUrl } from '~/utils/getImageUrl';
 import { trpc } from '~/utils/trpc';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -53,22 +47,10 @@ export const ProfileButton = () => {
         }}
       >
         <Avatar src={getImageUrl(data?.image)} alt={data?.name} />
-        <Typography
-          fontSize={15}
-          fontWeight={700}
-          mx={2}
-          sx={{
-            display: {
-              xs: 'none',
-              lg: 'inline',
-            },
-          }}
-        >
-          {data?.name}
-        </Typography>
 
         <MoreHorizIcon
           sx={{
+            ml: 2,
             display: {
               xs: 'none',
               lg: 'inline',
