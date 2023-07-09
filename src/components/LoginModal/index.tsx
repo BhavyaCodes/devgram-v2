@@ -6,17 +6,15 @@ import {
   DialogActions,
   Button,
 } from '@mui/material';
-import {
-  loginModalMessage,
-  useLoginModalStateContext,
-} from '~/context/loginModalStateContext';
+import { useLoginModalStateContext } from '~/context/loginModalStateContext';
 import { LoginButton } from '../LoginButton';
 import { useEffect, useState } from 'react';
 
 export const LoginModal = () => {
   const { message, setMessage } = useLoginModalStateContext();
-  const [messageTextInternal, setMessageTextInternal] =
-    useState<loginModalMessage | null>(message);
+  const [messageTextInternal, setMessageTextInternal] = useState<null | string>(
+    message,
+  );
 
   useEffect(() => {
     let timeoutId: any;

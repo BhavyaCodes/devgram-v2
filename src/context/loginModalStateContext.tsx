@@ -10,8 +10,8 @@ import {
 
 type LoginModalStateContextType =
   | {
-      message: loginModalMessage | null;
-      setMessage: Dispatch<SetStateAction<loginModalMessage | null>>;
+      message: null | string;
+      setMessage: Dispatch<SetStateAction<null | string>>;
     }
   | undefined;
 
@@ -38,7 +38,7 @@ export enum loginModalMessage {
 export const LoginModalStateContextProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [message, setMessage] = useState<null | loginModalMessage>(null);
+  const [message, setMessage] = useState<null | string>(null);
   return (
     <LoginModalStateContext.Provider value={{ message, setMessage }}>
       {children}

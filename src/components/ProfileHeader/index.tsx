@@ -18,11 +18,13 @@ import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import { getImageUrl } from '~/utils/getImageUrl';
 import Link from '../common/Link';
 import { LogoSvg } from '../common/LogoSvg';
+import { useLoginModalStateContext } from '~/context/loginModalStateContext';
 
 export const ProfileHeader = () => {
   const [rendered, setRendered] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const router = useRouter();
+  const { setMessage } = useLoginModalStateContext();
 
   const profileId = router.query.id as string;
   useEffect(() => {
@@ -56,7 +58,13 @@ export const ProfileHeader = () => {
     },
   );
 
-  const followUserMutation = trpc.user.followUser.useMutation();
+  const followUserMutation = trpc.user.followUser.useMutation({
+    onError(error) {
+      if (error.data?.code === 'UNAUTHORIZED') {
+        setMessage(`You must login to follow ${data?.name || 'this user'}`);
+      }
+    },
+  });
   const unfollowUserMutation = trpc.user.unfollowUser.useMutation();
 
   const handleFollowUser = () => {
@@ -67,7 +75,8 @@ export const ProfileHeader = () => {
       .mutateAsync({
         userId: data?._id.toString(),
       })
-      .then(() => refetch());
+      .then(() => refetch())
+      .catch((err) => console.log(err));
   };
 
   const handleUnFollowUser = () => {
@@ -78,7 +87,8 @@ export const ProfileHeader = () => {
       .mutateAsync({
         userId: data?._id.toString(),
       })
-      .then(() => refetch());
+      .then(() => refetch())
+      .catch((err) => console.log(err));
   };
 
   return (
