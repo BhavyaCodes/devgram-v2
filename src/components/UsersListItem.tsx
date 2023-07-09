@@ -4,6 +4,7 @@ import Link from './common/Link';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import { LogoSvg } from './common/LogoSvg';
 import { trpc } from '~/utils/trpc';
+import { useLoginModalStateContext } from '~/context/loginModalStateContext';
 
 interface _UsersListItem {
   _id: string;
@@ -42,6 +43,7 @@ const UsersListItem = ({
   ...otherProps
 }: UsersListItem) => {
   const context = trpc.useContext();
+  const { setMessage } = useLoginModalStateContext();
 
   const followerUserMutation = trpc.user.followUser.useMutation({
     onSuccess(data, variables) {
@@ -127,6 +129,12 @@ const UsersListItem = ({
 
           return { pageParams: oldData.pageParams, pages: newPages };
         });
+      }
+    },
+
+    onError(error) {
+      if (error.data?.code === 'UNAUTHORIZED') {
+        setMessage(`You must login to follow ${name || 'this user'}`);
       }
     },
   });
