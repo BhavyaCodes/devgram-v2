@@ -17,6 +17,9 @@ export const LeftBarOption: FC<{
       sx={{
         textDecoration: 'none',
         p: 1.5,
+        pr: {
+          md: 2,
+        },
         ml: -1.5,
         borderRadius: 200,
         '&:hover': {
