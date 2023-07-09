@@ -1,4 +1,4 @@
-import { Box, IconButton, useMediaQuery, useTheme } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { LogoSvgWhite } from '../../common/LogoSvgWhite';
 import Link from '../../common/Link';
 import { LeftBarOption } from './LeftBarOption';
@@ -16,14 +16,14 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 export const LeftBar = () => {
-  const theme = useTheme();
-  const enabled = useMediaQuery(theme.breakpoints.up('sm'));
+  // const theme = useTheme();
+  // const enabled = useMediaQuery(theme.breakpoints.up('sm'));
 
   const { data, isFetched } = trpc.user.getUser.useQuery(undefined, {
     staleTime: 60000,
     retry: false,
     refetchOnWindowFocus: false,
-    enabled,
+    // enabled,
   });
 
   const router = useRouter();
