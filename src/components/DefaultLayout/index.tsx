@@ -63,7 +63,7 @@ DefaultLayoutProps) => {
             <RightBar />
           </Box>
         </Box>
-        {/* <LoginModal /> */}
+        <LoginModal />
       </Container>
 
       <DynamicScrollToTop />

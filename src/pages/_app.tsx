@@ -11,6 +11,7 @@ import createEmotionCache from '../utils/createEmotionCache';
 import { parse } from 'cookie';
 import { roboto } from '~/utils/theme';
 import '../global.css';
+import { LoginModalStateContextProvider } from '~/context/loginModalStateContext';
 
 export type NextPageWithLayout<
   TProps = Record<string, unknown>,
@@ -99,11 +100,13 @@ const MyApp = (({
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <DefaultLayout>
-            <ReactQueryDevtools initialIsOpen={false} />
-            {page}
-            <ReactQueryDevtools />
-          </DefaultLayout>
+          <LoginModalStateContextProvider>
+            <DefaultLayout>
+              <ReactQueryDevtools initialIsOpen={false} />
+              {page}
+              <ReactQueryDevtools />
+            </DefaultLayout>
+          </LoginModalStateContextProvider>
         </ThemeProvider>
       </CacheProvider>
     ));

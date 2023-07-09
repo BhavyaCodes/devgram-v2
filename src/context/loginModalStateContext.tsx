@@ -12,6 +12,8 @@ type LoginModalStateContextType =
   | {
       open: boolean;
       setOpen: Dispatch<SetStateAction<boolean>>;
+      message: loginModalMessage | null;
+      setMessage: Dispatch<SetStateAction<loginModalMessage | null>>;
     }
   | undefined;
 
@@ -30,12 +32,20 @@ export const useLoginModalStateContext = () => {
   return context;
 };
 
+export enum loginModalMessage {
+  COMMENT = 'You must login to comment on this post',
+  Like = 'You must login to like this post',
+}
+
 export const LoginModalStateContextProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState<null | loginModalMessage>(null);
   return (
-    <LoginModalStateContext.Provider value={{ open, setOpen }}>
+    <LoginModalStateContext.Provider
+      value={{ open, setOpen, message, setMessage }}
+    >
       {children}
     </LoginModalStateContext.Provider>
   );

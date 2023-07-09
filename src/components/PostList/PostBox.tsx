@@ -39,6 +39,10 @@ import { formatText } from '~/utils/formatText';
 import { getImageUrl } from '~/utils/getImageUrl';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import { LogoSvg } from '../common/LogoSvg';
+import {
+  loginModalMessage,
+  useLoginModalStateContext,
+} from '~/context/loginModalStateContext';
 
 interface PostBoxProps {
   /**
@@ -119,6 +123,7 @@ export const PostBox = ({
   followingOnly,
   handleSnackbarOpen,
 }: PostBoxProps) => {
+  const { setOpen, setMessage } = useLoginModalStateContext();
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -184,6 +189,12 @@ export const PostBox = ({
           };
         },
       );
+    },
+    onError(error) {
+      if (error.data?.code === 'UNAUTHORIZED') {
+        setOpen(true);
+        setMessage(loginModalMessage.Like);
+      }
     },
   });
   const unlikeMutation = trpc.post.unlikePost.useMutation({
