@@ -410,8 +410,8 @@ const NewPost: FC<{ followingOnly?: boolean }> = ({ followingOnly }) => {
                           inputRef.current.focus();
                           setTimeout(() => {
                             inputRef.current.setSelectionRange(
-                              initialPosition + 1,
-                              initialPosition + 1,
+                              initialPosition + data.emoji.length,
+                              initialPosition + data.emoji.length,
                             );
                           }, 0);
                           console.log(document.getSelection()?.toString());
