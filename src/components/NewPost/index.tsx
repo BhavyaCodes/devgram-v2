@@ -39,6 +39,7 @@ const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
 });
 
 const NewPost: FC<{ followingOnly?: boolean }> = ({ followingOnly }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
   const utils = trpc.useContext();
@@ -223,6 +224,7 @@ const NewPost: FC<{ followingOnly?: boolean }> = ({ followingOnly }) => {
               maxInputSize={maxInputSize}
               input={input}
               setInput={setInput}
+              ref={inputRef}
             />
             {!!fileInput && (
               <Box
@@ -375,8 +377,52 @@ const NewPost: FC<{ followingOnly?: boolean }> = ({ followingOnly }) => {
                 <Box width={350}>
                   <EmojiPicker
                     searchDisabled
+                    // onEmojiClick={(data) =>
+                    //   setInput((input) => input + data.emoji)
+                    // }
+
                     onEmojiClick={(data) =>
-                      setInput((input) => input + data.emoji)
+                      setInput((input) => {
+                        const arr = input.split(''); // + data.emoji;
+                        console.log('--------------');
+                        const initialPosition: number =
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          //@ts-ignore
+                          inputRef?.current?.getCaretPosition() ?? arr.length;
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        //@ts-ignore
+                        console.log(inputRef?.current?.getCaretPosition());
+                        console.log(inputRef?.current);
+                        console.log(initialPosition);
+
+                        // console.log(inputRef?.current.getCaretPosition());
+
+                        console.log(initialPosition);
+                        arr.splice(
+                          initialPosition,
+                          // 2,
+                          0,
+                          data.emoji,
+                        );
+                        const str = arr.join('');
+                        if (inputRef.current) {
+                          // inputRef.current.selectionStart = initialPosition + 1;
+                          inputRef.current.focus();
+                          setTimeout(() => {
+                            inputRef.current.setSelectionRange(
+                              initialPosition + 1,
+                              initialPosition + 1,
+                            );
+                          }, 0);
+                          console.log(document.getSelection()?.toString());
+                          // inputRef.current.c
+                          // inputRef.current.focus();
+
+                          // inputRef.current.setSelectionRange(0, 10);
+                        }
+                        return str;
+                        // return input;
+                      })
                     }
                     theme={theme.palette.mode as Theme}
                     skinTonesDisabled
