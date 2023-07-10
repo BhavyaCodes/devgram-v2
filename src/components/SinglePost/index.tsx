@@ -46,6 +46,10 @@ import { LogoSvg } from '../common/LogoSvg';
 import { ViewLikesModal } from '../PostList/ViewLikesModal';
 import Linkify from 'linkify-react';
 import { RenderLink } from '../common/RenderLink';
+import {
+  loginModalMessage,
+  useLoginModalStateContext,
+} from '~/context/loginModalStateContext';
 
 interface PostBoxProps {
   /**
@@ -96,6 +100,8 @@ export const SinglePost = ({
   verified,
 }: // handleSelectViewLikesPostId,
 PostBoxProps) => {
+  const { setMessage } = useLoginModalStateContext();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
   const [viewLikesOpen, setViewLikesOpen] = useState(false);
@@ -165,6 +171,11 @@ PostBoxProps) => {
         };
         return copy;
       });
+    },
+    onError(error) {
+      if (error.data?.code === 'UNAUTHORIZED') {
+        setMessage(loginModalMessage.LIKE);
+      }
     },
   });
   const unlikeMutation = trpc.post.unlikePost.useMutation({
