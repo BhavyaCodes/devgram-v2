@@ -540,7 +540,14 @@ PostBoxProps) => {
                 />
 
                 <ActionButton
-                  onClick={() => console.log('asfsasdaf')}
+                  onClick={() => {
+                    commentInputRef.current?.focus();
+                    commentInputRef.current?.scrollIntoView({
+                      block: 'center',
+                      inline: 'center',
+                      behavior: 'smooth',
+                    });
+                  }}
                   hoverBgColor="rgba(0, 176, 255, 0.1)"
                   Icon={ChatBubbleOutlineRoundedIcon}
                   color="rgba(0, 176, 255, 1)"
