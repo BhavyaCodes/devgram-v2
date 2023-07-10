@@ -43,6 +43,8 @@ import {
   loginModalMessage,
   useLoginModalStateContext,
 } from '~/context/loginModalStateContext';
+import Linkify from 'linkify-react';
+import { RenderLink } from '../common/RenderLink';
 
 interface PostBoxProps {
   /**
@@ -507,7 +509,11 @@ export const PostBox = ({
                 sx={{ overflowWrap: 'anywhere' }}
                 whiteSpace="pre-wrap"
               >
-                {formatText(content)}
+                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                {/* @ts-ignore */}
+                <Linkify options={{ render: RenderLink, target: '_blank' }}>
+                  {formatText(content)}
+                </Linkify>
               </Typography>
               {(imageId || gifUrl) && (
                 <Box

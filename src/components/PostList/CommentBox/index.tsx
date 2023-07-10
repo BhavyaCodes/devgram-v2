@@ -21,6 +21,8 @@ import { formatText } from '~/utils/formatText';
 import { getImageUrl } from '~/utils/getImageUrl';
 import { LogoSvg } from '~/components/common/LogoSvg';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
+import Linkify from 'linkify-react';
+import { RenderLink } from '~/components/common/RenderLink';
 
 interface CommentBoxProps {
   commentId: string;
@@ -185,7 +187,11 @@ const CommentBox = ({
           whiteSpace="pre-wrap"
           sx={{ overflowWrap: 'anywhere' }}
         >
-          {formatText(content)}
+          {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+          {/* @ts-ignore */}
+          <Linkify options={{ render: RenderLink, target: '_blank' }}>
+            {formatText(content)}
+          </Linkify>
         </Typography>
       </Paper>
     </Box>
