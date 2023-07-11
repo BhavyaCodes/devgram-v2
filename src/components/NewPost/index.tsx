@@ -19,7 +19,7 @@ import React, {
   useState,
 } from 'react';
 import { trpc } from '~/utils/trpc';
-import { TextInput } from './TextInput';
+import { TextInput, TextInputHandle } from './TextInput';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import { ProgressBar } from './ProgressBar';
@@ -39,6 +39,7 @@ const EmojiPicker = dynamic(() => import('emoji-picker-react'), {
 });
 
 const NewPost: FC<{ followingOnly?: boolean }> = ({ followingOnly }) => {
+  const inputRef = useRef<TextInputHandle>(null);
   const router = useRouter();
   const profileId = router.query.id as string | undefined;
   const utils = trpc.useContext();
@@ -85,6 +86,10 @@ const NewPost: FC<{ followingOnly?: boolean }> = ({ followingOnly }) => {
     ) {
       return;
     }
+
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
 
     setEmojiPickerOpen(false);
   };
@@ -223,6 +228,7 @@ const NewPost: FC<{ followingOnly?: boolean }> = ({ followingOnly }) => {
               maxInputSize={maxInputSize}
               input={input}
               setInput={setInput}
+              ref={inputRef}
             />
             {!!fileInput && (
               <Box
@@ -376,7 +382,23 @@ const NewPost: FC<{ followingOnly?: boolean }> = ({ followingOnly }) => {
                   <EmojiPicker
                     searchDisabled
                     onEmojiClick={(data) =>
-                      setInput((input) => input + data.emoji)
+                      setInput((input) => {
+                        const arr = input.split('');
+                        const initialPosition: number =
+                          inputRef.current?.getCaretPosition() ?? arr.length;
+                        arr.splice(initialPosition, 0, data.emoji);
+                        const str = arr.join('');
+                        if (inputRef.current) {
+                          inputRef.current.focus();
+                          setTimeout(() => {
+                            inputRef.current?.setSelectionRange(
+                              initialPosition + data.emoji.length,
+                              initialPosition + data.emoji.length,
+                            );
+                          }, 0);
+                        }
+                        return str;
+                      })
                     }
                     theme={theme.palette.mode as Theme}
                     skinTonesDisabled
