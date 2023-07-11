@@ -8,33 +8,34 @@ import React, {
   useRef,
 } from 'react';
 
+export type TextInputHandle = {
+  focus: () => void;
+  getCaretPosition: () => number | null | undefined;
+  setSelectionRange: (...args: any[]) => void;
+  selectionStart?: number | null;
+};
+
 interface TextInputProps {
   input: string;
   setInput: Dispatch<SetStateAction<string>>;
   maxInputSize: number;
 }
 
-export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
+export const TextInput = forwardRef<TextInputHandle, TextInputProps>(
   function TextInput(props, inputRef) {
-    const internalRef = useRef<HTMLInputElement>();
+    const internalRef = useRef<TextInputHandle>(null);
 
     useImperativeHandle(
       inputRef,
       () => {
-        // return internalRef.current;
         return {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          // ...internalRef.current!,
           focus() {
-            internalRef?.current?.focus();
+            internalRef.current?.focus();
           },
-
           getCaretPosition() {
             return internalRef.current?.selectionStart;
           },
-
           setSelectionRange(...args) {
-            // document.getSelection()?.collapse(internalRef.current, 0);
             internalRef.current?.setSelectionRange(...args);
           },
         };
