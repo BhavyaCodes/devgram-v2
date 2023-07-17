@@ -45,7 +45,10 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
           property="og:description"
           content="Log into DevGram to start sharing and connecting with your friends, family, and people you know."
         />
-        <meta property="og:image" content={baseUrl + '/logo512.png'} />
+        <meta
+          property="og:image"
+          content={baseUrl + '/devgram_icon_325x325.png'}
+        />
 
         {/* <!-- Twitter --> */}
         <meta property="twitter:card" content="summary_large_image" />
@@ -55,7 +58,10 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
           property="twitter:description"
           content="Log into DevGram to start sharing and connecting with your friends, family, and people you know."
         />
-        <meta property="twitter:image" content={baseUrl + '/logo512.png'} />
+        <meta
+          property="twitter:image"
+          content={baseUrl + '/devgram_icon_325x325.png'}
+        />
 
         {/* PWA primary color */}
         {/* <meta name="theme-color" content={theme.palette.primary.main} /> */}
