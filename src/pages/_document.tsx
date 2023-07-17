@@ -30,9 +30,9 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
     >
       <Head>
         {/* <!-- Primary Meta Tags --> */}
-        <title>DevGram</title>
         <meta name="title" content="DevGram" />
         <meta
+          key="description"
           name="description"
           content="Log into DevGram to start sharing and connecting with your friends, family, and people you know."
         />
@@ -42,10 +42,12 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
         <meta property="og:url" content={baseUrl} />
         <meta property="og:title" content="DevGram" />
         <meta
+          key="og:description"
           property="og:description"
           content="Log into DevGram to start sharing and connecting with your friends, family, and people you know."
         />
         <meta
+          key="og:image"
           property="og:image"
           content={baseUrl + '/devgram_icon_325x325.png'}
         />
@@ -55,16 +57,18 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
         <meta property="twitter:url" content={baseUrl} />
         <meta property="twitter:title" content="DevGram" />
         <meta
+          key="twitter:description"
           property="twitter:description"
           content="Log into DevGram to start sharing and connecting with your friends, family, and people you know."
         />
         <meta
+          key="twitter:image"
           property="twitter:image"
           content={baseUrl + '/devgram_icon_325x325.png'}
         />
 
         {/* PWA primary color */}
-        {/* <meta name="theme-color" content={theme.palette.primary.main} /> */}
+        <meta name="theme-color" content="#1FDF64" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <meta name="emotion-insertion-point" content="" />
         {emotionStyleTags}
