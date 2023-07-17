@@ -19,52 +19,52 @@ const SinglePostPage = () => {
   return (
     <>
       <Head>
+        <meta property="og:site_name" content="DevGram" />
+        <meta name="title" key="title" content={post.userId.name} />
+        <meta property="og:title" key="og:title" content={post.userId.name} />
+        <meta
+          property="twitter:title"
+          key="twitter:title"
+          content={post.userId.name}
+        />
+
         <meta
           key="description"
           name="description"
           content={
-            data.post.content ||
+            post.content ||
             'Log into DevGram to start sharing and connecting with your friends, family, and people you know.'
           }
         />
         <meta
           key="twitter:description"
           property="twitter:description"
-          content={
-            data.post.content ||
-            'Log into DevGram to start sharing and connecting with your friends, family, and people you know.'
-          }
+          content={post.content}
         />
         <meta
           key="og:description"
           property="og:description"
-          content={
-            data.post.content ||
-            'Log into DevGram to start sharing and connecting with your friends, family, and people you know.'
-          }
+          content={post.content}
         />
-        {data.post.imageId && (
+        {post.imageId && (
           <>
-            <meta
-              property="og:image"
-              content={getImageUrl(data.post.imageId)}
-            />
+            <meta property="og:image" content={getImageUrl(post.imageId)} />
             <meta
               key="twitter:image"
               property="twitter:image"
-              content={getImageUrl(data.post.imageId)}
+              content={getImageUrl(post.imageId)}
             />
           </>
         )}
 
-        {data.post.gifUrl && (
+        {post.gifUrl && (
           <>
             <meta property="og:image:type" content="image/gif" />
-            <meta property="og:image" content={data.post.gifUrl} />
+            <meta property="og:image" content={post.gifUrl} />
             <meta
               key="twitter:image"
               property="twitter:image"
-              content={data.post.gifUrl}
+              content={post.gifUrl}
             />
           </>
         )}

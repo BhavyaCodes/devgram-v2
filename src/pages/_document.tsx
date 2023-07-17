@@ -30,7 +30,8 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
     >
       <Head>
         {/* <!-- Primary Meta Tags --> */}
-        <meta name="title" content="DevGram" />
+        <meta property="og:site_name" content="DevGram" />
+        <meta name="title" key="title" content="DevGram" />
         <meta
           key="description"
           name="description"
@@ -40,7 +41,7 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
         {/* <!-- Open Graph / Facebook --> */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content={baseUrl} />
-        <meta property="og:title" content="DevGram" />
+        <meta property="og:title" key="og:title" content="DevGram" />
         <meta
           key="og:description"
           property="og:description"
@@ -55,7 +56,7 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
         {/* <!-- Twitter --> */}
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={baseUrl} />
-        <meta property="twitter:title" content="DevGram" />
+        <meta property="twitter:title" key="twitter:title" content="DevGram" />
         <meta
           key="twitter:description"
           property="twitter:description"
