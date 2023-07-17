@@ -18,6 +18,8 @@ interface MyDocumentProps extends DocumentProps {
 }
 
 export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL as string;
+
   return (
     <Html
       lang="en"
@@ -27,6 +29,34 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
       }}
     >
       <Head>
+        {/* <!-- Primary Meta Tags --> */}
+        <title>DevGram</title>
+        <meta name="title" content="DevGram" />
+        <meta
+          name="description"
+          content="Log into DevGram to start sharing and connecting with your friends, family, and people you know."
+        />
+
+        {/* <!-- Open Graph / Facebook --> */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={baseUrl} />
+        <meta property="og:title" content="DevGram" />
+        <meta
+          property="og:description"
+          content="Log into DevGram to start sharing and connecting with your friends, family, and people you know."
+        />
+        <meta property="og:image" content={baseUrl + '/logo192.png'} />
+
+        {/* <!-- Twitter --> */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={baseUrl} />
+        <meta property="twitter:title" content="DevGram" />
+        <meta
+          property="twitter:description"
+          content="Log into DevGram to start sharing and connecting with your friends, family, and people you know."
+        />
+        <meta property="twitter:image" content={baseUrl + '/logo192.png'} />
+
         {/* PWA primary color */}
         {/* <meta name="theme-color" content={theme.palette.primary.main} /> */}
         <link rel="shortcut icon" href="/favicon.ico" />

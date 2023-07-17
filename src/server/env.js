@@ -12,6 +12,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   GOOGLE_OAUTH_CLIENT_SECRET: z.string(),
   JWT_SECRET: z.string(),
+  NEXT_PUBLIC_BASE_URL: z.string().url(),
   NEXT_PUBLIC_CLOUDINARY_API_KEY: z.string(),
   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string(),
   NEXT_PUBLIC_CLOUDINARY_FOLDER: z.string(),
