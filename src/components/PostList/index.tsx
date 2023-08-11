@@ -100,6 +100,7 @@ const PostsList: FC<{ profileId?: string; followingOnly?: boolean }> = ({
 
   const posts = data.pages.flatMap((page) => page.posts);
 
+  console.log(posts);
   return (
     <>
       <Snackbar
