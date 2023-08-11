@@ -1,5 +1,6 @@
 ## BUGS
 
+- [ ] use useDeferredValue for text input
 - [x] Fix profile query for users with no posts
 - [x] Can't follow yourself logic
 - [ ] Don't post after image upload error

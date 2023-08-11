@@ -24,12 +24,14 @@ import { FilterQuery, Types } from 'mongoose';
 //   updatedAt: true,
 // });
 
+const MAX_COMMENT_LENGTH = 280;
+
 export const commentRouter = router({
   addComment: authOnlyProcedure
     .input(
       z.object({
         postId: z.string(),
-        content: z.string(),
+        content: z.string().max(MAX_COMMENT_LENGTH),
       }),
     )
     .output(
