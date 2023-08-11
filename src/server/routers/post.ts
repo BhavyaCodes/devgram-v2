@@ -17,6 +17,9 @@ import { env } from '../env';
 import { v2 as cloudinary } from 'cloudinary';
 import isMongoId from 'validator/lib/isMongoId';
 
+const MAX_POST_LENGTH = 280;
+const OTHER_MAX_LENGTH = 500;
+
 interface PostsAggregationResult {
   _id: ObjectId;
   userId: {
@@ -51,9 +54,9 @@ export const postRouter = router({
   create: authOnlyProcedure
     .input(
       z.object({
-        content: z.string(),
-        imageId: z.string().optional(),
-        gifUrl: z.string().optional(),
+        content: z.string().max(MAX_POST_LENGTH),
+        imageId: z.string().max(OTHER_MAX_LENGTH).optional(),
+        gifUrl: z.string().max(OTHER_MAX_LENGTH).optional(),
       }),
     )
     .output(
