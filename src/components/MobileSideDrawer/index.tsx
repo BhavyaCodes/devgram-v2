@@ -62,6 +62,7 @@ export const MobileSideDrawer: FC<MobileSideDrawerProps> = ({
     if (!matches) {
       onClose();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matches]);
 
   return (

@@ -157,7 +157,7 @@ export const PostBox = ({
   }, [createdAt]);
 
   const likeMutation = trpc.post.likePost.useMutation({
-    onSuccess(data, variables, context) {
+    onSuccess(data, variables) {
       //variable -> postId
       utils.post.getAll.setInfiniteData(
         {
@@ -199,7 +199,7 @@ export const PostBox = ({
     },
   });
   const unlikeMutation = trpc.post.unlikePost.useMutation({
-    onSuccess(data, variables, context) {
+    onSuccess(data, variables) {
       //variable -> postId
       utils.post.getAll.setInfiniteData(
         {
@@ -256,7 +256,7 @@ export const PostBox = ({
       },
     );
   const deleteCommentMutation = trpc.post.comment.deleteComment.useMutation({
-    onSuccess(data, variables, context) {
+    onSuccess(data, variables) {
       utils.post.getAll.setInfiniteData({}, (oldData) => {
         if (!oldData) {
           return {
@@ -315,7 +315,7 @@ export const PostBox = ({
     if (lastComment?._id) {
       utils.post.comment.getCommentsByPostIdPaginated.setInfiniteData(
         { postId: _id, limit: 5 },
-        (oldData) => {
+        () => {
           const newPage = {
             comments: [lastComment],
             nextCursor: {
